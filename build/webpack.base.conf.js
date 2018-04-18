@@ -48,8 +48,14 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'babel-loader',
-        exclude:[/node_modules/]
-        // include: [resolve('src'), resolve('test')]
+        include: [
+          resolve('src'),
+          resolve('build'),
+          resolve('test'),
+          resolve('static'),
+          resolve('node_modules/_element-ui@2.3.4@element-ui/src'),
+          resolve('node_modules/_element-ui@2.3.4@element-ui/packages')
+        ]
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,

@@ -7,11 +7,14 @@ Vue.use(Vuex);
 const state = {
   userInfo:{},
   message:{},
-  count:0
+  count:0,
+  bookInfo:{},
 };
 
 const mutations = {
-
+  change_bookInfo(state, obj) {
+    state.bookInfo = obj
+  }
 };
 
 const actions = {

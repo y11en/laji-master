@@ -24,7 +24,8 @@
          getBaseData(){
             this.$ajax("/admin/getControlPanel",'',res=>{
                 if(res.returnCode===200){
-                    this.webBaseData = res.data;
+                    this.webBaseData = res.data
+                    console.log(this.webBaseData)
                 }
             })
          }

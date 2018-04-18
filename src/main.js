@@ -3,24 +3,25 @@
 import Vue from 'vue'
 import App from './app'
 import router from './router'
-import filter from './filter'
 import store from './store'
-import Zepto from 'zepto'
+import filter from './filter'
 import ElementUI from 'element-ui'
-import VueQuillEditor from 'vue-quill-editor'
 import 'element-ui/lib/theme-chalk/index.css'
+import VueQuillEditor from 'vue-quill-editor'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
+
+import Zepto from 'zepto'
 import fileUpload from 'vue-upload-component'
 import 'cropperjs/dist/cropper.min.css'
 Vue.component('file-upload',fileUpload)
 Vue.use(fileUpload)
-Vue.prototype.$http = Zepto;
-Vue.use(require("./assets/js/fun"));
-Vue.use(ElementUI);
-Vue.use(VueQuillEditor);
-Vue.config.productionTip = false;
+Vue.prototype.$http = Zepto
+Vue.use(require("./assets/js/fun"))
+Vue.use(ElementUI)
+Vue.use(VueQuillEditor)
+Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 new Vue({

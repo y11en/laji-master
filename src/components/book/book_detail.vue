@@ -23,101 +23,111 @@
       
       <el-tabs v-model="activeName" type="card">
         <el-tab-pane name="base" label="基本信息">
-          <el-form ref="detailForm1" :rules="rules1" :model="bookDetail" label-width="80px">
-            <el-form-item label="书籍名称" prop="bookName">
+          <el-row :gutter="24" class="el-row">
+            <el-col :span="1" class="el-title">
+              <span>书籍名称</span>
+            </el-col>
+            <el-col :span="20">
               <el-input readonly v-model="bookDetail.bookName" class="mw320"></el-input>
-            </el-form-item>
-            <el-form-item label="作品分类" prop="bookClassificationId">
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="24" class="el-row">
+            <el-col :span="1" class="el-title">
+              <span>作品分类</span>
+            </el-col>
+            <el-col :span="20">
               <el-select v-model="bookDetail.bookClassificationId" placeholder="请选择活动区域">
                 <el-option v-for="(item,$index) in baseData.classificationList" :key="$index" :label="item.classificationName" :value="item.id"></el-option>
               </el-select>
-            </el-form-item>
-            <el-form-item label="书籍标签" prop="bookLabId">
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="24" class="el-row">
+            <el-col :span="1" class="el-title">
+              <span>书籍标签</span>
+            </el-col>
+            <el-col :span="20">
               <el-checkbox-group v-model="bookDetail.bookLabId">
                 <el-checkbox v-for="(item,$index) in baseData.booklablesList" :label="item.id" name="bookLabId" :key="$index">{{item.bookLableName}}</el-checkbox>
               </el-checkbox-group>
-            </el-form-item>
-            <el-row :gutter="40">
-              <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-                <el-form-item label="千字单价" prop="bookPrice">
-                  <el-input v-model="bookDetail.bookPrice" class="mw220"></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-                <el-form-item label="创建时间" prop="bookCreatedTime">
-                  <el-date-picker
-                    v-model="bookDetail.bookCreatedTime"
-                    type="datetime"
-                    readonly
-                    value-format="yyyy-MM-dd HH:mm:ss"
-                    placeholder="选择日期时间">
-                  </el-date-picker>
-      
-                </el-form-item>
-              </el-col>
-            </el-row>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="24" class="el-row">
+            <el-col :span="1" class="el-title">
+              <span>千字单价</span>
+            </el-col>
+            <el-col :span="4">
+              <el-input v-model="bookDetail.bookPrice" class="mw220"></el-input>
+            </el-col>
+            <el-col :span="1" :offset="5" class="el-title">
+              <span>创建时间</span>
+            </el-col>
+            <el-col :span="4">
+              <el-date-picker v-model="bookDetail.bookCreatedTime" type="datetime" readonly value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间"></el-date-picker>
+            </el-col>
+          </el-row>
   
-            <el-row :gutter="40">
-              <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-                <el-form-item label="最新更新" prop="lastUpdateTime">
-                  <el-date-picker
-                    v-model="bookDetail.lastUpdateTime"
-                    type="datetime"
-                    value-format="yyyy-MM-dd HH:mm:ss"
-                    placeholder="选择日期时间">
-                  </el-date-picker>
-                </el-form-item>
-              </el-col>
-    
-              <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-                <el-form-item label="上架时间" prop="topFrameTime">
-                  <el-date-picker
-                    v-model="bookDetail.topFrameTime"
-                    type="datetime"
-                    readonly
-                    value-format="yyyy-MM-dd HH:mm:ss"
-                    placeholder="选择日期时间">
-                  </el-date-picker>
-                </el-form-item>
-              </el-col>
-            </el-row>
+          <el-row :gutter="24" class="el-row">
+            <el-col :span="1" class="el-title">
+              <span>最新更新</span>
+            </el-col>
+            <el-col :span="4">
+              <el-date-picker v-model="bookDetail.lastUpdateTime" type="datetime" value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间"></el-date-picker>
+            </el-col>
+            <el-col :span="1" :offset="5" class="el-title">
+              <span>上架时间</span>
+            </el-col>
+            <el-col :span="4">
+              <el-date-picker v-model="bookDetail.topFrameTime" type="datetime" readonly value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间"> </el-date-picker>
+            </el-col>
+          </el-row>
   
-            <el-row :gutter="40">
-              <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-                <el-form-item label="签约时间" prop="signTime">
-                  <el-date-picker
-                    v-model="bookDetail.signTime"
-                    type="datetime"
-                    readonly
-                    value-format="yyyy-MM-dd HH:mm:ss"
-                    placeholder="选择日期时间">
-                  </el-date-picker>
-                </el-form-item>
-              </el-col>
-    
-              <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-                <el-form-item label="字母索引" prop="initials">
-                  <el-input v-model="bookDetail.initials" class="mw220"></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
+          <el-row :gutter="24" class="el-row">
+            <el-col :span="1" class="el-title">
+              <span>签约时间</span>
+            </el-col>
+            <el-col :span="4">
+              <el-date-picker v-model="bookDetail.signTime" type="datetime" readonly value-format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间"></el-date-picker>
+            </el-col>
+            <el-col :span="1" :offset="5" class="el-title">
+              <span>字母索引</span>
+            </el-col>
+            <el-col :span="4">
+              <el-input v-model="bookDetail.initials" class="mw220"></el-input>
+            </el-col>
+          </el-row>
             
-            <el-form-item label="发布状态" prop="bookAuthorization">
+          <el-row :gutter="24" class="el-row">
+            <el-col :span="1" class="el-title">
+              <span>发布状态</span>
+            </el-col>
+            <el-col :span="20">
               <el-radio-group v-model="bookDetail.bookAuthorization">
                 <el-radio :label="0">网站首发</el-radio>
                 <el-radio :label="3">授权发布</el-radio>
                 <el-radio :label="2">首发签约</el-radio>
                 <el-radio :label="1">授权签约</el-radio>
               </el-radio-group>
-            </el-form-item>
-            <el-form-item label="作品简介" prop="bookIntroduction">
+            </el-col>
+          </el-row>
+          
+          <el-row :gutter="24" class="el-row">
+            <el-col :span="1" class="el-title">
+              <span>作品简介</span>
+            </el-col>
+            <el-col :span="20">
               <el-input type="textarea" class="book-intro" v-model="bookDetail.bookIntroduction"></el-input>
               <p><span class="fr">字数{{bookDetail.bookIntroduction.length}}/400</span></p>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="onSubmit('detailForm1')">保存提交</el-button>
-            </el-form-item>
-          </el-form>
+            </el-col>
+          </el-row>
+
+          <el-row :gutter="24" class="el-row">
+            <el-col :span="2" :offset="1">
+              <el-button type="primary" @click="submit()">保存提交</el-button>
+            </el-col>
+          </el-row>
         </el-tab-pane>
         <el-tab-pane name="extend" v-if="bookData" label="扩展信息">
           <el-form ref="detailForm2" :rules="rules2" :model="bookDetail" label-width="80px">
@@ -255,26 +265,6 @@
             bookIntroduction:''
           },
           bookData:{},
-          rules1: {
-            bookName: [
-              { required: true, message: '请输入活动名称', trigger: 'blur' },
-              { min: 1, max: 20, message: '长度在 20 个字符以内', trigger: 'blur' }
-            ],
-            bookClassificationId: [
-              { required: true,type:'number', message: '请选择作品分类', trigger: 'change' }
-            ],
-            bookLabId: [
-              { type: 'array',required: true,trigger: 'change' },
-              { type: 'array',min:2,max:5,message: '请选择2-5个标签',trigger: 'change'}
-            ],
-            bookAuthorization: [
-              { required: true,type:'number', message: '请选择发布状态', trigger: 'change' }
-            ],
-            bookIntroduction: [
-              { required: true, message: '作品简介', trigger: 'blur' },
-              { min: 10, max: 400, message: '长度在 10 到 400 个字符', trigger: 'blur' }
-            ]
-          },
           rules2: {
             bookName: [
               { required: true, message: '请输入活动名称', trigger: 'blur' },
@@ -332,7 +322,6 @@
               return false;
             }
           });
-//
         },
         getBaseInfo(){
           this.$ajax("/book-EditBookEcho",'',res=>{
@@ -346,36 +335,82 @@
         getBookDetail(){
           this.$ajax("/book-showBookInfo",{bookid:this.$route.params.bid},res=>{
             if(res.returnCode===200){
-              delete res.data.booklableList;
-              delete res.data.bookImage;
+              delete res.data.booklableList
+              delete res.data.bookImage
+              this.$store.commit('change_bookInfo', res.data)
+              console.log(res.data)
               res.data.bookLabId =(()=>{
-                  let arr = [];
+                  let arr = []
                   res.data.bookLabId.split(",").forEach((item)=>{
                       arr.push(parseInt(item))
-                  });
+                  })
                 return arr
-              })();
-              res.data.lastUpdateTime = this.$formTime(res.data.lastUpdateTime,'long');
-              res.data.bookCreatedTime = this.$formTime(res.data.bookCreatedTime,'long');
+              })()
+              res.data.lastUpdateTime = this.$formTime(res.data.lastUpdateTime,'long')
+              res.data.bookCreatedTime = this.$formTime(res.data.bookCreatedTime,'long')
               if(res.data.topFrameTime){
-                res.data.topFrameTime = this.$formTime(res.data.topFrameTime,'long');
+                res.data.topFrameTime = this.$formTime(res.data.topFrameTime,'long')
               }
               if(res.data.signTime){
-                res.data.signTime = this.$formTime(res.data.signTime,'long');
+                res.data.signTime = this.$formTime(res.data.signTime,'long')
               }
-              res.data.bookClassificationId = parseInt(res.data.bookClassificationId);
-              this.bookDetail = res.data;
+              res.data.bookClassificationId = parseInt(res.data.bookClassificationId)
+
+              this.bookDetail = res.data
             }
           });
           this.$ajax("/admin/getBookDataView",{bookid:this.$route.params.bid},res=>{
             this.bookData = res.data;
            
           },'post','json')
+        },
+        submit() {
+          if(this.bookDetail.bookLabId.length>5 || this.bookDetail.bookLabId.length<2){
+            this.$message({
+              message: '请选择2-5个标签',
+              type: 'warning'
+            })
+          }else if(this.bookDetail.bookIntroduction.length>400){
+            this.$message({
+              message: '长度在 1 到 400 个字符',
+              type: 'warning'
+            })
+          }else{
+            let data = {}
+            // data.bookId = this.$route.params.bid
+            // data.bookName = bookDetail.bookName
+            // data.bookWriterId: 3758
+            // data.writerName: 第六轻语
+            // data.bookIntroduction = this.bookDetail.bookIntroduction
+            // data.bookLabId =  this.bookDetail.bookLabId
+            // data.bookClassificationId = this.bookDetail.bookClassificationId
+            // data.initials: S
+            // data.bookCreatedTime: 2018-04-16 16:02:35
+            // data.bookWorldCount: 3098
+            // data.bookStatus: 0
+            // data.bookCheckStatus: 0
+            // data.bookAuthorization = this.bookDetail.bookAuthorization
+            // data.freeLimit: 0
+            // data.bookRemarks: 
+            // data.lastUpdateTime: 2018-04-16 16:40:17
+            // data.lastUpdateChapterId: 17076
+            // data.collectionStatus: 0
+            // data.classificationName: 异世幻想
+            // data.lastUpdateChapterName: 【贰】三顾茅庐（二）
+            // data.bookPrice: 3
+            // console.log(this.$store.state.bookAuthorization)
+            console.log(this.$store.state.bookInfo)
+            this.$ajax("/book-showBookInfo",{bookid:this.$route.params.bid},res=>{
+              this.getBookDetail()
+            })
+          }
         }
       },
+
       created(){
         this.getBaseInfo()
       },
+
       watch:{
         "bookDetail.bookIntroduction":function (val) {
            this.bookDetail.bookIntroduction = val.replace(/\s*\n+\s*/g,'\n\n')
@@ -387,5 +422,9 @@
     }
 </script>
 <style lang="stylus" rel="stylesheet/stylus">
-
+.el-row
+  margin 20px 0
+  .el-title
+    line-height 40px
+    text-align center
 </style>

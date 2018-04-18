@@ -1,78 +1,55 @@
 <template>
-  <div class="layui-layout-admin-wrapper">
-    <div class="layui-layout layui-layout-admin" style="">
-    <div class="layui-header">
-      <div class="layui-logo">辣鸡小说 后台管理</div>
-      <!-- 头部区域（可配合layui已有的水平导航） -->
-      <ul class="layui-nav layui-layout-right">
-        <li class="layui-nav-item">
-          <a href="javascript:;">
-            <img src="/static/img/avatar.jpg" class="layui-nav-img">
-            {{$store.state.userInfo.userName}}
-          </a>
-          <dl class="layui-nav-child">
-            <dd><a href="">基本资料</a></dd>
-            <dd><a href="">安全设置</a></dd>
-          </dl>
-        </li>
-        <li class="layui-nav-item"><a @click="exit" >退出</a></li>
-      </ul>
+<div>
+
+    <div class="header">
+        <div class="index-title">辣鸡小说 后台管理</div>
+        <ul class="user-box">
+            <li class="">
+                <span href="javascript:;">
+                    <img src="../assets/image/pic/avatar.jpg">
+                    {{$store.state.userInfo.userName}}
+                </span>
+                <span>基本资料</span>
+                <span>安全设置</span>
+            </li>
+            <li class="exit-btn"><span @click="exit">退出</span></li>
+        </ul>
     </div>
-    <div class="layui-side layui-bg-black">
-      <div class="layui-side-scroll">
-        <el-menu
-          :default-active="currentUrl"
-          class="el-menu-vertical-side"
-          background-color="#393D49"
-          text-color="#fff"
-          router
-        >
-          <template v-for="(item,$index) in sideNavList">
-            <el-submenu v-if="item.ChildMenu && item.ChildMenu.length>0" :index="'0'+$index">
-              <template slot="title">
-                <img :src="item.icoURL" alt="">
-                <span slot="title">{{item.menuName}}</span>
-              </template>
-              <el-menu-item
-                v-for="(item2,index2) in item.ChildMenu"
-                :key="index2"
-                :index="item2.menuURL"
-                :route="{path:item2.menuURL}">
-                {{item2.menuName}}
-              </el-menu-item>
-            </el-submenu>
-            
-            <el-menu-item
-              :index="item.menuURL"
-              :route="{path:item.menuURL}"
-              v-else>
-              <img :src="item.icoURL" alt="">
-              <span slot="title">{{item.menuName}}</span>
-            </el-menu-item>
-          </template>
-        </el-menu>
-      </div>
+
+    <div class="section">
+        <div class="left-nav">
+            <el-menu :default-active="currentUrl" class="el-menu-vertical-side" background-color="#393D49" text-color="#fff" router>
+                <template v-for="(item,$index) in sideNavList">
+                    <el-submenu v-if="item.ChildMenu && item.ChildMenu.length>0" :index="'0'+$index" :key="$index">
+                        <template slot="title">
+                            <img :src="item.icoURL" alt="">
+                            <span slot="title">{{item.menuName}}</span>
+                        </template>
+                        <el-menu-item v-for="(item2,index2) in item.ChildMenu" :key="index2" :index="item2.menuURL" :route="{path:item2.menuURL}">
+                            {{item2.menuName}}
+                        </el-menu-item>
+                    </el-submenu>
+                    
+                    <el-menu-item :index="item.menuURL" :route="{path:item.menuURL}" v-else :key="$index">
+                    <img :src="item.icoURL" alt="">
+                    <span slot="title">{{item.menuName}}</span>
+                    </el-menu-item>
+                </template>
+            </el-menu>
+        </div>
+
+        <div class="right-content">
+            <!-- 内容主体区域 -->
+            <!--<transition>-->
+            <keep-alive>
+                <router-view v-if="$route.meta.keepAlive"></router-view>
+            </keep-alive>
+            <!--</transition>-->
+            <router-view v-if="!$route.meta.keepAlive"></router-view>
+        </div>
+
     </div>
-    
-    <div class="layui-body" id="laji-admin-body">
-      <!-- 内容主体区域 -->
-        <!--<transition>-->
-          <keep-alive>
-            <router-view v-if="$route.meta.keepAlive"></router-view>
-          </keep-alive>
-        <!--</transition>-->
-          <router-view v-if="!$route.meta.keepAlive"></router-view>
-    </div>
-    <!--移动端侧边栏呼出按钮-->
-    <div class="site-tree-mobile layui-hide" @click="isShow">
-      <i class="layui-icon">&#xe602;</i>
-    </div>
-    <div class="site-mobile-shade" @click="isShow"></div>
-      <ul class="layui-fixbar" style="right: 50px; bottom: 100px;">
-        <li class="layui-icon layui-fixbar-top" lay-type="top" style="background-color:#393D49">&#xe604;</li>
-      </ul>
-    </div>
-  </div>
+</div>
 </template>
 
 <script type="text/ecmascript-6">
@@ -83,13 +60,6 @@
         }
       },
       methods:{
-        isShow(){
-          if(document.body.className==='site-mobile'){
-            document.body.classList.remove('site-mobile')
-          }else {
-            document.body.className = 'site-mobile'
-          }
-        },
         getNavList(){
            let setList = ()=>{
              let info = JSON.parse(sessionStorage.getItem('user_info')),
@@ -147,70 +117,60 @@
             return href;
         }
       },
-      watch:{
-          $route:function () {
-            document.getElementById('laji-admin-body').scrollTop =0;
-          }
-      }
+      watch:{}
     }
 </script>
 <style lang="stylus" rel="stylesheet/stylus">
-.lj-container
-  width 100%
-  .lj-header
-    height 50px
-    line-height 50px
-    background #01AAED
-  .lj-aside
-    float left
-    width 200px
-    height 200px
-    line-height 200px
-    background #2c3e50
-    &+.lj-container
-      overflow hidden
-      height 100%
-      background #5FB878
-  
-.el-menu-vertical-side
-  width 217px
-  overflow-y scroll
-  margin-right 17px
-  .el-menu-item
-    &.is-active
-      background #222d32!important
-      color #fff
-  .el-submenu
-    .el-menu-item
-      padding-left 50px!important
-  .el-header, .el-footer
-    background-color: #B3C0D1;
-    color: #333;
-    text-align: center;
-    line-height: 60px;
-  .el-aside
-    background-color: #D3DCE6;
-    color: #333;
-    text-align: center;
-    line-height: 200px;
-  .el-submenu__title
-    >img
-      margin-right 5px
-    
-  .el-main
-    background-color: #E9EEF3;
-    color: #333;
-    text-align: center;
-    line-height: 160px;
-    
-  body > .el-container
-    margin-bottom: 40px;
+.header
+    background #23262E
+    height 60px
+    overflow hidden
+    .index-title
+        float left
+        width 200px
+        height 100%
+        text-align center
+        color #009688
+        font-size 16px
+        line-height 60px
+    .user-box
+        float right
+        overflow hidden
+        li
+            float left
+            span
+                margin-right 10px
+                color #fff
+                font-size 14px
+                text-align center
+                line-height 60px
+                opacity .7
+                cursor pointer
+                img
+                    width 30px
+                    height 30px
+.section
+    position relative
+    .left-nav
+        position absolute
+        top 0
+        left 0
+        width 200px
+        overflow-x hidden
+        .el-menu-vertical-side
+            height 1300px
 
-.layui-layout-admin-wrapper
-    transform transitionZ(0)
-.layui-layout-admin
-  width: 100%!important;
-  min-width: 1024px!important;
-  margin: 0 auto!important;
- 
+    .right-content
+        position absolute
+        display block
+        top 0
+        right 0
+        bottom 0
+        left 200px
+        padding 10px 20px
+        box-sizing border-box
+        // width auto
+        // overflow hidden
+        // overflow-y auto
+
 </style>

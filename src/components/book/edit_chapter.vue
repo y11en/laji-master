@@ -362,24 +362,24 @@
       editChange(e){
         let parents = document.getElementById('content_edit_sole');
         let pList = parents.childNodes;
-        this.ruleForm.chapterContent = this.$http.trim(parents.innerText);
+        this.ruleForm.chapterContent = this.$http.trim(parents.innerText)
         if(pList.length>0){
           for(let i=0,len=pList.length;i<len;i++){
 //            重置样式,防止粘贴复制带来过来的内联样式
             pList[i].style = null;
             if(this.$http.trim(pList[i].innerText).length){
               if(!pList[i].getAttribute("uuid")){
-                pList[i].setAttribute("uuid","<X><XG>")
+                pList[i].setAttribute("uuid","<H><LG>")
               }else {
                 if(i>0 && pList[i].getAttribute("uuid").length > 7 && pList[(i-1)].getAttribute('uuid')===pList[i].getAttribute("uuid")){
-                  pList[i].setAttribute("uuid","<X><XG>")
+                  pList[i].setAttribute("uuid","<H><LG>")
                 }
               }
               if(pList[i].childNodes.length>1){
                 pList[i].innerHTML = pList[i].innerText;
               }
             }else {
-              pList[i].setAttribute('uuid','<X><XG>');
+              pList[i].setAttribute('uuid','<H><LG>');
             }
           }
         }
@@ -439,9 +439,9 @@
         }
       },
       "editContent":function (val)  {
-        let parents = document.getElementById('content_edit_sole');
-        let pList = parents.childNodes;
-        this.ruleForm.chapterContent = this.$http.trim(parents.innerText);
+        let parents = document.getElementById('content_edit_sole')
+        let pList = parents.childNodes
+        this.ruleForm.chapterContent = this.$http.trim(parents.innerText)
         if(pList.length > 0 && this.isUpDate){
           for(let i=0,len=pList.length;i<len;i++){
 //            重置样式,防止粘贴复制带来过来的内联样式
@@ -452,7 +452,7 @@
                 pList[i].innerHTML = pList[i].innerText;
               }
             }else {
-              pList[i].setAttribute('uuid','<X><XG>');
+              pList[i].setAttribute('uuid','<H><LG>');
             }
           }
         }
@@ -520,6 +520,7 @@
     }
   }
 </script>
+
 <style lang="stylus" type="text/stylus" rel="stylesheet/stylus">
   .chapter-ruleForm
     .iframe-wrap
