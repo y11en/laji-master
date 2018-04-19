@@ -1,74 +1,35 @@
 <template>
-    <div class="admin-user-wrap">
-      <el-alert
-        title=" "
-        type="info"
-        show-icon>
+<div class="admin-user-wrap">
+    <el-alert title=" " type="info" show-icon>
         <div>
-          <p>
-           <span>说明：</span> 此表展示的是本站全部{{$route.name==='authorList'?'作者':'普通用户'}}
-          </p>
+            <p><span>说明：</span> 此表展示的是本站全部{{$route.name==='authorList'?'作者':'普通用户'}}</p>
         </div>
-      </el-alert>
-      <el-row class="mbt20">
+    </el-alert>
       
-      </el-row>
-      
-      <el-row class="mbt20">
+    <el-row class="mbt20">
         <el-col :xs="20" :sm="16" :md="12" :lg="9" :xl="6">
-          <el-input placeholder="请输入内容" v-model="keywords" class="input-with-select" @keyup.enter.native="searchUser">
-            <el-select v-model="selectType" slot="prepend" placeholder="请选择">
-              <el-option label="笔  名" value="pseudonym"></el-option>
-              <el-option label="用户名" value="userName"></el-option>
-              <el-option label="真  名" value="realName"></el-option>
-              <el-option label="用户ID" value="userId"></el-option>
-              <el-option label="手机号" value="userPhone"></el-option>
-            </el-select>
-            <el-button slot="append" icon="el-icon-search" @click="searchUser"></el-button>
-          </el-input>
+            <el-input placeholder="请输入内容" v-model="keywords" class="input-with-select" @keyup.enter.native="searchUser">
+                <el-select v-model="selectType" slot="prepend" placeholder="请选择">
+                    <el-option label="笔  名" value="pseudonym"></el-option>
+                    <el-option label="用户名" value="userName"></el-option>
+                    <el-option label="真  名" value="realName"></el-option>
+                    <el-option label="用户ID" value="userId"></el-option>
+                    <el-option label="手机号" value="userPhone"></el-option>
+                </el-select>
+                <el-button slot="append" icon="el-icon-search" @click="searchUser"></el-button>
+            </el-input>
         </el-col>
-      </el-row>
+    </el-row>
       
-      <el-row class="mbt20">
-        <el-table
-          ref="multipleTable"
-          :data="userList.list"
-          border
-          select="row"
-          tooltip-effect="dark"
-          style="width: 100%">
-          <el-table-column
-            type="selection"
-            align="center">
-          </el-table-column>
+    <el-row class="mbt20">
+        <el-table ref="multipleTable" :data="userList.list" border select="row" tooltip-effect="dark" style="width:100%">
+            <el-table-column type="selection" align="center"></el-table-column>
+            <el-table-column prop="userId" label="ID" align="center"></el-table-column>
+            <el-table-column prop="userName" label="用户名" align="center"></el-table-column>
+            <el-table-column prop="pseudonym" label="笔名"></el-table-column>
+            <el-table-column prop="userMoney" label="辣椒"></el-table-column>
           
-          <el-table-column
-            prop="userId"
-            label="ID"
-            align="center">
-          </el-table-column>
-          <el-table-column
-            prop="userName"
-            label="用户名"
-            align="center">
-          </el-table-column>
-    
-          <el-table-column
-            prop="pseudonym"
-            label="笔名">
-          </el-table-column>
-          
-          <el-table-column
-            prop="userMoney"
-            label="辣椒"
-          >
-          </el-table-column>
-          
-          <el-table-column
-            prop="userRecommendTicket"
-            label="小米椒"
-          >
-          </el-table-column>
+          <el-table-column prop="userRecommendTicket" label="小米椒"></el-table-column>
   
           <el-table-column
             prop="userGoldenTicket"

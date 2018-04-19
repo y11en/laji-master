@@ -3,55 +3,28 @@ import Router from 'vue-router'
 import http from 'zepto'
 Vue.use(Router);
 
+const SensitiveWord = () => import("../components/sensitiveWord")
+
 const router = new Router({
   base:'/dominate',
   mode:'history',
   routes: [
-    {
-      path:'/',
-      redirect:'/login'
-    },
-    {
-      path: '/login',
-      name: 'login',
-      components: require("../components/login/index.vue")
-    },
+    { path:'/', redirect:'/login' },
+    { path: '/login', name: 'login', components: require("../components/login/index.vue") },
     // 管理后台首页
-    {
-      path: '/',
-      components: require("../components/index.vue"),
-      children:[
-        {
-          path:'index',
-          redirect:'book/list/1'
-        },
-        {
-          path:'board',
-          name:'Board',
-          components:require('../components/system/index.vue')
-        }
+    { path: '/', components: require("../components/index.vue"), children:[
+        { path:'index', redirect:'book/list/1' },
+        { path:'board', name:'Board', components:require('../components/system/index.vue') },
+        { path:'sensitiveWord', name: 'SensitiveWord', component: SensitiveWord },
 
 ///////////////////////////////////////////////////////////////////
         // 书籍管理
         //   书籍列表
-        ,{
-          path:'book/list',
-          redirect:'book/list/1'
-        }
-        ,{
-          path:'book/list/:page',
-          name:'bookList',
-          meta:{keepAlive:true},
-          components:require('../components/book/index.vue')
-        }
-        ,{
-          path:'book/info/:bid',
-          name:'bookInfo',
-          meta:{keepAlive:true},
-          components:require('../components/book/index.vue')
-        }
+        { path:'book/list', redirect:'book/list/1' },
+        { path:'book/list/:page', name:'bookList', meta:{keepAlive:true}, components:require('../components/book/index.vue') },
+        { path:'book/info/:bid', name:'bookInfo', meta:{keepAlive:true}, components:require('../components/book/index.vue') },
         // 书籍详情
-        ,{
+        {
           path:'book_detail/:bid',
           name:'bookDetail',
           components:require('../components/book/book_detail.vue')
@@ -630,6 +603,7 @@ router.beforeEach((to,form,next)=>{
       http.ajax({
         type:'post',
         url:'https://www.lajixs.com/api/admin-isLogin',
+        // url: 'http://192.168.0.136:8081/api/admin-isLogin',
         xhrFields: {withCredentials: true},
         crossDomain: true,
         data:{},

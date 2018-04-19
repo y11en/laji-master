@@ -66,7 +66,7 @@
         :on-progress="excelProgress"
         :on-success="progressEnd"
         :on-error="progressEnd"
-        action="/api/uploadExcel">
+        action="http://www.lajixs.com/api/uploadExcel">
         <el-button size="medium" type="primary">上传</el-button>
       </el-upload>
     </el-row>
@@ -232,7 +232,7 @@
         }
       },
       excelProgress(res){
-          this.$myLoad('正在上传中...');
+          this.$myLoad('正在上传中...')
       },
       progressEnd(callback,file){
           if(callback.returnCode===200){

@@ -14,6 +14,9 @@
             </li>
             <li class="exit-btn"><span @click="exit">退出</span></li>
         </ul>
+        <router-link to="/sensitiveWord" class="notice-box">
+            <img src="../assets/image/icon/attribute-icon@1_01.png" alt="">
+        </router-link>
     </div>
 
     <div class="section">
@@ -120,11 +123,12 @@
       watch:{}
     }
 </script>
+
 <style lang="stylus" rel="stylesheet/stylus">
 .header
+    position relative
     background #23262E
     height 60px
-    overflow hidden
     .index-title
         float left
         width 200px
@@ -149,6 +153,21 @@
                 img
                     width 30px
                     height 30px
+    .notice-box
+        position absolute
+        z-index 9999
+        width 80px
+        height 40px
+        margin-left -40px
+        top 60px
+        left 50%
+        border-radius 0 0 10px 10px
+        box-shadow 5px 5px 5px #888
+        background black
+        cursor pointer
+        img
+            width 100%
+            height 100%
 .section
     position relative
     .left-nav
@@ -163,7 +182,7 @@
     .right-content
         position absolute
         display block
-        top 0
+        top 60px
         right 0
         bottom 0
         left 200px
