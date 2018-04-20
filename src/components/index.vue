@@ -15,13 +15,14 @@
             <li class="exit-btn"><span @click="exit">退出</span></li>
         </ul>
         <router-link to="/sensitiveWord" class="notice-box">
-            <img src="../assets/image/icon/attribute-icon@1_01.png" alt="">
+            <img v-show="this.$store.state.hasNotice" src="../assets/image/icon/red.png" alt="">
+            <img v-show="!this.$store.state.hasNotice" src="../assets/image/icon/gray.png" alt="">
         </router-link>
     </div>
 
     <div class="section">
         <div class="left-nav">
-            <el-menu :default-active="currentUrl" class="el-menu-vertical-side" background-color="#393D49" text-color="#fff" router>
+            <el-menu :default-active="currentUrl" class="el-menu-vertical-side" background-color="#393D49" text-color="#fff" :unique-opened="true" router>
                 <template v-for="(item,$index) in sideNavList">
                     <el-submenu v-if="item.ChildMenu && item.ChildMenu.length>0" :index="'0'+$index" :key="$index">
                         <template slot="title">
@@ -159,11 +160,10 @@
         width 80px
         height 40px
         margin-left -40px
-        top 60px
+        top 61px
         left 50%
         border-radius 0 0 10px 10px
         box-shadow 5px 5px 5px #888
-        background black
         cursor pointer
         img
             width 100%

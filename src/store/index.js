@@ -10,6 +10,7 @@ const state = {
     userInfo:{},
     message:{},
     count:0,
+    hasNotice: false,
     bookAuthorization: null,
 }
 
@@ -63,6 +64,10 @@ const actions = {
         if(res.returnCode === 200) return res.data
     },
 
+    async getDataPosition ({}) {
+        const res = await service.getDataPosition().catch(err => console.error(err))
+        if(res.returnCode === 200) return res.data
+    },
 }
 
 const  getters = {

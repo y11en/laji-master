@@ -4,429 +4,179 @@ import http from 'zepto'
 Vue.use(Router);
 
 const SensitiveWord = () => import("../components/sensitiveWord")
+const Login = () => import("../components/login/index")
+const Index = () => import("../components/system/index")
+// const SensitiveWord = () => import("../components/sensitiveWord")
+// const SensitiveWord = () => import("../components/sensitiveWord")
+// const SensitiveWord = () => import("../components/sensitiveWord")
+// const SensitiveWord = () => import("../components/sensitiveWord")
+// const SensitiveWord = () => import("../components/sensitiveWord")
+// const SensitiveWord = () => import("../components/sensitiveWord")
+// const SensitiveWord = () => import("../components/sensitiveWord")
+
 
 const router = new Router({
   base:'/dominate',
   mode:'history',
   routes: [
     { path:'/', redirect:'/login' },
-    { path: '/login', name: 'login', components: require("../components/login/index.vue") },
+    { path: '/login', name: 'login', component: Login },
     // 管理后台首页
     { path: '/', components: require("../components/index.vue"), children:[
         { path:'index', redirect:'book/list/1' },
-        { path:'board', name:'Board', components:require('../components/system/index.vue') },
+        { path:'board', name:'Board', component: Index },
         { path:'sensitiveWord', name: 'SensitiveWord', component: SensitiveWord },
 
-///////////////////////////////////////////////////////////////////
         // 书籍管理
         //   书籍列表
         { path:'book/list', redirect:'book/list/1' },
         { path:'book/list/:page', name:'bookList', meta:{keepAlive:true}, components:require('../components/book/index.vue') },
         { path:'book/info/:bid', name:'bookInfo', meta:{keepAlive:true}, components:require('../components/book/index.vue') },
         // 书籍详情
-        {
-          path:'book_detail/:bid',
-          name:'bookDetail',
-          components:require('../components/book/book_detail.vue')
-        }
+        { path:'book_detail/:bid', name:'bookDetail', components:require('../components/book/book_detail.vue') },
         // 章节列表
-        ,{
-          path:'book_chapter_list/:bid',
-          name:'bookChapterList',
-          components:require('../components/book/book_chapter_list.vue')
-        }
+        { path:'book_chapter_list/:bid', name:'bookChapterList', components:require('../components/book/book_chapter_list.vue') },
 
         // 编辑章节
-        ,{
-          path:'edit_chapter/:cid',
-          name:'editChapter',
-          components:require('../components/book/edit_chapter.vue')
-        }
+        { path:'edit_chapter/:cid', name:'editChapter', components:require('../components/book/edit_chapter.vue') },
 
         // 新增章节
-        ,{
-          path:'add_new_chapter/:bid',
-          name:'addNewChapter',
-          components:require('../components/book/add_new_chapter.vue')
-        }
+        { path:'add_new_chapter/:bid', name:'addNewChapter', components:require('../components/book/add_new_chapter.vue') },
 
         // 卷列表
-        ,{
-          path:'book_volume_list/:bid',
-          name:'bookVolumeList',
-          components:require('../components/book/book_volume_list.vue')
-        }
+        { path:'book_volume_list/:bid', name:'bookVolumeList', components:require('../components/book/book_volume_list.vue') },
 
         // 新增书籍
-        ,{
-          path:'add_new_book',
-          name:'addNewBook',
-          components:require('../components/book/add_new_book.vue')
-        }
+        { path:'add_new_book', name:'addNewBook', components:require('../components/book/add_new_book.vue') },
 
         // 定时发布
-        ,{
-          path:'book/timer',
-         redirect:'book/timer/1'
-        }
-        ,{
-          path:'book/timer/:page',
-          name:'bookTimer',
-          components:require('../components/book/timer_list.vue')
-        }
+        { path:'book/timer', redirect:'book/timer/1' },
+        { path:'book/timer/:page', name:'bookTimer', components:require('../components/book/timer_list.vue') },
         // 草稿箱
-        ,{
-          path:'book/draft',
-          redirect:'book/draft/1'
-        }
-        ,{
-          path:'book/draft/:page',
-          name:'bookDraft',
-          components:require('../components/book/draft_list.vue')
-        }
+        { path:'book/draft', redirect:'book/draft/1' },
+        { path:'book/draft/:page', name:'bookDraft', components:require('../components/book/draft_list.vue') },
 
-///////////////////////////////////////////////////////////////////
         // 用户管理
-        ,{
-          path:'user/list',
-          redirect:'user/list/1'
-        }
-        ,{
-          path:'user/list/:page',
-          name:'userList',
-          components:require("../components/user/index.vue")
-        },
-        ,{
-          path:'user/info/:uid',
-          name:'userInfo',
-          components:require("../components/user/index.vue")
-        }
-        ,{
-          path:'author/list',
-          redirect:'author/list/1'
-        }
-        ,{
-          path:'author/list/:page',
-          name:'authorList',
-          components:require("../components/user/index.vue")
-        }
-        ,{
-          path:'author/monthly/:aid',
-         redirect:'author/monthly/:aid/1'
-        }
-        ,{
-          path:'author/monthly/:aid/:page',
-          name:'authorMonReport',
-          components:require("../components/user/monthly.vue")
-        }
-        ,{
-          path:'author/add_monthly/:aid',
-          name:'authorAddMonReport',
-          components:require("../components/user/add_monthly.vue")
-        }
+        { path:'user/list', redirect:'user/list/1' },
+        { path:'user/list/:page', name:'userList', components:require("../components/user/index.vue") },
+        { path:'user/info/:uid', name:'userInfo', components:require("../components/user/index.vue") },
+        { path:'author/list', redirect:'author/list/1' },
+        { path:'author/list/:page', name:'authorList', components:require("../components/user/index.vue") },
+        { path:'author/monthly/:aid', redirect:'author/monthly/:aid/1' },
+        { path:'author/monthly/:aid/:page', name:'authorMonReport', components:require("../components/user/monthly.vue") },
+        { path:'author/add_monthly/:aid', name:'authorAddMonReport', components:require("../components/user/add_monthly.vue") },
 
-        ,{
-          path:'author/edit_monthly/:bid',
-          name:'authorEditMonReport',
-          components:require("../components/user/add_monthly.vue")
-        }
-        ,{
-          path:'user/detail/:rid',
-          name:'userDetail',
-          components:require("../components/user/detail.vue")
-        }
-///////////////////////////////////////////////////////////////////
+        { path:'author/edit_monthly/:bid', name:'authorEditMonReport', components:require("../components/user/add_monthly.vue") },
+        { path:'user/detail/:rid', name:'userDetail', components:require("../components/user/detail.vue") },
         // 属性管理
-        ,{
-          path:'property',
-          name:'bookProperty',
-          components:require("../components/book/book_property.vue")
-        }
+        { path:'property', name:'bookProperty', components:require("../components/book/book_property.vue") },
 
-///////////////////////////////////////////////////////////////////
         // 评论管理
 
         // 书评管理
-        ,{
-          path:'comment/b_comment',
-          redirect:'comment/b_comment/1',
-        }
-        ,{
-          path:'comment/b_comment/:page',
-          name:'bookComment',
-          components:require("../components/comment/book_comment.vue")
-        }
+        { path:'comment/b_comment', redirect:'comment/b_comment/1', },
+        { path:'comment/b_comment/:page', name:'bookComment', components:require("../components/comment/book_comment.vue") },
 
         // 书评回复
-        ,{
-          path:'comment/reply',
-          redirect:'comment/reply/1',
-        }
-        ,{
-          path:'comment/reply/:page',
-          name:'bookReply',
-          components:require("../components/comment/reply_list.vue")
-        }
+        { path:'comment/reply', redirect:'comment/reply/1', },
+        { path:'comment/reply/:page', name:'bookReply', components:require("../components/comment/reply_list.vue") },
 
 ///////////////////////////////////////////////////////////////////
         // 间贴管理
-        ,{
-          path:'barrage',
-          redirect:'barrage/1'
-        }
-        ,{
-          path:'barrage/:page',
-          name:'adminBarrage',
-          components:require("../components/barrage/index.vue")
-        }
+        { path:'barrage', redirect:'barrage/1' },
+        { path:'barrage/:page', name:'adminBarrage', components:require("../components/barrage/index.vue") },
 
 
 ///////////////////////////////////////////////////////////////////
         // 章节管理
-        ,{
-          path:'chapter',
-          redirect:'chapter/1'
-        }
-        ,{
-          path:'chapter/:page',
-          name:'allChapter',
-          components:require("../components/book/all_chapter_list.vue")
-        }
+        { path:'chapter', redirect:'chapter/1' },
+        { path:'chapter/:page', name:'allChapter', components:require("../components/book/all_chapter_list.vue") },
 
 ///////////////////////////////////////////////////////////////////
         // 消息管理
 
         // 系统消息
-        ,{
-          path:'message/system',
-          redirect:'message/system/1'
-        }
-        ,{
-          path:'message/system/:page',
-          name:'mesSystem',
-          components:require("../components/message/system.vue")
-        }
-        ,{
-          path:'message/edit_message/:mid',
-          name:'mesEditMessage',
-          components:require("../components/message/edit_system.vue")
-        }
-        ,{
-          path:'message/add_message',
-          name:'mesAddMessage',
-          components:require("../components/message/edit_system.vue")
-        }
+        { path:'message/system',redirect:'message/system/1' },
+        { path:'message/system/:page', name:'mesSystem', components:require("../components/message/system.vue") },
+        { path:'message/edit_message/:mid', name:'mesEditMessage', components:require("../components/message/edit_system.vue") },
+        { path:'message/add_message', name:'mesAddMessage', components:require("../components/message/edit_system.vue") },
         // 私信
-        ,{
-          path:'message/person',
-          redirect:'message/person/1'
-        }
-        ,{
-          path:'message/person/:page',
-          name:'mesPerson',
-          components:require("../components/message/personal.vue")
-        }
+        { path:'message/person', redirect:'message/person/1' },
+        { path:'message/person/:page', name:'mesPerson', components:require("../components/message/personal.vue") },
 
 ///////////////////////////////////////////////////////////////////
         // 数据统计
 
         // 打赏统计
-        ,{
-          path:'statistics/reward',
-          redirect:'statistics/reward/1'
-        }
-        ,{
-          path:'statistics/reward/:page',
-          name:'staReward',
-          components:require("../components/statistics/reward.vue")
-        }
+        { path:'statistics/reward', redirect:'statistics/reward/1' },
+        { path:'statistics/reward/:page', name:'staReward', components:require("../components/statistics/reward.vue") },
 
-        ,{
-          path:'statistics/reward/:uid/:page',
-          name:'staUserReward',
-          components:require("../components/statistics/reward.vue")
-        }
+        { path:'statistics/reward/:uid/:page', name:'staUserReward', components:require("../components/statistics/reward.vue") },
 
         // 订阅统计
-        ,{
-          path:'statistics/subscribe',
-          redirect:'statistics/subscribe/1'
-        }
-        ,{
-          path:'statistics/subscribe/:page',
-          name:'staSubscribe',
-          components:require("../components/statistics/subscribe.vue")
-        }
+        { path:'statistics/subscribe', redirect:'statistics/subscribe/1' },
+        { path:'statistics/subscribe/:page', name:'staSubscribe', components:require("../components/statistics/subscribe.vue") },
 
-        ,{
-          path:'statistics/subscribe/:uid/:page',
-          name:'staUserSubscribe',
-          components:require("../components/statistics/subscribe.vue")
-        }
+        { path:'statistics/subscribe/:uid/:page', name:'staUserSubscribe', components:require("../components/statistics/subscribe.vue") },
         // 推荐统计
-        ,{
-          path:'statistics/recommend',
-          redirect:'statistics/recommend/1'
-        }
-        ,{
-          path:'statistics/recommend/:page',
-          name:'staRecommend',
-          components:require("../components/statistics/recommend.vue")
-        }
-        ,{
-          path:'statistics/recommend/:uid/:page',
-          name:'staUserRecommend',
-          components:require("../components/statistics/recommend.vue")
-        }
+        { path:'statistics/recommend', redirect:'statistics/recommend/1' },
+        { path:'statistics/recommend/:page', name:'staRecommend', components:require("../components/statistics/recommend.vue") },
+        { path:'statistics/recommend/:uid/:page', name:'staUserRecommend', components:require("../components/statistics/recommend.vue") },
 
         //金椒统计
-        ,{
-          path:'statistics/pepper',
-          redirect:'statistics/pepper/1'
-        }
-        ,{
-          path:'statistics/pepper/:page',
-          name:'staPepper',
-          components:require("../components/statistics/pepper.vue")
-        }
+        { path:'statistics/pepper', redirect:'statistics/pepper/1' },
+        { path:'statistics/pepper/:page', name:'staPepper', components:require("../components/statistics/pepper.vue") },
 
-        ,{
-          path:'statistics/pepper/:uid/:page',
-          name:'staUserPepper',
-          components:require("../components/statistics/pepper.vue")
-        }
+        { path:'statistics/pepper/:uid/:page', name:'staUserPepper', components:require("../components/statistics/pepper.vue") },
 
         // 充值统计
-        ,{
-          path:'statistics/charge',
-          redirect:'statistics/charge/1'
-        }
-        ,{
-          path:'statistics/charge/:page',
-          name:'staCharge',
-          components:require("../components/statistics/charge.vue")
-        },
-        ,{
-          path:'statistics/charge/:uid/:page',
-          name:'staUserCharge',
-          components:require("../components/statistics/charge.vue")
-        }
+        { path:'statistics/charge', redirect:'statistics/charge/1' },
+        { path:'statistics/charge/:page', name:'staCharge', components:require("../components/statistics/charge.vue") },
+        { path:'statistics/charge/:uid/:page', name:'staUserCharge', components:require("../components/statistics/charge.vue") },
 
         // 详细数据
-        ,{
-          path:'statistics/detail',
-          redirect:'statistics/detail/1'
-        }
-        ,{
-          path:'statistics/detail/:page',
-          name:'staDetail',
-          components:require("../components/statistics/detail.vue")
-        }
+        { path:'statistics/detail', redirect:'statistics/detail/1' },
+        { path:'statistics/detail/:page', name:'staDetail', components:require("../components/statistics/detail.vue") },
 
         // 月报管理
-        ,{
-          path:'statistics/monthly',
-          redirect:'statistics/monthly/1'
-        }
-        ,{
-          path:'statistics/monthly/:page',
-          name:'staBookMonthly',
-          components:require("../components/user/monthly.vue")
-        }
+        { path:'statistics/monthly', redirect:'statistics/monthly/1' },
+        { path:'statistics/monthly/:page', name:'staBookMonthly', components:require("../components/user/monthly.vue") },
 
 
 ///////////////////////////////////////////////////////////////////
         // 权限管理
 
         // 管理员
-        ,{
-          path:'authority/administrator',
-          redirect:'authority/administrator/1'
-        }
-        ,{
-          path:'authority/administrator/:page',
-          name:'autAdministrator',
-          components:require("../components/authority/admin.vue")
-        }
+        { path:'authority/administrator', redirect:'authority/administrator/1' },
+        { path:'authority/administrator/:page', name:'autAdministrator', components:require("../components/authority/admin.vue") },
 
         // 角色管理
-        ,{
-          path:'authority/role',
-          redirect:'authority/role/1'
-        }
-        ,{
-          path:'authority/role/:page',
-          name:'autRole',
-          components:require("../components/authority/role_list.vue")
-        }
+        { path:'authority/role', redirect:'authority/role/1' },
+        { path:'authority/role/:page', name:'autRole', components:require("../components/authority/role_list.vue") },
         // 资源管理
-        ,{
-          path:'authority/resource',
-          name:'autResource',
-          components:require("../components/authority/resource.vue")
-        }
+        { path:'authority/resource', name:'autResource', components:require("../components/authority/resource.vue") },
 
 ///////////////////////////////////////////////////////////////////
         // 系统管理
 
         // 推荐管理
-        ,{
-          path:'system/recommend',
-          redirect:'system/recommend/1'
-        }
-        ,{
-          path:'system/recommend/:page',
-          name:'sysRecommend',
-          components:require("../components/system/recommend.vue")
-        }
+        { path:'system/recommend', redirect:'system/recommend/1' },
+        { path:'system/recommend/:page', name:'sysRecommend', components:require("../components/system/recommend.vue") },
         // 系统公告
-        ,{
-          path:'system/notice',
-          redirect:'system/notice/1'
-        }
-        ,{
-          path:'system/notice/:page',
-          name:'sysNotice',
-          components:require("../components/system/notice.vue")
-        }
-        ,{
-          path:'system/edit_notice/:id',
-          name:'sysEditNotice',
-          components:require("../components/system/add_notice.vue")
-        }
-        ,{
-          path:'system/add_notice',
-          name:'sysAddNotice',
-          components:require("../components/system/add_notice.vue")
-        }
+        { path:'system/notice', redirect:'system/notice/1' },
+        { path:'system/notice/:page', name:'sysNotice', components:require("../components/system/notice.vue") },
+        { path:'system/edit_notice/:id', name:'sysEditNotice', components:require("../components/system/add_notice.vue") },
+        { path:'system/add_notice', name:'sysAddNotice', components:require("../components/system/add_notice.vue") },
         // 发布邮件
-        ,{
-          path:'system/email',
-          redirect:'system/email/1'
-        }
-        ,{
-          path:'system/email/:page',
-          name:'sysEmail',
-          components:require("../components/system/email.vue")
-        }
+        { path:'system/email', redirect:'system/email/1' },
+        { path:'system/email/:page', name:'sysEmail', components:require("../components/system/email.vue") },
         // 限时免费
 
-        ,{
-          path:'system/deadline',
-          redirect:'system/deadline/1'
-        }
-        ,{
-          path:'system/deadline/:page',
-          name:'sysDeadline',
-          components:require("../components/system/deadline.vue")
-        }
+        { path:'system/deadline', redirect:'system/deadline/1' },
+        { path:'system/deadline/:page', name:'sysDeadline', components:require("../components/system/deadline.vue") },
 
         // 活动推荐
-        ,{
-          path:'system/actives',
-          name:'sysActives',
-          components:require("../components/system/actives.vue")
-        }
+        ,{ path:'system/actives', name:'sysActives', components:require("../components/system/actives.vue") },
 
         // 数据导出
         ,{

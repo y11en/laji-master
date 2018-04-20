@@ -61,3 +61,9 @@ export function sysBookUpdate(data) {
     return ax.post('/admin/sysbookupdate', {data:data})
             .then(res => res.data)
 }
+
+
+export function getDataPosition() {
+    return ax.get('/sys-getDataPosition')
+            .then(res => res.data)
+}
