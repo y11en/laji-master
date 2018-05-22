@@ -354,6 +354,7 @@ export default{
                 if(this.bookDetail.bookAuthorization === this.$store.state.bookAuthorization){
                     this.bookDetail.bookAuthorization = null
                 }
+                this.bookDetail.bookCheckStatus = null
                 this.$store.dispatch('sysBookUpdate', this.bookDetail).then(res => {
                     this.$message({ message: '修改成功！', type: 'success' })
                     this.getBookDetail()
@@ -363,7 +364,7 @@ export default{
     },
 
     created(){
-        this.$store.dispatch('book_EditBookEcho').then(res => {
+        this.$store.dispatch('book_EditBookEcho', {}).then(res => {
             this.baseData = res
             this.getBookDetail()
         })

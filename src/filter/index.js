@@ -67,7 +67,7 @@ Vue.filter("words",function (value){
     //返回字数
     sLen += str.length;
   }catch (e){
-    console.log(e)
+    // console.log(e)
   }
   return sLen;
 });

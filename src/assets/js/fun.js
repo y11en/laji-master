@@ -40,7 +40,7 @@ exports.install = function (Vue, options) {
         // url:'http://192.168.0.136:8081/api'+url,
         url:'https://www.lajixs.com/api'+url,
         data:data,
-        dataType:!dataType?'json':dataType,
+        dataType:!dataType ? 'json' : dataType,
         xhrFields: {withCredentials: true},
         crossDomain: true,
         success:(res)=>{

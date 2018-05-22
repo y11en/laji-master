@@ -120,11 +120,8 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import draggable from 'vuedraggable'
   export default{
-    components:{
-      draggable
-    },
+      
     data(){
       return{
         checkList:[],

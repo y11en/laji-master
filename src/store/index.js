@@ -3,6 +3,10 @@
  */
 import Vue from 'vue'
 import Vuex from 'vuex'
+import AdminModule from './modules/admin'
+import BookModule from './modules/book'
+import SystemModule from './modules/system'
+
 import service from '../api'
 Vue.use(Vuex)
 
@@ -12,6 +16,7 @@ const state = {
     count:0,
     hasNotice: false,
     bookAuthorization: null,
+    date: ''
 }
 
 const mutations = {
@@ -41,8 +46,8 @@ const actions = {
         if(res.returnCode === 200) return res.data
     },
 
-    async book_EditBookEcho ({}) {
-        const res = await service.book_EditBookEcho().catch(err => console.error(err))
+    async book_EditBookEcho ({}, data) {
+        const res = await service.book_EditBookEcho(data).catch(err => console.error(err))
         if(res.returnCode === 200) return res.data
     },
 
@@ -68,6 +73,70 @@ const actions = {
         const res = await service.getDataPosition().catch(err => console.error(err))
         if(res.returnCode === 200) return res.data
     },
+
+    async generateMonthlyreport ({}, data) {
+        const res = await service.generateMonthlyreport(data).catch(err => console.error(err))
+        if(res.returnCode === 200) return res.data
+    },
+
+    /**
+     * 当日数据统计
+     */
+    async getControlPanel () {
+        const res = await service.getControlPanel().catch(err => console.error(err))
+        return res
+    },
+    
+    /**
+     * 获取访问日志
+     */
+    async getSiteaccessrecordsInfo () {
+        const res = await service.getSiteaccessrecordsInfo().catch(err => console.error(err))
+        return res
+    },
+
+    /**
+     * 获取用户列表
+     */
+    async getUserList ({}, data) {
+        const res = await service.getUserList(data).catch(err => console.error(err))
+        return res
+    },
+
+    /**
+     * 模糊搜索书籍
+     */
+    async stacksSearch ({}, data) {
+        const res = await service.stacksSearch(data).catch(err => console.error(err))
+        return res
+    },
+
+    /**
+     * 书籍列表
+     */
+    async getBookInfoList ({}, data) {
+        const res = await service.getBookInfoList(data).catch(err => console.error(err))
+        return res
+    },
+
+    /**
+     * 书籍导出
+     */
+    async chapterContentImport ({}, data) {
+        const res = await service.chapterContentImport(data).catch(err => console.error(err))
+        return res
+    },
+
+    /**
+     * 书籍导出
+     */
+    async chapterZipDownload ({}, data) {
+        const res = await service.chapterZipDownload(data).catch(err => console.error(err))
+        return res
+    },
+
+    
+
 }
 
 const  getters = {
@@ -77,8 +146,13 @@ const  getters = {
 };
 
 export default new Vuex.Store({
-  state,
-  mutations,
-  actions,
-  getters
-});
+    state,
+    mutations,
+    actions,
+    getters,
+    modules: {
+        admin: AdminModule,
+        book: BookModule,
+        system: SystemModule
+    }
+})

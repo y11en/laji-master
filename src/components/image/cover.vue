@@ -44,7 +44,7 @@
         },
         methods:{
             getCoverList(){
-                this.$ajax("/admin/getBooInfoList",{
+                this.$ajax("/admin/getBookInfoList",{
                   page:this.$route.params.page,
                   orderParemeter:'bookId',
                   paramType:'query',

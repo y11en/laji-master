@@ -132,10 +132,9 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import Cropper from '../common/img_upload.vue'
   export default{
     components:{
-      'pic-cropper':Cropper
+      'pic-cropper': () => require('../../components/img_upload.vue')
     },
     data(){
       return{
@@ -162,7 +161,7 @@
           searchValue[this.selectType] = val;
           this.bookList = {}
         }
-        this.$ajax("/admin/getBooInfoList",searchValue,res=>{
+        this.$ajax("/admin/getBookInfoList",searchValue,res=>{
           if(res.returnCode===200){
             this.bookList = res.data
           }

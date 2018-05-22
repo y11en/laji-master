@@ -5,24 +5,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-    export default{
-        data() {
-            return {
-                // setIframeHeight(iframe) {
-                //     if (iframe) {
-                //         var iframeWin = iframe.contentWindow || iframe.contentDocument.parentWindow
-                //         if (iframeWin.document.body) {
-                //             iframe.height = iframeWin.document.documentElement.scrollHeight || iframeWin.document.body.scrollHeight
-                //         }
-                //     }
-                // }
-            }
-        },
-        // mounted: function() {
-        //     console.log(1)
-        //     this.setIframeHeight(document.getElementById('external-frame'))
-        // }
-    }
+export default{ }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">

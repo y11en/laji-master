@@ -338,7 +338,7 @@
           //返回字数
           sLen += str.length;
         }catch(e){
-          console.log(e)
+        //   console.log(e)
         }
         this.ruleForm.chapterLength = sLen;
         if(sLen>20000){

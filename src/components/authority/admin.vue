@@ -333,7 +333,7 @@
         if(type==='edit'){
             this.$set(this.droitInfo,'userName',row.userName);
             this.$set(this.droitInfo,'userId',row.userId);
-            console.log(this.droitInfo);
+            // console.log(this.droitInfo);
             this.getDroitList();
             this.editDroitInfo('search',row)
         }

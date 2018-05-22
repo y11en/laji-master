@@ -11,7 +11,7 @@ const ax = axios.create({
 // 拦截器
 ax.interceptors.request.use(config => {
     if ( config.method === 'post' ) {
-        config.data = querystring.stringify(config.data.data)
+        config.data = querystring.stringify(config.data)
     }
     return config
 }, error => {
