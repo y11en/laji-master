@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import http from 'zepto'
 import axios from 'axios'
 Vue.use(Router)
 
@@ -183,10 +182,7 @@ const router = new Router({
         { path: '/image/avatar/:page', name: 'imgAvatar', components: require('../components/image/avatar.vue') },
         // 封面管理
         { path: '/image/cover', redirect: 'image/cover/1' },
-        { path: '/image/cover/:page', name: 'imgCover', components: require('../components/image/cover.vue') },
-
-        // 任务调度
-        { path: '/task', name: 'adminTask', components: require('../components/other/task.vue') }
+        { path: '/image/cover/:page', name: 'imgCover', components: require('../components/image/cover.vue') }
     ]
 })
 
@@ -194,6 +190,7 @@ router.beforeEach((to, form, next) => {
     if(Number(router.app.$cookie('login_key'))){
         axios({
             url: 'https://www.lajixs.com/api/admin-isLogin',
+            // url: 'http://192.168.0.136:8081/api/admin-isLogin',
             method: 'post',
             withCredentials: true
         }).then(res => {
@@ -212,13 +209,19 @@ router.beforeEach((to, form, next) => {
             }
         })
     }else {
-        if(to.name === 'login') next()
-        else next({ path: '/login' })
+        if(to.name === 'login') {
+            next()
+        } else {
+            next({ path: '/login' })
+        }
     }
 })
 
 router.afterEach(()=>{
-    window.scrollTo(0, 0)
+    // setTimeout(()=>{
+        window.scrollTo(0, 0)
+        // console.log(1)
+    // },500)
 })
 
 export default router

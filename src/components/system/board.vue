@@ -1,26 +1,183 @@
 <template>
-    <div class="admin-index-wrap">
-        <div id="todayCartogram" style="width: 50%; height: 300px;"></div>
-        <div id="tswkCartogram" style="width: 100%;height:800px;"></div>
-        <div id="watchCartogram" style="width: 100%;height:800px;"></div>
+    <div class="admin-control-panel">
+        <el-alert title="" class="hint">
+            <p>{{'尊敬的admin，中午好！现在时间是：' + today + '，多云天气 18℃ ~ 26℃'}}</p>
+        </el-alert>
+
+        <div class="data-list">
+            <el-row :gutter="24">
+                <el-col :xs="24" :sm="24" :md="12" :lg="8" :xl="4" v-for="(item, index) in todayData" :key="index">
+                    <div class="data-item">
+                        <span class="data-icon"><i class="el-icon-location"></i></span>
+                        <div class="data-msg">
+                            <h1>{{item.value}}</h1>
+                            <p>{{item.name}}</p>
+                        </div>
+                    </div>
+                </el-col>
+            </el-row>
+        </div>
+
+        <div class="data-system">
+            <el-row :gutter="24">
+                <el-col :xs="24" :sm="24" :md="24" :lg="12">
+                    <section class="panel">
+                        <div class="panel-header">
+                            <span class="span-title">module1</span>
+                            <span class="tools" @click="module1 = !module1">
+                                <a href="javascript:;" class="el-icon-arrow-down" v-show="!module1"></a>
+                                <a href="javascript:;" class="el-icon-arrow-up" v-show="module1"></a>
+                            </span>
+                        </div>
+                        <div class="panel-body module1" :class="{hidden: module1 === true}">
+                            <div class="larry-table">
+                                <p>敬请期待</p>
+                            </div>
+                        </div>
+                    </section>
+                </el-col>
+
+                <el-col :xs="24" :sm="24" :md="24" :lg="12">
+                    <section class="panel">
+                        <div class="panel-header">
+                            <span class="span-title">module2</span>
+                            <span class="tools" @click="module2 = !module2">
+                                <a href="javascript:;" class="el-icon-arrow-down" v-show="!module2"></a>
+                                <a href="javascript:;" class="el-icon-arrow-up" v-show="module2"></a>
+                            </span>
+                        </div>
+                        <div class="panel-body module2" :class="{hidden: module2 === true}">
+                            <div class="larry-table">
+                                <p>敬请期待</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="panel">
+                        <div class="panel-header">
+                            <span class="span-title">数据统计</span>
+                            <span class="tools" @click="module3 = !module3">
+                                <a href="javascript:;" class="el-icon-arrow-down" v-show="!module3"></a>
+                                <a href="javascript:;" class="el-icon-arrow-up" v-show="module3"></a>
+                            </span>
+                        </div>
+                        <div class="panel-body today-click" :class="{hidden: module3 === true}">
+                            <div class="larry-table" id="today">
+                                <div id="todayClick" style="width: 100%; height: 270px;"></div>
+                            </div>
+                        </div>
+                    </section>
+                </el-col>
+            </el-row>
+        </div>
+
+        <!-- <div id="tswkCartogram" style="width: 100%; height:800px;"></div> -->
+        <!-- <div id="watchCartogram" style="width: 100%; height:800px;"></div> -->
     </div>
 </template>
-
 <script type="text/ecmascript-6">
+// 25 2 3 7 9 11 16 21 22 
+const axios = require('axios')
 const echarts = require('echarts')
 export default{
     data(){
         return{
+            module1: false,
+            module2: false,
+            module3: false,
 
+            today: '',
+            getToday: () => {
+                var time = new Date()
+                var month = time.getMonth() >= 10 ? time.getMonth() : '0'+time.getMonth()
+                var second = time.getSeconds() >= 10 ? time.getSeconds() : '0'+time.getSeconds()
+                return time.getFullYear() + '年' + month + '月' + time.getDate() + '日 ' + this.weekDay[time.getDay()] + ' ' + time.getHours() + ':' + time.getMinutes() + ':' + second
+            },
+            weekDay: ['星期日', '星期一', '星期二', '星期三', '星期四' ,'星期五', '星期六'],
+            timing: null,
+            
             matchTitle: function(val) {
                 let msg = ''
                 switch (val){
-                    case 'AndroidClickCount':
+                    case 'androidV':
                         msg = '安卓点击';
+                        break;
+                    case 'iosV':
+                        msg = 'IOS点击';
+                        break;
+                    case 'pcV':
+                        msg = 'PC点击';
+                        break;
+                    case 'totalIP':
+                        msg = '总点击';
+                        break;
+                        
+                    case 'NewBookRecordCount':
+                        msg = '新增小说';
+                        break;
+                    case 'NewUserRecordCount':
+                        msg = '新增用户';
+                        break;
+                    case 'updateBookCount':
+                        msg = '更新书籍数量';
                         break;
                     case 'ExceptionRecordCount':
                         msg = '异常数量';
                         break;
+                    case 'laJiao':
+                        msg = '总打赏';
+                        break;
+                    case 'iosLoginCount':
+                        msg = 'IOS登录次数';
+                        break;
+                    case 'pingLunHuiFu':
+                        msg = '评论回复';
+                        break;
+                    case 'NewAuthorRecordCount':
+                        msg = '新增作者';
+                        break;
+                    case 'VisitIPAddressStatistics':
+                        msg = '访问IP地址记录';
+                        break;
+                    case 'wapLoginCount':
+                        msg = 'wap站登录次数';
+                        break;
+                    case 'jianTie':
+                        msg = '总间帖';
+                        break;
+                    case 'NewSaveRecordCount':
+                        msg = '收藏';
+                        break;
+                    case 'SignCount':
+                        msg = '签约数量';
+                        break;
+                    case 'androidLoginCount':
+                        msg = '安卓登录次数';
+                        break;
+                    case 'pingLun':
+                        msg = '总评论';
+                        break;
+                    case 'tuiJianPiao':
+                        msg = '总推荐';
+                        break;
+                    case 'NewChapterRecordCount':
+                        msg = '新增章节';
+                        break;
+                    case 'TotalClick':
+                        msg = '总点击量';
+                        break;
+                    case 'pcLoginCount':
+                        msg = 'PC端登录次数';
+                        break;
+                    case 'ReadRecordCount':
+                        msg = '阅读记录';
+                        break;
+                    case 'dinYue':
+                        msg = '总订阅';
+                        break;
+
+
+
                     case 'IosClickCount':
                         msg = 'IOS点击';
                         break;
@@ -30,26 +187,8 @@ export default{
                     case 'MessageRecordCount':
                         msg = '私信条数';
                         break;
-                    case 'NewSaveRecordCount':
-                        msg = '收藏';
-                        break;
-                    case 'ReadRecordCount':
-                        msg = '阅读记录';
-                        break;
                     case 'signCount':
                         msg = '签到人数';
-                        break;
-                    case 'androidLoginCount':
-                        msg = '安卓登录次数';
-                        break;
-                    case 'iosLoginCount':
-                        msg = 'IOS登录次数';
-                        break;
-                    case 'pcLoginCount':
-                        msg = 'PC端登录次数';
-                        break;
-                    case 'wapLoginCount':
-                        msg = 'wap站登录次数';
                         break;
                     case 'nowRersionNum':
                         msg = '登录人次';
@@ -57,26 +196,8 @@ export default{
                     case 'IllegalIpAddressList':
                         msg = '独立IP';
                         break;
-                    case 'laJiao':
-                        msg = '总打赏';
-                        break;
-                    case 'dinYue':
-                        msg = '总订阅';
-                        break;
-                    case 'tuiJianPiao':
-                        msg = '总推荐';
-                        break;
-                    case 'pingLun':
-                        msg = '总评论';
-                        break;
                     case 'jinPiao':
                         msg = '总金票';
-                        break;
-                    case 'jianTie':
-                        msg = '总间帖';
-                        break;
-                    case 'pingLunHuiFu':
-                        msg = '评论回复';
                         break;
                     case 'AndroidDownLoadCount':
                         msg = '安卓下载次数';
@@ -84,22 +205,6 @@ export default{
                     case 'IosDownLoadCount':
                         msg = 'IOS下载次数';
                         break;
-                    case 'NewBookRecordCount':
-                        msg = '新增小说';
-                        break;
-                    case 'NewChapterRecordCount':
-                        msg = '新增章节';
-                        break;
-                    case 'NewUserRecordCount':
-                        msg = '新增用户';
-                        break;
-                    case 'NewAuthorRecordCount':
-                        msg = '新增作者';
-                        break;
-                    case 'updateBookCount':
-                        msg = '更新书籍数量';
-                        break;
-
                     case 'iosClickCount':
                         msg = '当日IOS点击数量';
                         break;
@@ -186,66 +291,66 @@ export default{
                     }
                 return msg
             },
-
-            randomData: function() {
-                now = new Date(+now + oneDay);
-                value = value + Math.random() * 21 - 10;
-                return {
-                    name: now.toString(),
-                    value: [
-                        [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'),
-                        Math.round(value)
-                    ]
-                }
-            },
-
-            todayWidth: 0,
-
-            todayOption: {
-                title: {
-                    text: '当日数据统计'
+            // 当天各项统计数据数组
+            todayData: [],
+            // 当天各设备点击数据对象——echart
+            todayClickData: {
+                title : {
+                    text: '各设备点击次数统计',
+                    // subtext: '纯属虚构',
+                    x:'center'
                 },
-                color: ['#3398DB'],
                 tooltip : {
-                    trigger: 'axis',
-                    axisPointer : {            // 坐标轴指示器，坐标轴触发有效
-                        type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-                    }
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b} : {c} ({d}%)"
                 },
-                grid: {
-                    left: '3%',
-                    right: '4%',
-                    bottom: '3%',
-                    containLabel: true,
-                    y2: 140
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    data: ['安卓点击','PC点击','IOS点击']
                 },
-                xAxis : [
-                    {
-                        type : 'category',
-                        data : [],
-                        axisTick: {
-                            alignWithLabel: true
-                        },
-                        axisLabel:{  
-                            interval:0,//横轴信息全部显示
-                            rotate:-30,//-30度角倾斜显示
-                        }  
-                    }
-                ],
-                yAxis : [
-                    {
-                        type : 'value'
-                    }
-                ],
                 series : [
                     {
-                        name:'number',
-                        type:'bar',
-                        barWidth: '60%',
-                        data:[]
+                        name: '访问来源',
+                        type: 'pie',
+                        radius : '55%',
+                        center: ['50%', '60%'],
+                        data:[],
+                        itemStyle: {
+                            emphasis: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
                     }
                 ]
             },
+            // 请求/绘制当天统计数据
+            responseTodayData: function() {
+                this.$store.dispatch('getControlPanel').then(res => {
+                    if(res.returnCode===200){
+                        var todayClick = res.data.clickIPINFo
+                        delete todayClick.totalIP
+                        for(var key in todayClick){
+                            var obj = new Object()
+                            obj.name = this.matchTitle(key)
+                            obj.value = todayClick[key]
+                            this.todayClickData.series[0].data.push(obj)
+                        }
+                        echarts.init(document.getElementById('todayClick')).setOption(this.todayClickData)
+                        // ----------------------------------------------------------------------
+                        let todayObj = res.data
+                        delete todayObj.clickIPINFo
+                        for(var key in todayObj){
+                            var obj = new Object()
+                            obj.name = this.matchTitle(key)
+                            obj.value = todayObj[key]
+                            this.todayData.push(obj)
+                        }
+                    }
+                })
+            },  
 
             tswkOption: {
                 title: {
@@ -278,7 +383,40 @@ export default{
                 },
                 series: []
             },
-
+            // 一周数据统计
+            tswk:function() {
+                this.$store.dispatch('getSiteaccessrecordsInfo').then(res => {
+                    if(res.returnCode === 200){
+                        let tswkList = res.data.list
+                        for(var i=0; i<tswkList.length; i++) {
+                            delete tswkList[i].id
+                            delete tswkList[i].dataTimes
+                            if(i === 0){
+                                for(var key in tswkList[i]){
+                                    var obj = new Object()
+                                    obj.name = this.matchTitle(key)
+                                    obj.type = 'line'
+                                    obj.stack = key
+                                    obj.data = []
+                                    obj.data.push(Number(tswkList[i][key]))
+                                    this.tswkOption.series.push(obj)
+                                    this.tswkOption.legend.data.push(this.matchTitle(key))
+                                }
+                            }else{
+                                for(var key in tswkList[i]){
+                                    for(var k=0; k<this.tswkOption.series.length; k++){
+                                        if(this.tswkOption.series[k].name === this.matchTitle(key)){
+                                            this.tswkOption.series[k].data[i] = Number(tswkList[i][key])
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        var tswkChart = echarts.init(document.getElementById('tswkCartogram'), 'dark')
+                        tswkChart.setOption(this.tswkOption)
+                    }
+                })
+            },
             watchOption: {
                 title: {
                     text: '动态数据 + 时间坐标轴'
@@ -318,61 +456,131 @@ export default{
         }
     },
 
-    mounted() {
-        this.$store.dispatch('getControlPanel').then(res => {
-            if(res.returnCode===200){
-                delete res.data.TotalClick
-                res.data.AndroidClickCount = res.data.clickIPINFo.androidV
-                res.data.IosClickCount = res.data.clickIPINFo.iosV
-                res.data.pcClickCount = res.data.clickIPINFo.pcV
-                res.data.TotalClick = res.data.clickIPINFo.totalIP
-                var widthNum = 0
-                for(var item in res.data){
-                    this.todayOption.xAxis[0].data.push(this.matchTitle(item))
-                    this.todayOption.series[0].data.push(Number(res.data[item]))
-                    widthNum++
-                }
-                this.todayWidth = widthNum * 2
-                let todayChart = echarts.init(document.getElementById('todayCartogram'))
-                todayChart.setOption(this.todayOption)
-            }
-        })
+    created() {
+        this.timing = setInterval( () => {
+            this.today = this.getToday()
+        }, 1000)
+        this.responseTodayData()
+        window.addEventListener('resize', this.canvasRepeat)
 
-        // this.$store.dispatch('getSiteaccessrecordsInfo').then(res => {
-        //     if(res.returnCode === 200){
-        //         let tswkList = res.data.list
-        //         for(var i=0; i<tswkList.length; i++) {
-        //             delete tswkList[i].id
-        //             delete tswkList[i].dataTimes
-        //             if(i === 0){
-        //                 for(var key in tswkList[i]){
-        //                     var obj = new Object()
-        //                     obj.name = this.matchTitle(key)
-        //                     obj.type = 'line'
-        //                     obj.stack = key
-        //                     obj.data = []
-        //                     obj.data.push(Number(tswkList[i][key]))
-        //                     this.tswkOption.series.push(obj)
-        //                     this.tswkOption.legend.data.push(this.matchTitle(key))
-        //                 }
-        //             }else{
-        //                 for(var key in tswkList[i]){
-        //                     for(var k=0; k<this.tswkOption.series.length; k++){
-        //                         if(this.tswkOption.series[k].name === this.matchTitle(key)){
-        //                             this.tswkOption.series[k].data[i] = Number(tswkList[i][key])
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //         var tswkChart = echarts.init(document.getElementById('tswkCartogram'), 'dark')
-        //         tswkChart.setOption(this.tswkOption)
-        //     }
-        // })
+    },
 
-    }
+    beforeDestroy () {
+        clearInterval(this.timing)
+        window.removeEventListener('resize', this.canvasRepeat, false)
+    },
+
+    methods: {
+        canvasRepeat() {
+            document.getElementById('today').innerHTML = '<div id="todayClick" style="width: 100%; height: 270px;"></div>'
+            echarts.init(document.getElementById('todayClick')).setOption(this.todayClickData, true)
+        }
+    },
+    
 }
 </script>
-<style lang="stylus" rel="stylesheet/stylus">
+
+<style lang="stylus" rel="stylesheet/stylus" scoped>
+.admin-control-panel
+    .hint
+        margin-bottom 10px
+        height 50px
+        background #f2dede
+        p
+            color #a94442
+    .data-list
+        overflow hidden
+        .el-col
+            .data-item
+                position relative
+                border 1px solid transparent
+                box-sizing border-box
+                height 85px
+                border-radius 5px
+                background #fff
+                margin-bottom 20px
+                .data-icon
+                    position absolute
+                    width 38%
+                    height 83px
+                    left 0
+                    top 0
+                    background red
+                    text-align center
+                    line-height 83px
+                    font-size 3em
+                    color #fff
+                .data-msg
+                    position absolute
+                    width 60%
+                    height 83px
+                    top 0
+                    right 0
+                    text-align center
+                    h1
+                        height 45px
+                        line-height 45px
+                        padding-top 8px
+                        font-size 30px
+                        font-weight 300
+                        color #979DAF
+                        box-sizing border-box
+                        font-family Arial,Helvetica,sans-serif
+                    p
+                        height 30px
+                        line-height 30px
+                        padding-top 1px
+                        color #979DAF
+                        font-size 14px
+                        box-sizing border-box
+                        font-family Arial,Helvetica,sans-serif
+            .data-item:first-child
+                margin-left 0
+            .data-item:last-child
+                margin-right 0
+    .data-system
+        width 100%
+        .panel
+            background #fff
+            margin-bottom 20px
+            border 1px solid transparent
+            border-radius 4px
+            box-shadow 0 1px 1px rgba(0,0,0,.05)
+            .panel-header
+                border-color #eff2f7
+                font-size 14px
+                font-weight 300;
+                padding 15px 20px
+                padding-left 15px
+                border 0
+                border-bottom 1px solid #EEEFF1
+                .span-title
+                    font-size 16px
+                    color #333
+                    font-family "Microsoft YaHei"
+                    font-weight 400
+                .tools
+                    float right
+                    a
+                        font-weight bold
+                        color #e2e2e2
+                        margin-left 10px
+            .panel-body
+                overflow hidden
+                transition all .2s linear
+                .larry-table
+                    margin 15px
+                    margin-top 20px
+                    margin-bottom 20px
+            .today-click
+                height 310px
+            .module1
+                height 200px
+            .module2
+                height 100px
+            .hidden
+                height 0px
+                overflow hidden
+                transition all .2s linear
 
 </style>
