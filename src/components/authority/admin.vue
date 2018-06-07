@@ -193,157 +193,155 @@
 </template>
 
 <script type="text/ecmascript-6">
-
   export default{
-    data(){
-      return{
-        dialogType:'add',
-        dialogVisible:false,
-        adminMemberList:{},
-        keywords:'',
-        selectType:'',
-        centerDialogVisible:false,
-        fileList:[],
-        file:[],
-        uploadData:{},
-        memberInfo:{
-          userName:'',
-          userPassword:''
+    data() {
+      return {
+        dialogType: 'add',
+        dialogVisible: false,
+        adminMemberList: {},
+        keywords: '',
+        selectType: '',
+        centerDialogVisible: false,
+        fileList: [],
+        file: [],
+        uploadData: {},
+        memberInfo: {
+          userName: '',
+          userPassword: ''
         },
-        droitInfo:{
-            shows:1,
-            deletes:0,
-            updates:0,
-            adds:0,
-            toExamine:1,
-            menuList:[]
+        droitInfo: {
+          shows: 1,
+          deletes: 0,
+          updates: 0,
+          adds: 0,
+          toExamine: 1,
+          menuList: []
         },
-        typeList:[],
-        droitList:[]
+        typeList: [],
+        droitList: []
       }
     },
-    methods:{
-      getMemberList(){
-        let searchValue = {
-          page:this.$route.params.page
-        };
-        this.$ajax("/admin/getAdminInfoList",searchValue,res=>{
-          if(res.returnCode===200){
+    methods: {
+      getMemberList() {
+        const searchValue = {
+          page: this.$route.params.page
+        }
+        this.$ajax('/admin/getAdminInfoList', searchValue, res => {
+          if (res.returnCode === 200) {
             this.adminMemberList = res.data
-          }else if(!res.data) {
+          } else if (!res.data) {
             this.adminMemberList = {}
           }
         })
       },
-      delMember(row){
+      delMember(row) {
         this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$ajax("/admin/deleteAdminInfo",{id:row.userId},res=>{
-             this.dialogVisible = false;
-            if(res.returnCode===200){
-              this.getMemberList();
-              this.$message({message:res.msg,type:'success'})
+          this.$ajax('/admin/deleteAdminInfo', { id: row.userId }, res => {
+            this.dialogVisible = false
+            if (res.returnCode === 200) {
+              this.getMemberList()
+              this.$message({ message: res.msg, type: 'success' })
             }
           })
-        });
+        })
       },
-      addAdminMember(formName){
+      addAdminMember(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-              this.$ajax("/admin/addAdminInfo",this.memberInfo,res=>{
-                this.dialogVisible = false;
-                if(res.returnCode===200){
-                    this.getMemberList();
-                    this.$message({ message:res.msg,type:'success'})
-                }
-              })
+            this.$ajax('/admin/addAdminInfo', this.memberInfo, res => {
+              this.dialogVisible = false
+              if (res.returnCode === 200) {
+                this.getMemberList()
+                this.$message({ message: res.msg, type: 'success' })
+              }
+            })
           } else {
-            return false;
+            return false
           }
-        });
+        })
       },
-      editDroitInfo(type,val){
-          let sub;
-          if(type==='edit'){
-              let subData = JSON.parse(JSON.stringify(this.droitInfo));
-              subData.menuList = subData.menuList.toString();
-              subData.type = 2;
-              sub = subData
-          }else {
-              sub = {
-                  userId:val.userId,
-                  type:type==='search'?1:3
-              }
+      editDroitInfo(type, val) {
+        let sub
+        if (type === 'edit') {
+          const subData = JSON.parse(JSON.stringify(this.droitInfo))
+          subData.menuList = subData.menuList.toString()
+          subData.type = 2
+          sub = subData
+        } else {
+          sub = {
+            userId: val.userId,
+            type: type === 'search' ? 1 : 3
           }
-          this.$ajax('/admin/getAdminRolemenuanduserrole',sub ,res=>{
-              if(type!=='search'){
-                this.dialogVisible =false;
-              }
-              if(res.returnCode===200){
-                  if(type==='search'){
-                    res.data.menuList = JSON.parse('[' + String(res.data.menuList.split(",")) + ']');
-                    this.droitInfo = res.data;
-                    this.$set(this.droitInfo,'userName',val.userName);
-                  }else {
-                      this.$message({ message:res.msg,type:'success' })
-                  }
-              }else if(!res.data && type==='search'){
-                  this.droitInfo.menuList = [];
-              }
-          })
+        }
+        this.$ajax('/admin/getAdminRolemenuanduserrole', sub, res => {
+          if (type !== 'search') {
+            this.dialogVisible = false
+          }
+          if (res.returnCode === 200) {
+            if (type === 'search') {
+              res.data.menuList = JSON.parse('[' + String(res.data.menuList.split(',')) + ']')
+              this.droitInfo = res.data
+              this.$set(this.droitInfo, 'userName', val.userName)
+            } else {
+              this.$message({ message: res.msg, type: 'success' })
+            }
+          } else if (!res.data && type === 'search') {
+            this.droitInfo.menuList = []
+          }
+        })
       },
-      editMemberInfo(row){
+      editMemberInfo(row) {
         this.$prompt('请输入新密码', '修改密码', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           inputPattern: /[a-zA-Z\d_]{6,18}/,
           inputErrorMessage: '密码只能包含数字、字母和_，长度6-18位'
         }).then(({ value }) => {
-          this.$ajax('/admin/updateAdminInfo',{
-              id:row.id,
-              userPassword:value
-          },res=>{
-              if(res.returnCode===200){
-                this.$message({
-                  type: 'success',
-                  message: res.msg
-                });
-              }
-          });
-          
-        }).catch(() => {
-        });
-      },
-      getDroitList(){
-          this.$ajax("/admin-RefreshRoleMenu",'',res=>{
-              if(res.returnCode===200){
-                  this.droitList = JSON.parse(sessionStorage.getItem('user_info')).roleMenuList
-              }
+          this.$ajax('/admin/updateAdminInfo', {
+            id: row.id,
+            userPassword: value
+          }, res => {
+            if (res.returnCode === 200) {
+              this.$message({
+                type: 'success',
+                message: res.msg
+              })
+            }
           })
+        }).catch(() => {
+        })
       },
-      pageChange(page){
-        this.$router.push({ params:{ page:page } })
+      getDroitList() {
+        this.$ajax('/admin-RefreshRoleMenu', '', res => {
+          if (res.returnCode === 200) {
+            this.droitList = JSON.parse(sessionStorage.getItem('user_info')).roleMenuList
+          }
+        })
       },
-      dialogSync(type,row){
-        this.dialogType = type;
-        this.dialogVisible = true;
-        if(type==='edit'){
-            this.$set(this.droitInfo,'userName',row.userName);
-            this.$set(this.droitInfo,'userId',row.userId);
-            // console.log(this.droitInfo);
-            this.getDroitList();
-            this.editDroitInfo('search',row)
+      pageChange(page) {
+        this.$router.push({ params: { page: page }})
+      },
+      dialogSync(type, row) {
+        this.dialogType = type
+        this.dialogVisible = true
+        if (type === 'edit') {
+          this.$set(this.droitInfo, 'userName', row.userName)
+          this.$set(this.droitInfo, 'userId', row.userId)
+          // console.log(this.droitInfo);
+          this.getDroitList()
+          this.editDroitInfo('search', row)
         }
       }
     },
-    created(){
+    created() {
       this.getMemberList()
     },
-    watch:{
-      '$route':function () {
+    watch: {
+      '$route': function() {
         this.getMemberList()
       }
     }

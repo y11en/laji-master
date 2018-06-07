@@ -44,81 +44,80 @@
 
 <script type="text/ecmascript-6">
 export default{
-    
-    data() {
-        return {
-            searchArr: '',
-            timeout: null,
-            bookList: [],
-            exportIds: []
+
+  data() {
+    return {
+      searchArr: '',
+      timeout: null,
+      bookList: [],
+      exportIds: []
+    }
+  },
+
+  methods: {
+    querySearchAsync(queryString, cb) {
+      this.$store.dispatch('stacksSearch', {
+        keyWord: queryString,
+        isHotWorld: 0,
+        startPage: 1
+      }).then(res => {
+        if (res.returnCode === 200) {
+          const bookList = res.data.list
+          const list = []
+          for (let i = 0, len = bookList.length; i < len; i++) {
+            this.$set(list, list.length, {
+              value: bookList[i].bookName,
+              id: bookList[i].bookId,
+              writerName: bookList[i].writerName,
+              bookWorldCount: bookList[i].bookWorldCount,
+              lastUpdateTime: bookList[i].lastUpdateTime,
+              bookImage: bookList[i].bookImage
+            })
+          }
+          const results = queryString ? list.filter(this.createStateFilter(queryString)) : list
+          clearTimeout(this.timeout)
+          this.timeout = setTimeout(() => {
+            cb(results)
+          }, 3000 * Math.random())
         }
+      })
     },
 
-    methods: {
-        querySearchAsync(queryString, cb) {
-            this.$store.dispatch('stacksSearch', {
-                keyWord: queryString,
-                isHotWorld: 0,
-                startPage: 1
-            }).then(res => {
-                if(res.returnCode===200){
-                    let bookList = res.data.list
-                    let list = []
-                    for(let i=0, len=bookList.length; i<len; i++){
-                        this.$set(list, list.length, {
-                            value: bookList[i].bookName,
-                            id: bookList[i].bookId,
-                            writerName: bookList[i].writerName,
-                            bookWorldCount: bookList[i].bookWorldCount,
-                            lastUpdateTime: bookList[i].lastUpdateTime,
-                            bookImage: bookList[i].bookImage
-                        })
-                    }
-                    let results = queryString ? list.filter(this.createStateFilter(queryString)) : list
-                    clearTimeout(this.timeout)
-                    this.timeout = setTimeout(() => {
-                        cb(results)
-                    }, 3000 * Math.random ())
-                }
-            })
-        },
+    createStateFilter(queryString) {
+      return (state) => {
+        return (state.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0)
+      }
+    },
 
-        createStateFilter(queryString) {
-            return (state) => {
-                return (state.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0)
-            }
-        },
+    handleSelect(item) {
+      if (this.bookList.length <= 10) {
+        this.bookList.push(item)
+        this.exportIds.push(item.id)
+      } else {
+        this.$message({ message: '最多一次性导出十本书籍！', type: 'warning' })
+      }
+    },
 
-        handleSelect(item) {
-            if(this.bookList.length <= 10){
-                this.bookList.push(item)
-                this.exportIds.push(item.id)
-            } else {
-                this.$message({ message: '最多一次性导出十本书籍！', type: 'warning' })
-            }
-        },
-
-        handleClick(id) {
-            if(id.length !== 0){
-                this.$store.dispatch('chapterContentImport', {bookIds: id}).then(res => {
-                    if(res.returnCode === 500){
-                        let el = document.createElement('a')
-                        el.href = 'https://www.lajixs.com/api/ChapterZipDownload?bookId='+id
+    handleClick(id) {
+      if (id.length !== 0) {
+        this.$store.dispatch('chapterContentImport', { bookIds: id }).then(res => {
+          if (res.returnCode === 500) {
+            const el = document.createElement('a')
+            el.href = 'https://www.lajixs.com/api/ChapterZipDownload?bookId=' + id
                         // el.download ="todo文件导出.txt"
-                        el.click()
-                    }
-                })
-            } else {
-                this.$message({ message: '至少需要一本书籍！', type: 'warning' })
-            }
-        },
+            el.click()
+          }
+        })
+      } else {
+        this.$message({ message: '至少需要一本书籍！', type: 'warning' })
+      }
+    },
 
-        deleteRow(index) {
-            this.bookList.splice(index, 1)
-            this.exportIds.splice(index, 1)
-
-        }
+    deleteRow(index) {
+      this.bookList.splice(index, 1)
+      this.exportIds.splice(index, 1)
     }
+  }
 }
 </script>
 

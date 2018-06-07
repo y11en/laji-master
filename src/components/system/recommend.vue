@@ -157,134 +157,134 @@
 
 <script type="text/ecmascript-6">
     export default{
-      data(){
-        return{
-          loading:false,
-          currentType:'',
-          typeList:[],
-          searchValue:'', //推荐位类型ID
-          tableList:[],
-          dialogFormVisible:false,
-          formValue:{},
-          completeValue:'',
-          restaurant:[],
-          timeout:null,
-          dialogImageUrl:'',
-          dialogVisible:false,
-          bookclassid:'',
-          bookClassList:''
+      data() {
+        return {
+          loading: false,
+          currentType: '',
+          typeList: [],
+          searchValue: '', // 推荐位类型ID
+          tableList: [],
+          dialogFormVisible: false,
+          formValue: {},
+          completeValue: '',
+          restaurant: [],
+          timeout: null,
+          dialogImageUrl: '',
+          dialogVisible: false,
+          bookclassid: '',
+          bookClassList: ''
         }
       },
-      methods:{
-        getRecommendList(){
-          this.$ajax('/sys-getRecommendedPosition',{},res=>{
-            if(res.returnCode===200){
-              this.typeList = res.data;
-              this.searchValue = 0;
+      methods: {
+        getRecommendList() {
+          this.$ajax('/sys-getRecommendedPosition', {}, res => {
+            if (res.returnCode === 200) {
+              this.typeList = res.data
+              this.searchValue = 0
               this.search()
             }
           })
         },
-        getBookClass(){
-            this.$ajax("/ranking-classification",{},res=>{
-              if(res.returnCode===200){
-                  this.bookClassList = res.data
-              }
-            },'get')
+        getBookClass() {
+          this.$ajax('/ranking-classification', {}, res => {
+            if (res.returnCode === 200) {
+              this.bookClassList = res.data
+            }
+          }, 'get')
         },
-        search(){
-          this.$ajax("/sys-getRecommendedPositionByType",{
-            RecommendpositionTypeid:this.typeList[this.searchValue].recommendType
-          },res=>{
-              if(res.returnCode===200){
-                this.tableList = this.typeList[this.searchValue].recommendType===7?res.data.reverse():res.data
-              }
+        search() {
+          this.$ajax('/sys-getRecommendedPositionByType', {
+            RecommendpositionTypeid: this.typeList[this.searchValue].recommendType
+          }, res => {
+            if (res.returnCode === 200) {
+              this.tableList = this.typeList[this.searchValue].recommendType === 7 ? res.data.reverse() : res.data
+            }
           })
         },
         remoteMethod(query) {
-          let str = this.$http.trim(query);
-          if (str.length>0) {
-            this.loading = true;
-            let data = {
-              keyWord:str,
-              isHotWorld:1,
-              startPage:1
-            };
-            if(this.typeList[this.searchValue].recommendName.indexOf("分类推荐")>-1){
+          const str = this.$http.trim(query)
+          if (str.length > 0) {
+            this.loading = true
+            const data = {
+              keyWord: str,
+              isHotWorld: 1,
+              startPage: 1
+            }
+            if (this.typeList[this.searchValue].recommendName.indexOf('分类推荐') > -1) {
               data.bookClassificationId = this.typeList[this.searchValue].bookClassificationId
             }
-            this.$ajax("/stacks-search",data,res=>{
-              this.loading = false;
-              if(res.returnCode===200){
-                res.data.list.forEach((item)=>{
-                  item.value = item.bookName + " (" +item.bookId+")"
-                });
+            this.$ajax('/stacks-search', data, res => {
+              this.loading = false
+              if (res.returnCode === 200) {
+                res.data.list.forEach((item) => {
+                  item.value = item.bookName + ' (' + item.bookId + ')'
+                })
                 this.restaurant = res.data.list.filter(item => {
                   return item.bookName.toLowerCase()
-                    .indexOf(query.toLowerCase()) > -1;
-                });
+                    .indexOf(query.toLowerCase()) > -1
+                })
               }
-            });
+            })
           } else {
-            this.restaurant = [];
+            this.restaurant = []
           }
         },
-        handleClick(val,type){
-          let calssid = this.typeList[this.searchValue].bookClassificationId;
-          
-          this.formValue = {};
+        handleClick(val, type) {
+          const calssid = this.typeList[this.searchValue].bookClassificationId
+    
+          this.formValue = {}
 //          for(let k=0,len=this.bookClassList.length;k<len;k++){
 //              if(Number(calssid)===this.bookClassList[k].id){
 //                console.log(val.recommendName.slice(0,val.recommendName.lastIndexOf("-")) + "-" + this.bookClassList[k].classificationName);
-////              this.$set(this.formValue,'recommendName',val.recommendName);
+// //              this.$set(this.formValue,'recommendName',val.recommendName);
 //                break;
 //              }
 //          }
-          this.$set(this.formValue,'type',type);
-          this.$set(this.formValue,'bookImage',val.bookImage);
-          this.$set(this.formValue,'id',val.id);
-          this.dialogImageUrl = '';
-          this.dialogFormVisible = true;
-        },
-        handleSelect(k){
-          this.formValue.bookimg = k.bookImage;
-          this.formValue.bookWriterId = k.bookWriterId;
-          this.formValue.bookId = k.bookId;
-        },
+          this.$set(this.formValue, 'type', type)
+          this.$set(this.formValue, 'bookImage', val.bookImage)
+          this.$set(this.formValue, 'id', val.id)
+          this.dialogImageUrl = ''
+          this.dialogFormVisible = true
+    },
+        handleSelect(k) {
+          this.formValue.bookimg = k.bookImage
+          this.formValue.bookWriterId = k.bookWriterId
+          this.formValue.bookId = k.bookId
+    },
 //      编辑推荐位信息
-        editRecommend(){
-           if(this.formValue.bookId){
-               this.$ajax("/admin/updateActivityRecommendedPosition",this.formValue,res=>{
-                 this.dialogFormVisible = false;
-                 if(res.returnCode===200){
-                   this.completeValue = '';
-                   this.formValue = {};
-                   this.search();
-                 }
-               })
-           }else {
-              console.log(this.formValue)
-           }
+        editRecommend() {
+          if (this.formValue.bookId) {
+            this.$ajax('/admin/updateActivityRecommendedPosition', this.formValue, res => {
+              this.dialogFormVisible = false
+              if (res.returnCode === 200) {
+                this.completeValue = ''
+                this.formValue = {}
+                this.search()
+              }
+            })
+          } else {
+            console.log(this.formValue)
+          }
         },
         handlePictureCard(file) {
-          this.formValue.bookImage = file.url;
-        },
+          this.formValue.bookImage = file.url
+    },
 //        手动上传图片
         submitUpload() {
-          this.$refs.upload.submit();
-        },
+          this.$refs.upload.submit()
+    },
 //        上传成功后回调
-        successBack(res,file){
-            this.$message(res.msg);
-            this.search();
-            this.dialogFormVisible = false;
-        }
-      }
-      ,created(){
-        this.getBookClass();
+        successBack(res, file) {
+          this.$message(res.msg)
+          this.search()
+          this.dialogFormVisible = false
+    }
+      },
+  created() {
+        this.getBookClass()
         this.getRecommendList()
       }
-      
+    
     }
 </script>
 <style lang="stylus" rel="stylesheet/stylus">

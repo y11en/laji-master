@@ -157,131 +157,131 @@
 
 <script type="text/ecmascript-6">
   export default{
-    data(){
-      return{
-        fold:false,
-        filterForm:{
-          rechargeType:'',
-          client:'',
-          isOK:''
+    data() {
+      return {
+        fold: false,
+        filterForm: {
+          rechargeType: '',
+          client: '',
+          isOK: ''
         },
-        searchForm:{
+        searchForm: {
         },
-        defaultValue:null,
-        pickerOptions:{
+        defaultValue: null,
+        pickerOptions: {
           shortcuts: [{
             text: '本月',
             onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setDate(1);
-              picker.$emit('pick', [start,end]);
+              const end = new Date()
+              const start = new Date()
+              start.setDate(1)
+              picker.$emit('pick', [start, end])
             }
           }],
-          disabledDate(time){
+          disabledDate(time) {
             return time.getTime() > Date.now()
           }
         },
-        chargeCommentList:{},
-        keywords:'',
-        selectType:'userName',
-        multipleSelection:[],
-        userInfo:{},
-        date:''
+        chargeCommentList: {},
+        keywords: '',
+        selectType: 'userName',
+        multipleSelection: [],
+        userInfo: {},
+        date: ''
       }
     },
-    methods:{
-      getChargeStatisticList(){
-        this.searchForm = {};
-        this.searchForm.page = this.$route.params.page;
-        if(this.$route.params.uid){
+    methods: {
+      getChargeStatisticList() {
+        this.searchForm = {}
+        this.searchForm.page = this.$route.params.page
+        if (this.$route.params.uid) {
           this.searchForm.userId = this.$route.params.uid
         }
-        if(this.selectType && this.keywords){
-          if((this.selectType==='userId') && !Number(this.keywords)){
-            this.$message({message:'ID必需为数字',type:'warning'});
+        if (this.selectType && this.keywords) {
+          if ((this.selectType === 'userId') && !Number(this.keywords)) {
+            this.$message({ message: 'ID必需为数字', type: 'warning' })
             return false
           }
           this.searchForm[this.selectType] = this.keywords
         }
-        for(let i in this.filterForm){
-          if(this.filterForm[i]!==''){
+        for (const i in this.filterForm) {
+          if (this.filterForm[i] !== '') {
             this.searchForm[i] = this.filterForm[i]
           }
         }
-        if(this.date){
-          this.searchForm.startdate	 = this.date[0] + ' 00:00:00';
+        if (this.date) {
+          this.searchForm.startdate	 = this.date[0] + ' 00:00:00'
           this.searchForm.enddate	 = this.date[1] + ' 23:59:59'
         }
-        this.$ajax("/sys-RechargeRecordStatistics",this.searchForm,res=>{
-          if(res.returnCode===200){
+        this.$ajax('/sys-RechargeRecordStatistics', this.searchForm, res => {
+          if (res.returnCode === 200) {
             this.chargeCommentList = res.data
-          }else if(!res.data){
+          } else if (!res.data) {
             this.chargeCommentList = {}
           }
         })
       },
-      searchReplyCom(){
-        if(this.$route.params.page==1){
+      searchReplyCom() {
+        if (this.$route.params.page == 1) {
           this.getChargeStatisticList()
-        }else {
-          this.$router.push({params:{page:1}})
+        } else {
+          this.$router.push({ params: { page: 1 }})
         }
       },
-      handleCurrentChange(page){
-        this.$router.push({params:{page:page}})
+      handleCurrentChange(page) {
+        this.$router.push({ params: { page: page }})
       },
-      getUserInfo(){
-        if(this.$route.params.uid){
-          this.$ajax("/person-SimplifyUserInfo",{puserid:this.$route.params.uid},res=>{
-            if(res.returnCode===200){
+      getUserInfo() {
+        if (this.$route.params.uid) {
+          this.$ajax('/person-SimplifyUserInfo', { puserid: this.$route.params.uid }, res => {
+            if (res.returnCode === 200) {
               this.userInfo = res.data
             }
           })
         }
       }
     },
-    created(){
-      if(this.$route.name==='staUserCharge'){
-        this.date = [this.$formTime(new Date(new Date().setDate(1)),'sort'),this.$formTime(new Date(),'sort')]
+    created() {
+      if (this.$route.name === 'staUserCharge') {
+        this.date = [this.$formTime(new Date(new Date().setDate(1)), 'sort'), this.$formTime(new Date(), 'sort')]
       }
-      this.getChargeStatisticList();
+      this.getChargeStatisticList()
       this.getUserInfo()
     },
-    watch:{
-      "$route":function () {
+    watch: {
+      '$route': function() {
         this.getChargeStatisticList()
       },
-      "date":function (val,old) {
-        if(old!==''){
+      'date': function(val, old) {
+        if (old !== '') {
           this.getChargeStatisticList()
         }
       },
-      filterForm:{
+      filterForm: {
         handler() {
           this.getChargeStatisticList()
         },
         deep: true
       }
     },
-    filters:{
-        type:function (val) {
-          let text = '';
-          switch (val){
-            case 110:
-                text = '支付宝';
-                break;
-            case 111:
-                text = '微信';
-                break;
-            case 112:
-                text = 'IOS';
-                break;
-            default:
-                text = '其他'
-          }
-          return text;
+    filters: {
+      type: function(val) {
+        let text = ''
+        switch (val) {
+          case 110:
+            text = '支付宝'
+            break
+          case 111:
+            text = '微信'
+            break
+          case 112:
+            text = 'IOS'
+            break
+          default:
+            text = '其他'
         }
+        return text
+      }
     }
   }
 </script>

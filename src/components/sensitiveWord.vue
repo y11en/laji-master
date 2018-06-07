@@ -13,18 +13,18 @@
 <script type="text/ecmascript-6">
 export default {
 
-    data() {
-        return {
-            chapterSensitiveWords: [],
+  data() {
+    return {
+      chapterSensitiveWords: []
 
-        }
-    },
-
-    created: function() {
-        this.$store.dispatch('getChapterSensitiveWords').then(res => {
-            this.chapterSensitiveWords = res.ChapterSensitiveWords
-        })
     }
+  },
+
+  created: function() {
+    this.$store.dispatch('getChapterSensitiveWords').then(res => {
+      this.chapterSensitiveWords = res.ChapterSensitiveWords
+    })
+  }
 }
 </script>
 

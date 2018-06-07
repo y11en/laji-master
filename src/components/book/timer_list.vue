@@ -129,129 +129,129 @@
 <script type="text/ecmascript-6">
   import draggable from 'vuedraggable'
   export default{
-    components:{
+    components: {
       draggable
     },
-    data(){
-      return{
-        checkList:[],
-        centerDialogVisible:false,
-        timerList:[],
-        cloneList:[],
-        updateData:{},
-        page:1,
-        multipleSelection:[],
-        newDrag:true,
-        keywords:''
+    data() {
+      return {
+        checkList: [],
+        centerDialogVisible: false,
+        timerList: [],
+        cloneList: [],
+        updateData: {},
+        page: 1,
+        multipleSelection: [],
+        newDrag: true,
+        keywords: ''
       }
     },
-    methods:{
-      getTimerList(){
-        this.$ajax("/admin/getAdminChapterTimingRelease",{
-          page:this.$route.params.page,
-          searchCondition:this.keywords
-        },res=>{
-          if(res.returnCode===200){
+    methods: {
+      getTimerList() {
+        this.$ajax('/admin/getAdminChapterTimingRelease', {
+          page: this.$route.params.page,
+          searchCondition: this.keywords
+        }, res => {
+          if (res.returnCode === 200) {
             this.timerList = res.data
           }
         })
       },
 
 //      批量删除
-      toggleRowSelection(){
-        if(this.multipleSelection.length){
+      toggleRowSelection() {
+        if (this.multipleSelection.length) {
           this.$confirm('此操作将永久删除所选章节, 是否继续?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            this.getChapterList();
+            this.getChapterList()
             this.$message({
               type: 'success',
               message: '删除成功!'
-            });
+            })
           }).catch(() => {
             this.$message({
               type: 'info',
               message: '已取消删除'
-            });
-          });
-        }else {
-          this.$message({message:'请选取要删除的章节！',type:'warning',showClose:true})
+            })
+          })
+        } else {
+          this.$message({ message: '请选取要删除的章节！', type: 'warning', showClose: true })
         }
       },
-      
-      handleSelectionChange(val){
+  
+      handleSelectionChange(val) {
         this.multipleSelection = val
       },
 //      点击行选中
-      handleRowClick(row){
-        this.$refs.multipleTable.toggleRowSelection(row);
+      handleRowClick(row) {
+        this.$refs.multipleTable.toggleRowSelection(row)
       },
-      
-      handleClick(val,data){
-        if(val==='a'){
-          this.$router.push({path:'/edit_chapter/'+data.id})
-        }else if(val==='b'){
-        
-        }else if(val==='c'){
-        
+  
+      handleClick(val, data) {
+        if (val === 'a') {
+          this.$router.push({ path: '/edit_chapter/' + data.id })
+        } else if (val === 'b') {
+  
+        } else if (val === 'c') {
+  
         }
       },
-      
-      handleCurrentChange(page){
-        this.page = page;
-        this.$router.push({params:{page:page}})
+  
+      handleCurrentChange(page) {
+        this.page = page
+        this.$router.push({ params: { page: page }})
       },
 
 //        书籍上架下架
-      bookChangeState(val,data){
-        let state = data.bookCheckStatus,status = data.bookStatus;
-        if(val==='a'){
+      bookChangeState(val, data) {
+        let state = data.bookCheckStatus, status = data.bookStatus
+        if (val === 'a') {
 //              书籍审核
           state = 1
-        }else if(val==='b'){
+        } else if (val === 'b') {
 //              书籍上架
-          if(data.bookCheckStatus===0){
-            this.$message({message:'书籍暂未审核，请先审核通过！',type:'warning'})
-          }else {
+          if (data.bookCheckStatus === 0) {
+            this.$message({ message: '书籍暂未审核，请先审核通过！', type: 'warning' })
+          } else {
             state = 2
           }
-        }else if(val==='c'){
+        } else if (val === 'c') {
 //              书籍下架
-          if(data.bookCheckStatus<=1){
-            this.$message({message:'书籍已下架！',type:'warning'})
-          }else {
+          if (data.bookCheckStatus <= 1) {
+            this.$message({ message: '书籍已下架！', type: 'warning' })
+          } else {
             state = 1
           }
-        }else if(val==='d'){
+        } else if (val === 'd') {
           status = 1
         }
-        this.$ajax("/admin/sysbookupdate",{bookId:data.bookId,bookCheckStatus:state,bookAuthorization:data.bookAuthorization,bookStatus:status},res=>{
-          if(res.returnCode===200){
-            this.$message(res.msg);
+        this.$ajax('/admin/sysbookupdate', { bookId: data.bookId, bookCheckStatus: state, bookAuthorization: data.bookAuthorization, bookStatus: status }, res => {
+          if (res.returnCode === 200) {
+            this.$message(res.msg)
             this.getBookList()
           }
         })
       }
     },
-    created(){
+    created() {
       this.getTimerList()
     },
-    watch:{
-      $route:function () {
+    watch: {
+      $route: function() {
         this.getTimerList()
       }
     },
-    computed:{
-      nowTime:function () {
-        let time = new Date().getTime();
-        this.$ajax("/sys-getNetWorkDateTime",'',res=>{
-          if(res.returnCode===200){
+    computed: {
+      nowTime: function() {
+        let time = new Date().getTime()
+        this.$ajax('/sys-getNetWorkDateTime', '', res => {
+          if (res.returnCode === 200) {
             time = res.data.beijing
           }
-        },'get');
-        return time;
+        }, 'get')
+        return time
       }
     }
   }

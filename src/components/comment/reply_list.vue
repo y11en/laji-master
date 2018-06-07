@@ -68,120 +68,120 @@
 <script type="text/ecmascript-6">
 export default{
 
-    data(){
-        return{
-            searchForm:{},
-            replyCommentList:{},
-            keywords:'',
-            selectType:'',
-            multipleSelection:[]
+  data() {
+    return {
+      searchForm: {},
+      replyCommentList: {},
+      keywords: '',
+      selectType: '',
+      multipleSelection: []
+    }
+  },
+
+  methods: {
+
+    getReplyCommentList() {
+      this.searchForm = {}
+      this.searchForm.page = this.$route.params.page
+      if (this.selectType) {
+        if ((this.selectType === 'bookId' || this.selectType === 'userId' || this.selectType === 'commentId') && !Number(this.keywords)) {
+          this.$message({ message: 'ID必需为数字', type: 'warning' })
+          return false
         }
+        this.searchForm[this.selectType] = this.keywords
+      }
+      this.$ajax('/admin/bookCommentReplyList', this.searchForm, res => {
+        if (res.returnCode === 200) {
+          this.replyCommentList = res.data
+        } else if (!res.data) {
+          this.replyCommentList = {}
+        }
+      })
     },
 
-    methods:{
+    searchReplyCom() {
+      if (this.$route.params.page == 1) {
+        this.getReplyCommentList()
+      } else {
+        this.$router.push({ params: { page: 1 }})
+      }
+    },
 
-        getReplyCommentList(){
-            this.searchForm = {}
-            this.searchForm.page = this.$route.params.page
-            if(this.selectType){
-                if((this.selectType==='bookId' || this.selectType==='userId' || this.selectType==='commentId') && !Number(this.keywords)){
-                    this.$message({message:'ID必需为数字',type:'warning'});
-                    return false
-                }
-                this.searchForm[this.selectType] = this.keywords
-            }
-            this.$ajax("/admin/bookCommentReplyList",this.searchForm,res=>{
-                if(res.returnCode===200){
-                    this.replyCommentList = res.data
-                }else if(!res.data){
-                    this.replyCommentList = {}
-                }
-            })
-        },
+    handleCurrentChange(page) {
+      this.$router.push({ params: { page: page }})
+    },
 
-        searchReplyCom(){
-            if(this.$route.params.page==1){
-                this.getReplyCommentList()
-            }else {
-                this.$router.push({params:{page:1}})
-            }
-        },
-
-        handleCurrentChange(page){
-            this.$router.push({params:{page:page}})
-        },
-      
-        handleRowClick(row){
-            this.$refs.multipleTable.toggleRowSelection(row)
-        },
+    handleRowClick(row) {
+      this.$refs.multipleTable.toggleRowSelection(row)
+    },
 
         // 批量处理
-        toggleSelection(dType,item){
-            let idList = []
-            let delData = ()=>{
-                let code = 0, tip
-                if(dType==='book'){
-                    code = 2
-                    tip = '此操作将永久删除书籍<span class="red">'+item.bookName+'</span>的全部书评回复, 是否继续?'
-                }else if(dType==='user'){
-                    code = 4
-                    tip = '此操作将永久删除用户<span class="red">'+item.userName+'</span>的全部书评回复, 是否继续?'
-                }else {
-                    tip = '此操作将永久删除'+idList.length+'条书评回复, 是否继续?'
-                    if(idList.length>1){
-                        code = 1
-                    }else {
-                        code = 0
-                    }
-                }
-                this.$confirm(tip , '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    dangerouslyUseHTMLString:true,
-                    type: 'warning'
-                }).then(() => {
-                    this.$ajax("/comm-deletereplyInfo",{
-                        commentid:idList.toString(),
-                        type:code
-                    },res=>{
-                        if(res.returnCode===200){
-                            this.$message({message:'删除成功',type:'success'});
-                            this.getReplyCommentList()
-                        }
-                    })
-                })
-            }
-            if(item){
-                if(dType==='book'){
-                    idList.push(item.bookid)
-                }else {
-                    idList.push(item.userId)
-                }
-            }else if(this.multipleSelection.length){
-                this.multipleSelection.forEach((item)=>{
-                    idList.push(item.id)
-                })
-            }else {
-                this.$message({message:'请选取要删除的内容',type:'warning'});
-                return false
-            }
-            delData()
-        },
-
-        handleSelectionChange(val){
-            this.multipleSelection = val
+    toggleSelection(dType, item) {
+      const idList = []
+      const delData = () => {
+        let code = 0, tip
+        if (dType === 'book') {
+          code = 2
+          tip = '此操作将永久删除书籍<span class="red">' + item.bookName + '</span>的全部书评回复, 是否继续?'
+        } else if (dType === 'user') {
+          code = 4
+          tip = '此操作将永久删除用户<span class="red">' + item.userName + '</span>的全部书评回复, 是否继续?'
+        } else {
+          tip = '此操作将永久删除' + idList.length + '条书评回复, 是否继续?'
+          if (idList.length > 1) {
+            code = 1
+          } else {
+            code = 0
+          }
         }
+        this.$confirm(tip, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          dangerouslyUseHTMLString: true,
+          type: 'warning'
+        }).then(() => {
+          this.$ajax('/comm-deletereplyInfo', {
+            commentid: idList.toString(),
+            type: code
+          }, res => {
+              if (res.returnCode === 200) {
+                  this.$message({ message: '删除成功', type: 'success' })
+                  this.getReplyCommentList()
+                }
+            })
+        })
+      }
+      if (item) {
+        if (dType === 'book') {
+          idList.push(item.bookid)
+        } else {
+          idList.push(item.userId)
+        }
+      } else if (this.multipleSelection.length) {
+        this.multipleSelection.forEach((item) => {
+          idList.push(item.id)
+        })
+      } else {
+        this.$message({ message: '请选取要删除的内容', type: 'warning' })
+        return false
+      }
+      delData()
     },
 
-    created(){
-        this.getReplyCommentList()
-    },
-
-    watch:{
-        "$route":function (val) {
-            this.getReplyCommentList()
-        }
+    handleSelectionChange(val) {
+      this.multipleSelection = val
     }
+  },
+
+  created() {
+    this.getReplyCommentList()
+  },
+
+  watch: {
+    '$route': function(val) {
+      this.getReplyCommentList()
+    }
+  }
 }
 </script>
 

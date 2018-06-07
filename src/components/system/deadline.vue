@@ -140,143 +140,141 @@
 
 <script type="text/ecmascript-6">
     export default{
-      data(){
-          return{
-            deadLineList:[],
-            dialogFormVisible:false,
-            selectValue:'',
-            formValue:{
-              list:[]
-            },
-            options:[],
-            loading:false
-          }
+      data() {
+        return {
+          deadLineList: [],
+          dialogFormVisible: false,
+          selectValue: '',
+          formValue: {
+            list: []
+          },
+          options: [],
+          loading: false
+        }
       },
-      methods:{
-        getDeadLine(page){
-          this.$ajax("/admin/sys-getFreetimelimit",{page:page?page:this.$route.params.page},res=>{
-            if(res.returnCode===200){
-              res.data.list = res.data.list.reverse();
+      methods: {
+        getDeadLine(page) {
+          this.$ajax('/admin/sys-getFreetimelimit', { page: page || this.$route.params.page }, res => {
+            if (res.returnCode === 200) {
+              res.data.list = res.data.list.reverse()
               this.deadLineList = res.data
             }
           })
         },
-        editDeadLine(){
-          let num = 0,subData;
-          let add = (arr)=>{
-            this.$ajax("/admin/sys-addfreetimelimit",{
-              bookId:arr[0],
-              bookName:arr[1],
-              batchNumber:this.deadLineList.list?(this.deadLineList.list[0].batchNumber+1):1,
-              refreshtime:this.formValue.time
-            },res=>{
-              if(res.returnCode===200){
-                if(num===7){
-                  this.dialogFormVisible = false;
-                  this.$loading().close();
-                  this.getDeadLine();
-                  this.$message({message:"添加成功",type:'success'});
+        editDeadLine() {
+          let num = 0, subData
+          const add = (arr) => {
+            this.$ajax('/admin/sys-addfreetimelimit', {
+              bookId: arr[0],
+              bookName: arr[1],
+              batchNumber: this.deadLineList.list ? (this.deadLineList.list[0].batchNumber + 1) : 1,
+              refreshtime: this.formValue.time
+            }, res => {
+              if (res.returnCode === 200) {
+                if (num === 7) {
+                  this.dialogFormVisible = false
+                  this.$loading().close()
+                  this.getDeadLine()
+                  this.$message({ message: '添加成功', type: 'success' })
                   return false
                 }
-                num++;
-                if(num<=7){
-                  add(subData[num].split(','));
+                num++
+                if (num <= 7) {
+                  add(subData[num].split(','))
                 }
               }
             })
-          };
-          if(this.formValue.time){
-            if(this.formValue.list.length!==8){
-              this.$message({message:'请添加满8本书籍后提交',type:'warning'})
-            }else {
+          }
+          if (this.formValue.time) {
+            if (this.formValue.list.length !== 8) {
+              this.$message({ message: '请添加满8本书籍后提交', type: 'warning' })
+            } else {
               this.$loading({
                 lock: true,
                 text: 'Loading',
                 spinner: 'el-icon-loading',
                 background: 'rgba(0, 0, 0, 0.7)'
-              });
-              subData = JSON.parse(JSON.stringify(this.formValue.list));
-              add(subData[0].split(','));
+              })
+              subData = JSON.parse(JSON.stringify(this.formValue.list))
+              add(subData[0].split(','))
             }
-          }else {
-              this.$message({message:'请先选取时间',type:'warning'})
+          } else {
+            this.$message({ message: '请先选取时间', type: 'warning' })
           }
-          
         },
-        delDeadLine(id){
-              if(!id){
-                  let list = [];
-                  for(let k=0,len = this.deadLineList.list.length;k<len;k++){
-                      if(this.deadLineList.list[0].batchNumber !== this.deadLineList.list[k].batchNumber){
-                        this.$message({message:'不同批次，不可一次删除',type:'warning'});
-                        return false
-                      }
-                      list.push(this.deadLineList.list[k].id)
-                  }
-                  id = list.toString()
+        delDeadLine(id) {
+          if (!id) {
+            const list = []
+            for (let k = 0, len = this.deadLineList.list.length; k < len; k++) {
+              if (this.deadLineList.list[0].batchNumber !== this.deadLineList.list[k].batchNumber) {
+                this.$message({ message: '不同批次，不可一次删除', type: 'warning' })
+                return false
               }
-              this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
-                  confirmButtonText: '确定',
-                  cancelButtonText: '取消',
-                  type: 'warning'
-              }).then(() => {
-                  this.$ajax("/admin/sys-deltefreetimelimit",{
-                      freeTimeLimitid:id
-                  },(res)=>{
-                    if(res.returnCode===200){
-                        this.$message({message:'删除成功',type:'success'});
-                        this.getDeadLine(1)
-                    }
-                  })
-              });
-          
-        },
+              list.push(this.deadLineList.list[k].id)
+            }
+            id = list.toString()
+          }
+          this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$ajax('/admin/sys-deltefreetimelimit', {
+              freeTimeLimitid: id
+            }, (res) => {
+              if (res.returnCode === 200) {
+                this.$message({ message: '删除成功', type: 'success' })
+                this.getDeadLine(1)
+              }
+            })
+          })
+    },
         remoteMethod(query) {
           if (query !== '') {
-            this.loading = true;
-            this.$ajax("/stacks-search",{
-              keyWord:query,
-              isHotWorld:1,
-              startPage:1
-            },res=>{
-              if(res.returnCode===200){
-                this.loading = false;
-                this.options = res.data.list.filter(item =>{
-                    return item.bookName.toLowerCase().indexOf(query.toLowerCase()) > -1;
-                });
+            this.loading = true
+            this.$ajax('/stacks-search', {
+              keyWord: query,
+              isHotWorld: 1,
+              startPage: 1
+            }, res => {
+              if (res.returnCode === 200) {
+                this.loading = false
+                this.options = res.data.list.filter(item => {
+                  return item.bookName.toLowerCase().indexOf(query.toLowerCase()) > -1
+                })
               }
-            });
+            })
           } else {
-            this.options = [];
+            this.options = []
           }
         },
-        addDeadLine(){
-          if(this.$route.params.page!==1){
-            this.$router.push({params:{page:1}})
+        addDeadLine() {
+          if (this.$route.params.page !== 1) {
+            this.$router.push({ params: { page: 1 }})
           }
           this.dialogFormVisible = true
         },
-        search(){
+        search() {
         //   console.log("搜索")
         },
-        pageChange(page){
-          this.$router.push({params:{page:page}})
+        pageChange(page) {
+          this.$router.push({ params: { page: page }})
         }
       },
-      created(){
+      created() {
         this.getDeadLine()
       },
-      watch:{
-          "$route":function () {
-            this.getDeadLine()
-          }
+      watch: {
+        '$route': function() {
+          this.getDeadLine()
+        }
       },
-      computed:{
-          time:function () {
-            let now = new Date();
-            let fut = now.setFullYear(now.getFullYear()+10);
-            return  fut + '  -   ' + now
-          }
+      computed: {
+        time: function() {
+          const now = new Date()
+          const fut = now.setFullYear(now.getFullYear() + 10)
+          return fut + '  -   ' + now
+        }
       }
     }
 </script>

@@ -245,142 +245,139 @@
 
 <script type="text/ecmascript-6">
 export default{
-    data() {
-        return {
-            activeName:'base',
-            baseData:{},
-            DataChange:false,
-            bookDetail: {
-                bookName:'',
-                bookClassificationId:null,
-                bookLabId:null,
-                bookAuthorization:null,
-                bookIntroduction:''
-            },
-            bookData:{},
-            rules2: {
-                bookName: [
+  data() {
+    return {
+      activeName: 'base',
+      baseData: {},
+      DataChange: false,
+      bookDetail: {
+        bookName: '',
+        bookClassificationId: null,
+        bookLabId: null,
+        bookAuthorization: null,
+        bookIntroduction: ''
+      },
+      bookData: {},
+      rules2: {
+        bookName: [
                     { required: true, message: '请输入活动名称', trigger: 'blur' },
                     { min: 1, max: 20, message: '长度在 20 个字符以内', trigger: 'blur' }
-                ],
-                bookClassificationId: [
-                    { required: true,type:'number', message: '请选择作品分类', trigger: 'change' }
-                ],
-                bookLabId: [
-                    { type: 'array',required: true,trigger: 'change' },
-                    { type: 'array',min:2,max:5,message: '请选择2-5个标签',trigger: 'change'}
-                ],
-                bookAuthorization: [
-                    { required: true,type:'number', message: '请选择发布状态', trigger: 'change' }
-                ],
-                bookIntroduction: [
+        ],
+        bookClassificationId: [
+                    { required: true, type: 'number', message: '请选择作品分类', trigger: 'change' }
+        ],
+        bookLabId: [
+                    { type: 'array', required: true, trigger: 'change' },
+                    { type: 'array', min: 2, max: 5, message: '请选择2-5个标签', trigger: 'change' }
+        ],
+        bookAuthorization: [
+                    { required: true, type: 'number', message: '请选择发布状态', trigger: 'change' }
+        ],
+        bookIntroduction: [
                     { required: true, message: '作品简介', trigger: 'blur' },
                     { min: 1, max: 400, message: '长度在 1 到 400 个字符', trigger: 'blur' }
-                ]
-            }
-        }
-    },
-    methods: {
-
-        getBookDetail(){
-            this.$store.dispatch('book_showBookInfo', {bookid: this.$route.params.bid}).then(res => {
-                delete res.booklableList
-                delete res.bookImage
-                res.bookLabId =(()=>{
-                    let arr = []
-                    res.bookLabId.split(",").forEach((item)=>{
-                        arr.push(parseInt(item))
-                    })
-                    return arr
-                })()
-                res.lastUpdateTime = new Date(res.lastUpdateTime)
-                res.bookCreatedTime = new Date(res.bookCreatedTime)
-                if(res.topFrameTime)
-                    res.topFrameTime = new Date(res.topFrameTime)
-                if(res.signTime)
-                    res.signTime = new Date(res.signTime)
-                
-                res.bookClassificationId = parseInt(res.bookClassificationId)
-                this.bookDetail = res
-            })
-
-            this.$store.dispatch('getBookDataView', {bookid: this.$route.params.bid}).then(res => {
-                this.bookData = res
-            })
-        },
-
-        onSubmit(formName) {
-            let formData = JSON.parse(JSON.stringify(this.bookDetail))
-            formData.bookLabId = formData.bookLabId.toString()
-            formData.bookIntroduction = this.$http.trim(formData.bookIntroduction).replace(/\s*\n+\s*/g,'\n')
-            if(!formData.signTime){
-                delete formData.signTime
-            }
-            if(!formData.topFrameTime){
-                delete formData.topFrameTime
-            }
-            this.$refs[formName].validate((valid) => {
-                if (valid) {
-                    this.$myLoad()
-                    this.$ajax("/admin/sysbookupdate",formData,res=>{
-                        this.$loading().close()
-                        if(res.returnCode===200){
-                            if(this.bookData && this.DataChange){
-                                this.$ajax("/admin/updateBookData",this.bookData,res=>{
-                                    if(res.returnCode===200){
-                                        this.$message({message:'修改成功',type:'success'})
-                                        this.getBaseInfo()
-                                    }
-                                })
-                            }else {
-                                this.$message({message:"修改成功",type:'success'})
-                            }
-                        }
-                    })
-                } else {
-                    this.$message({message:"请完善表单信息！",type:'warning'})
-                    return false;
-                }
-            })
-        },
-
-        submit() {
-            if(this.bookDetail.bookLabId.length>5 || this.bookDetail.bookLabId.length<2) {
-                this.$message({ message: '请选择2-5个标签', type: 'warning' })
-            }else if(this.bookDetail.bookIntroduction.length>400){
-                this.$message({ message: '长度在 1 到 400 个字符', type: 'warning' })
-            }else{
-
-                if(this.bookDetail.bookAuthorization === this.$store.state.bookAuthorization){
-                    this.bookDetail.bookAuthorization = null
-                }
-                this.bookDetail.bookCheckStatus = null
-                this.$store.dispatch('sysBookUpdate', this.bookDetail).then(res => {
-                    this.$message({ message: '修改成功！', type: 'success' })
-                    this.getBookDetail()
-                })
-            }
-        }
-    },
-
-    created(){
-        this.$store.dispatch('book_EditBookEcho', {}).then(res => {
-            this.baseData = res
-            this.getBookDetail()
-        })
-    },
-
-    watch:{
-
-        "bookDetail.bookIntroduction":function (val) {
-            this.bookDetail.bookIntroduction = val.replace(/\s*\n+\s*/g,'\n\n')
-        },
-
-        "bookData":function (val) {
-            this.DataChange = true
-        }
-        
+        ]
+      }
     }
+  },
+  methods: {
+
+    getBookDetail() {
+      this.$store.dispatch('book_showBookInfo', { bookid: this.$route.params.bid }).then(res => {
+        delete res.booklableList
+        delete res.bookImage
+        res.bookLabId = (() => {
+          const arr = []
+          res.bookLabId.split(',').forEach((item) => {
+            arr.push(parseInt(item))
+          })
+          return arr
+        })()
+        res.lastUpdateTime = new Date(res.lastUpdateTime)
+        res.bookCreatedTime = new Date(res.bookCreatedTime)
+        if (res.topFrameTime) { res.topFrameTime = new Date(res.topFrameTime) }
+        if (res.signTime) { res.signTime = new Date(res.signTime) }
+
+        res.bookClassificationId = parseInt(res.bookClassificationId)
+        this.bookDetail = res
+      })
+
+      this.$store.dispatch('getBookDataView', { bookid: this.$route.params.bid }).then(res => {
+        this.bookData = res
+      })
+    },
+
+    onSubmit(formName) {
+      const formData = JSON.parse(JSON.stringify(this.bookDetail))
+      formData.bookLabId = formData.bookLabId.toString()
+      formData.bookIntroduction = this.$http.trim(formData.bookIntroduction).replace(/\s*\n+\s*/g, '\n')
+      if (!formData.signTime) {
+        delete formData.signTime
+      }
+      if (!formData.topFrameTime) {
+        delete formData.topFrameTime
+      }
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.$myLoad()
+          this.$ajax('/admin/sysbookupdate', formData, res => {
+            this.$loading().close()
+            if (res.returnCode === 200) {
+              if (this.bookData && this.DataChange) {
+                this.$ajax('/admin/updateBookData', this.bookData, res => {
+                  if (res.returnCode === 200) {
+                    this.$message({ message: '修改成功', type: 'success' })
+                    this.getBaseInfo()
+                  }
+                })
+              } else {
+                this.$message({ message: '修改成功', type: 'success' })
+              }
+            }
+          })
+        } else {
+          this.$message({ message: '请完善表单信息！', type: 'warning' })
+          return false
+        }
+      })
+    },
+
+    submit() {
+      if (this.bookDetail.bookLabId.length > 5 || this.bookDetail.bookLabId.length < 2) {
+        this.$message({ message: '请选择2-5个标签', type: 'warning' })
+      } else if (this.bookDetail.bookIntroduction.length > 400) {
+        this.$message({ message: '长度在 1 到 400 个字符', type: 'warning' })
+      } else {
+        if (this.bookDetail.bookAuthorization === this.$store.state.bookAuthorization) {
+          this.bookDetail.bookAuthorization = null
+        }
+        this.bookDetail.bookCheckStatus = null
+        this.$store.dispatch('sysBookUpdate', this.bookDetail).then(res => {
+          this.$message({ message: '修改成功！', type: 'success' })
+          this.getBookDetail()
+        })
+      }
+    }
+  },
+
+  created() {
+    this.$store.dispatch('book_EditBookEcho', {}).then(res => {
+      this.baseData = res
+      this.getBookDetail()
+    })
+  },
+
+  watch: {
+
+    'bookDetail.bookIntroduction': function(val) {
+      this.bookDetail.bookIntroduction = val.replace(/\s*\n+\s*/g, '\n\n')
+    },
+
+    'bookData': function(val) {
+      this.DataChange = true
+    }
+
+  }
 }
 </script>
 <style lang="stylus" rel="stylesheet/stylus">

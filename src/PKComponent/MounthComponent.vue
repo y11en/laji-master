@@ -46,100 +46,97 @@ import querystring from 'querystring'
 import ax from 'axios'
 export default {
 
-    title: '表格编辑器',
+  title: '表格编辑器',
 
-    data() {
-        return {
-            rowNum: 6,
-            colNum: 6,
-            tableArr: [],
-            tableTitle: ['书籍编号', '书籍名称', '作者编号', '作者名称', '第三方', '考勤'],
-            copyContent: '',
-            date: ''
-        }
-    },
-    created: function() {
-        // this.createTable()
-        let time = new Date()
-        let year = time.getFullYear()
-        let month = time.getMonth()
-        this.date = year + '-' + month
-    },
-    methods: {
-        
-        sendFather(type) {
-            if(type === 'close')
-                this.$emit('fromChild', false, 'close')
-            else
-                this.$emit('fromChild', false, 'succ')
-            this.tableArr = []
-            this.copyContent = ''
-        },
-
-        repeat() {
-            this.rowNum = 6
-            this.colNum = 6
-            this.tableArr = []
-            this.copyContent = ''
-        },
-
-        createTable() {
-            let arr = new Array()
-            for(var r=0; r<this.rowNum; r++) {
-                arr[r] = new Array()
-                for(var c=0; c<this.colNum; c++) {
-                    arr[r][c] = ''
-                }
-            }
-            this.tableArr = arr
-        },
-
-        submitData() {
-            if(this.date !== ''){
-                if(this.tableArr.length != 0){
-                    let arr = this.tableArr
-                    let sendObj = {}
-                    let list = []
-                    for(var i=0; i<arr.length; i++) {
-                        var obj = new Object()
-                        obj.bookid = arr[i][0] ? arr[i][0] : ""
-                        obj.bookName = arr[i][1] ? arr[i][1] : ""
-                        obj.authorid = arr[i][2] ? arr[i][2] : ""
-                        obj.authorName = arr[i][3] ? arr[i][3] : ""
-                        obj.thirdPart = arr[i][4] ? arr[i][4] : 0
-                        obj.checkworkattendance = arr[i][5] ? arr[i][5] : 0
-                        list[i] = obj
-                    }
-                    sendObj.data = new Object()
-                    sendObj.data.list = list
-                    sendObj.data = JSON.stringify(sendObj.data)
-                    sendObj.startdate = this.date + '-01 00:00:00'
-                    sendObj.enddate = this.date + '-31 23:59:59'
-                    this.$store.dispatch('generateMonthlyreport', sendObj).then(res => {
-                        this.$message({ message:'操作成功', type:'success' })
-                        this.sendFather('succ')
-                    })
-                }else this.$message({ message:'请编辑表格', type:'warning' })
-            }else this.$message({ message:'请选择时间', type:'warning' })
-        }
-
-    },
-
-    watch: {
-        'copyContent': function(val) {
-            var a = val.replace(/(^\s*)|(\s*$)/g, "")
-            a = a.split('\n')
-            for(var i=0; i<a.length; i++){
-                a[i] = a[i].replace(/\s+/g, ' ')
-                a[i] = a[i].replace(/(^\s*)|(\s*$)/g, "")
-                a[i] = a[i].split(' ')
-            }
-            if(a[0][0] === '书籍编号'){
-                a.shift()
-            }
-            this.tableArr = a
-        }
+  data() {
+    return {
+      rowNum: 6,
+      colNum: 6,
+      tableArr: [],
+      tableTitle: ['书籍编号', '书籍名称', '作者编号', '作者名称', '第三方', '考勤'],
+      copyContent: '',
+      date: ''
     }
+  },
+  created: function() {
+        // this.createTable()
+    const time = new Date()
+    const year = time.getFullYear()
+    const month = time.getMonth()
+    this.date = year + '-' + month
+  },
+  methods: {
+
+    sendFather(type) {
+      if (type === 'close') { this.$emit('fromChild', false, 'close') } else { this.$emit('fromChild', false, 'succ') }
+      this.tableArr = []
+      this.copyContent = ''
+    },
+
+    repeat() {
+      this.rowNum = 6
+      this.colNum = 6
+      this.tableArr = []
+      this.copyContent = ''
+    },
+
+    createTable() {
+      const arr = new Array()
+      for (var r = 0; r < this.rowNum; r++) {
+        arr[r] = new Array()
+        for (var c = 0; c < this.colNum; c++) {
+          arr[r][c] = ''
+        }
+      }
+      this.tableArr = arr
+    },
+
+    submitData() {
+      if (this.date !== '') {
+        if (this.tableArr.length != 0) {
+          const arr = this.tableArr
+          const sendObj = {}
+          const list = []
+          for (var i = 0; i < arr.length; i++) {
+            var obj = new Object()
+            obj.bookid = arr[i][0] ? arr[i][0] : ''
+            obj.bookName = arr[i][1] ? arr[i][1] : ''
+            obj.authorid = arr[i][2] ? arr[i][2] : ''
+            obj.authorName = arr[i][3] ? arr[i][3] : ''
+            obj.thirdPart = arr[i][4] ? arr[i][4] : 0
+            obj.checkworkattendance = arr[i][5] ? arr[i][5] : 0
+            list[i] = obj
+          }
+          sendObj.data = new Object()
+          sendObj.data.list = list
+          sendObj.data = JSON.stringify(sendObj.data)
+          sendObj.startdate = this.date + '-01 00:00:00'
+          sendObj.enddate = this.date + '-31 23:59:59'
+          this.$store.dispatch('generateMonthlyreport', sendObj).then(res => {
+            this.$message({ message: '操作成功', type: 'success' })
+            this.sendFather('succ')
+          })
+        } else this.$message({ message: '请编辑表格', type: 'warning' })
+      } else this.$message({ message: '请选择时间', type: 'warning' })
+    }
+
+  },
+
+  watch: {
+    'copyContent': function(val) {
+      var a = val.replace(/(^\s*)|(\s*$)/g, '')
+      a = a.split('\n')
+      for (var i = 0; i < a.length; i++) {
+        a[i] = a[i].replace(/\s+/g, ' ')
+        a[i] = a[i].replace(/(^\s*)|(\s*$)/g, '')
+        a[i] = a[i].split(' ')
+      }
+      if (a[0][0] === '书籍编号') {
+        a.shift()
+      }
+      this.tableArr = a
+    }
+  }
 }
 </script>
 

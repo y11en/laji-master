@@ -212,12 +212,9 @@
               xhr:function(){            //在jquery函数中直接使用ajax的XMLHttpRequest对象
                 var xhr = new XMLHttpRequest();
                 xhr.upload.addEventListener("progress", function(evt){
-                  if (evt.lengthComputable) {
-                //    var percentComplete = Math.round(evt.loaded * 100 / evt.total);
-                //    console.log("正在提交."+percentComplete.toString() + '%');        //在控制台打印上传进度
-                  }
-                }, false);
-                return xhr;
+                  if (evt.lengthComputable) {}
+                }, false)
+                return xhr
               }
   
             });

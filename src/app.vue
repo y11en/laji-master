@@ -1,203 +1,255 @@
 <template>
-    <div id="app">
-        <header v-if="$route.name != 'login'">
-            <div class="index-title">辣鸡小说 后台管理</div>
-            <ul class="header-right">
-                <el-dropdown trigger="click" :class="{active: headerNavActive === 1}">
-                    <span class="dropdown-toggle" @click="headerNav(1)">
-                        <i class="fa fa-envelope"></i>
-                        <i class="fa fa-sort-desc"></i>
-                    </span>
-                    <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item command="a">黄金糕</el-dropdown-item>
-                        <el-dropdown-item command="d" divided>双皮奶</el-dropdown-item>
-                        <el-dropdown-item command="e" divided>蚵仔煎</el-dropdown-item>
-                    </el-dropdown-menu>
-                </el-dropdown>
-                
-                <el-dropdown trigger="click" :class="{active: headerNavActive === 2}">
-                    <span class="dropdown-toggle" @click="headerNav(2)">
-                        <i class="fa fa-server"></i>
-                        <i class="fa fa-sort-desc"></i>
-                    </span>
-                    <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item command="a">黄金糕</el-dropdown-item>
-                        <el-dropdown-item command="d" divided>双皮奶</el-dropdown-item>
-                        <el-dropdown-item command="e" divided>蚵仔煎</el-dropdown-item>
-                    </el-dropdown-menu>
-                </el-dropdown>
+  <div id="app">
+    <header v-if="$route.name != 'login'">
+      <div class="index-title">辣鸡小说 后台管理</div>
+      <ul class="header-right">
+        <el-dropdown trigger="click" :class="{active: headerNavActive === 1}">
+          <span class="dropdown-toggle" @click="headerNav(1)">
+            <i class="fa fa-envelope"></i>
+            <!-- <i class="fa fa-sort-desc"></i> -->
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="a">fffffffffffffffffffffffffffffff黄金糕</el-dropdown-item>
+            <el-dropdown-item command="d" divided>双皮奶</el-dropdown-item>
+            <el-dropdown-item command="e" divided>蚵仔煎</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+          
+        <el-dropdown trigger="click" :class="{active: headerNavActive === 2}">
+          <span class="dropdown-toggle" @click="headerNav(2)">
+            <i class="fa fa-tasks"></i>
+            <!-- <i class="fa fa-sort-desc"></i> -->
+          </span>
+          <el-dropdown-menu slot="dropdown" class="task">
+            <el-dropdown-item command="a">
+              <div>
+                <i style="font-weight: bold; font-size: 13px">Task 1</i>
+                <span style="float: right; color: #999;">60% Component</span>
+              </div>
+              <div class="progress" style="height: 8px;">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%;"></div>
+              </div>
+            </el-dropdown-item>
+            <el-dropdown-item command="d" divided>
+              <div>
+                <i style="font-weight: bold; font-size: 13px">Task 2</i>
+                <span style="float: right; color: #999;">20% Component</span>
+              </div>
+              <div class="progress" style="height: 8px;">
+                <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 20%;"></div>
+              </div>
+            </el-dropdown-item>
+            <el-dropdown-item command="c" divided>
+              <div>
+                <i style="font-weight: bold; font-size: 13px">Task 3</i>
+                <span style="float: right; color: #999;">60% Component</span>
+              </div>
+              <div class="progress" style="height: 8px;">
+                <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 60%;"></div>
+              </div>
+            </el-dropdown-item>
+            <el-dropdown-item command="d" divided>
+              <div>
+                <i style="font-weight: bold; font-size: 13px">Task 3</i>
+                <span style="float: right; color: #999;">85% Component</span>
+              </div>
+              <div class="progress" style="height: 8px;">
+                <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 85%;"></div>
+              </div>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
 
-                <el-dropdown trigger="click" :class="{active: headerNavActive === 3}">
-                    <span class="dropdown-toggle" @click="headerNav(3)">
-                        <i class="fa fa-bell"></i>
-                        <i class="fa fa-sort-desc"></i>
-                    </span>
-                    <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item command="a">黄金糕</el-dropdown-item>
-                        <el-dropdown-item command="d" divided>双皮奶</el-dropdown-item>
-                        <el-dropdown-item command="e" divided>蚵仔煎</el-dropdown-item>
-                    </el-dropdown-menu>
-                </el-dropdown>
+        <el-dropdown trigger="click" :class="{active: headerNavActive === 3}">
+          <span class="dropdown-toggle" @click="headerNav(3)">
+            <i class="fa fa-bell"></i>
+            <!-- <i class="fa fa-sort-desc"></i> -->
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="a">
+              <p></p>
+            </el-dropdown-item>
+            <el-dropdown-item command="d" divided>双皮奶</el-dropdown-item>
+            <el-dropdown-item command="e" divided>蚵仔煎</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
 
-                <el-dropdown trigger="click" :class="{active: headerNavActive === 4}">
-                    <span class="dropdown-toggle" @click="headerNav(4)">
-                        <i class="fa fa-user"></i>
-                        <i class="fa fa-sort-desc"></i>
-                    </span>
-                    <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item command="a">黄金糕</el-dropdown-item>
-                        <el-dropdown-item command="d" divided>双皮奶</el-dropdown-item>
-                        <el-dropdown-item command="e" divided><span @click="exit">退出</span></el-dropdown-item>
-                    </el-dropdown-menu>
-                </el-dropdown>
-                <!-- <li class="">
-                    <span href="javascript:;">
-                        <img src="./assets/image/pic/avatar.jpg">
-                        {{$store.state.userInfo.userName}}
-                    </span>
-                </li>
-                <li class="exit-btn"><span @click="exit">退出</span></li> -->
-            </ul>
-            <router-link to="/sensitiveWord" class="notice-box">
-                <img v-show="this.$store.state.hasNotice" src="./assets/image/icon/red.png" alt="">
-                <img v-show="!this.$store.state.hasNotice" src="./assets/image/icon/gray.png" alt="">
-            </router-link>
-        </header>
+        <el-dropdown trigger="click" :class="{active: headerNavActive === 4}">
+          <span class="dropdown-toggle" @click="headerNav(4)">
+            <i class="fa fa-user"></i>
+            <!-- <i class="fa fa-sort-desc"></i> -->
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="a">
+              <p><i class="fa fa-user fa-fw"></i> User Profile</p>
+            </el-dropdown-item>
+            <el-dropdown-item command="d">
+              <p><i class="fa fa-cog fa-fw"></i> Settings</p>
+            </el-dropdown-item>
+            <el-dropdown-item command="e" divided>
+              <p @click="exit"><i class="fa fa-sign-out fa-fw"></i> Logout</p>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </ul>
+      <router-link to="/sensitiveWord" class="notice-box">
+        <img v-show="this.$store.state.hasNotice" src="./assets/image/icon/red.png" alt="">
+        <img v-show="!this.$store.state.hasNotice" src="./assets/image/icon/gray.png" alt="">
+      </router-link>
+    </header>
 
-        <nav v-show="$route.name != 'login'">
-            <el-menu :default-active="currentUrl" class="main-nav" :unique-opened="true" router>
-                <template v-for="(item, $index) in sideNavList">
-                    <el-submenu v-if="item.ChildMenu && item.ChildMenu.length>0" :index="'0'+$index" :key="$index">
-                        <template slot="title">
-                            <img :src="item.icoURL" alt="">
-                            <span slot="title">{{item.menuName}}</span>
-                        </template>
-                        <template v-for="(item2,index2) in item.ChildMenu">
-                            <el-menu-item v-if="item2.menuName === 'ActiveMQ监控'" :index="item2.menuURL" :key="index2" @click="jump('ActiveMQ监控')">
-                                ActiveMQ监控
-                            </el-menu-item>
-                            <el-menu-item v-else :key="index2" :index="item2.menuURL" :route="{path:item2.menuURL}">
-                                {{item2.menuName}}
-                            </el-menu-item>
-                        </template>
-                    </el-submenu>
-                    
-                    <el-menu-item :index="item.menuURL" :route="{path:item.menuURL}" v-else :key="$index">
-                        <img :src="item.icoURL" alt="">
-                        <span slot="title">{{item.menuName}}</span>
-                    </el-menu-item>
-                </template>
+    <nav v-if="$route.name != 'login'">
+      <el-menu :default-active="currentUrl" class="main-nav" :unique-opened="true" router>
+        <template v-for="(item, $index) in sideNavList">
+          <el-submenu v-if="item.ChildMenu && item.ChildMenu.length>0" :index="'0'+$index" :key="$index">
+            <template slot="title">
+              <img :src="item.icoURL" alt="">
+              <span slot="title">{{item.menuName}}</span>
+            </template>
+            <template v-for="(item2,index2) in item.ChildMenu">
+              <el-menu-item v-if="item2.menuName === 'ActiveMQ监控'" :index="item2.menuURL" :key="index2" @click="jump('ActiveMQ监控')">
+                ActiveMQ监控
+              </el-menu-item>
+              <el-menu-item v-else :key="index2" :index="item2.menuURL" :route="{path:item2.menuURL}">
+                {{item2.menuName}}
+              </el-menu-item>
+            </template>
+          </el-submenu>
+          <template v-else>
+            <el-menu-item v-if="item.menuName === '任务调度'" :index="item.menuURL" @click="jump('任务调度')" :key="$index">
+                <img :src="item.icoURL" alt="">
+                <span slot="title">{{item.menuName}}</span>
+            </el-menu-item>
+            <el-menu-item v-else :index="item.menuURL" :route="{path:item.menuURL}" :key="$index">
+                <img :src="item.icoURL" alt="">
+                <span slot="title">{{item.menuName}}</span>
+            </el-menu-item>
+          </template>
+        </template>
 
-                <el-menu-item @click="jump('任务调度')" index="test">
-                    <img :src="teskImg" alt="">
-                    <span>任务调度</span>
-                </el-menu-item>
-            </el-menu>
-        </nav>
+        <el-submenu index="/census" >
+          <template slot="title">
+            <img src="../static/img/icon/wxb.png" alt="">
+            <span slot="title">应用统计</span>
+          </template>
+          <el-menu-item index="/census/index">数据概览</el-menu-item>
+          <el-menu-item index="/census/recharge">充值</el-menu-item>
+          <el-menu-item index="/census/createBook">创书</el-menu-item>
+        </el-submenu>
+      </el-menu>
+    </nav>
 
-        <section :class="{'main-contain': $route.name != 'login' }">
-            <transition name="fade">
-                <router-view/>
-            </transition>
-        </section>
-    </div>
+    <section :class="{'main-contain': $route.name != 'login' }">
+      <transition name="fade">
+        <router-view/>
+      </transition>
+    </section>
+  </div>
 </template>
 
 <script>
 import './assets/css/global.css'
 import './assets/css/reset.styl'
 export default {
-    name: 'App',
+  name: 'App',
 
-    data() {
-        return {
-            sideNavList:[],
-            teskImg: '',
-            headerNavActive: 0,
-        }
-    },
-    
-    methods:{
-        getNavList(){
-            let setList = ()=>{
-                let info = JSON.parse(sessionStorage.getItem('user_info')),
-                navList = JSON.parse(JSON.stringify(info.roleMenuList)),
-                newNav = [];
-
-                this.$store.state.userInfo = info;
-                navList.forEach((item,$index)=>{
-                    if(item.pid===0){
-                        navList[$index].show = false
-                        newNav.push(item)
-                    }
-                });
-                newNav.forEach((item1)=>{
-                    navList.forEach((item2)=>{
-                        if(item1.id===item2.pid){
-                            if(!item1.ChildMenu){item1.ChildMenu=[];}
-                            item1.ChildMenu.push(item2)
-                        }
-                    })
-                });
-                this.teskImg = newNav[newNav.length-1].icoURL
-                newNav.pop()
-                this.sideNavList = newNav
-            };
-        
-            if(!sessionStorage.getItem('user_info')){
-                this.$ajax("/admin-RefreshRoleMenu",'',res=>{
-                    if(res.returnCode===200){
-                        sessionStorage.setItem('user_info',JSON.stringify(res.data))
-                        setList()
-                    }else {
-                        this.$cookie('login_key','',-1);
-                        this.$router.push('/login');
-                    }
-                });
-            }else {
-                setList()
-            }
-        },
-
-        exit(){
-            this.$cookie('login_key','',-1)
-            sessionStorage.removeItem('user_info')
-            this.$router.push('/login')
-        },
-
-        jump(val) {
-            if(val === '任务调度'){
-                window.open('http://118.31.165.113:8082/', 'newwindow', 'height=981,width=1500,top=150,left=190')
-            } else if(val === 'ActiveMQ监控') {
-                window.open('http://118.31.165.113:8161/', 'newwindow', 'height=981,width=1500,top=150,left=190')
-            }
-        },
-
-        headerNav(val) {
-            console.log(val)
-            this.headerNavActive = val
-        }
-    },
-
-    created(){
-        this.getNavList()
-    },
-
-    computed:{
-        currentUrl () {
-            let href = this.$route.path
-            if(this.$route.params.page){
-                href = href.substring(0, href.lastIndexOf('/'))
-            }
-            return href
-        }
+  data() {
+    return {
+      sideNavList: [],
+      headerNavActive: 0
     }
+  },
+
+  methods: {
+    getNavList() {
+      const setList = () => {
+        let info = JSON.parse(sessionStorage.getItem('user_info')),
+          navList = JSON.parse(JSON.stringify(info.roleMenuList)),
+          newNav = []
+
+        this.$store.state.userInfo = info
+        navList.forEach((item, $index) => {
+          if (item.pid === 0) {
+            navList[$index].show = false
+            newNav.push(item)
+          }
+        })
+        newNav.forEach((item1) => {
+          navList.forEach((item2) => {
+            if (item1.id === item2.pid) {
+              if (!item1.ChildMenu) { item1.ChildMenu = [] }
+              item1.ChildMenu.push(item2)
+            }
+          })
+        })
+        this.sideNavList = newNav
+                // console.log(this.sideNavList)
+      }
+
+      if (!sessionStorage.getItem('user_info')) {
+        this.$ajax('/admin-RefreshRoleMenu', '', res => {
+          if (res.returnCode === 200) {
+            sessionStorage.setItem('user_info', JSON.stringify(res.data))
+            setList()
+          } else {
+            this.$cookie('login_key', '', -1)
+            this.$router.push('/login')
+          }
+        })
+      } else {
+        setList()
+      }
+    },
+
+    exit() {
+      this.$cookie('login_key', '', -1)
+      sessionStorage.removeItem('user_info')
+      this.$router.push('/login')
+    },
+
+    jump(val) {
+      if (val === '任务调度') {
+        window.open('http://118.31.165.113:8082/', 'newwindow', 'height=981,width=1500,top=150,left=190')
+      } else if (val === 'ActiveMQ监控') {
+        window.open('http://118.31.165.113:8161/', 'newwindow', 'height=981,width=1500,top=150,left=190')
+      }
+    },
+
+    headerNav(val) {
+      this.headerNavActive = val
+    }
+  },
+
+  created() {
+    this.getNavList()
+  },
+
+  computed: {
+    currentUrl() {
+      let href = this.$route.path
+      if (this.$route.params.page) {
+        href = href.substring(0, href.lastIndexOf('/'))
+      }
+      return href
+    }
+  },
+
+  watch: {
+    $route(to, from) {
+      if (from.name === 'login') {
+        this.getNavList()
+      }
+    }
+  }
 }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
 ul.el-dropdown-menu
     margin-top 3px !important
+.task
+    width 255px
+       
 #app
     background #09192A
     header
@@ -233,8 +285,6 @@ ul.el-dropdown-menu
                 color #fff
             .active
                 background #225081
-                
-
         .user-box
             overflow hidden
             li

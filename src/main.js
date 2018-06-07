@@ -15,20 +15,20 @@ import 'quill/dist/quill.bubble.css'
 import Zepto from 'zepto'
 import fileUpload from 'vue-upload-component'
 import 'cropperjs/dist/cropper.min.css'
-Vue.component('file-upload',fileUpload)
+Vue.component('file-upload', fileUpload)
 Vue.use(fileUpload)
 Vue.prototype.$http = Zepto
-Vue.use(require("./assets/js/fun"))
+Vue.use(require('./assets/js/fun'))
 Vue.use(ElementUI)
 Vue.use(VueQuillEditor)
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 new Vue({
-    el: '#app',
-    router,
-    filter,
-    store,
-    components: { App },
-    template: '<App/>'
+  el: '#app',
+  router,
+  filter,
+  store,
+  components: { App },
+  template: '<App/>'
 })

@@ -1,77 +1,71 @@
 <template>
-    <div class="wbc-wrapper clear">
-      <el-alert
-        title="操作说明"
-        type="info"
-        class="mbt20"
-        show-icon>
+<div class="wbc-wrapper clear">
+    <el-alert title="操作说明" type="info" class="mbt20" show-icon>
         <div>
-          <p>
-            此表为本站全部书籍封面，您可以直接预览审核
-          </p>
+            <p>此表为本站全部书籍封面，您可以直接预览审核</p>
         </div>
-      </el-alert>
-  
-      <div class="wbcw-contain clearfix">
-          <el-card v-if="bookCoverList.list" v-for="(item,$index) in bookCoverList.list" :key="item.bookId" :body-style="{ padding: '0px' }">
+    </el-alert>
+
+    <div class="wbcw-contain clearfix">
+        <el-card v-if="bookCoverList.list" v-for="(item,$index) in bookCoverList.list" :key="item.bookId" :body-style="{ padding: '0px' }">
             <router-link :to="'/book/info/'+item.bookId">
-              <img :src="item.bookImage" class="image">
-              <div class="mask">
-                <p class="tit">{{item.bookName}}</p>
-                <p class="author">{{item.writerName}}</p>
-              </div>
+                <img :src="item.bookImage" class="image">
+                <div class="mask">
+                    <p class="tit">{{item.bookName}}</p>
+                    <p class="author">{{item.writerName}}</p>
+                </div>
             </router-link>
-          </el-card>
-        </div>
-        <el-pagination
-          class="mbt20"
-          background
-          @current-change="handleCurrentChange"
-          :current-page="bookCoverList.pageNum"
-          :page-size="bookCoverList.pageSize"
-          layout="total, prev, pager, next, jumper"
-          :total="bookCoverList.total">
-        </el-pagination>
+        </el-card>
     </div>
+    <el-pagination
+        class="mbt20"
+        background
+        @current-change="handleCurrentChange"
+        :current-page="bookCoverList.pageNum"
+        :page-size="bookCoverList.pageSize"
+        layout="total, prev, pager, next, jumper"
+        :total="bookCoverList.total">
+    </el-pagination>
+</div>
 </template>
 
 <script type="text/ecmascript-6">
-    export default{
-        data(){
-            return{
-                bookCoverList:{}
-            }
-        },
-        methods:{
-            getCoverList(){
-                this.$ajax("/admin/getBookInfoList",{
-                  page:this.$route.params.page,
-                  orderParemeter:'bookId',
-                  paramType:'query',
-                  img:'cover',
-                  pageSize:'120'
-                },res=>{
-                    if(res.returnCode===200){
-                        this.bookCoverList = res.data
-                    }
-                })
-            },
-          
-            handleCurrentChange(page){
-              this.$router.push({params:{page:page}})
-            }
-        },
-        created(){
-            this.getCoverList()
-        },
-        watch:{
-          $route:function (val) {
-            this.getCoverList()
-          }
-        }
-      
+export default{
+  data() {
+    return {
+      bookCoverList: {}
     }
+  },
+  methods: {
+    getCoverList() {
+      this.$ajax('/admin/getBookInfoList', {
+        page: this.$route.params.page,
+        orderParemeter: 'RIGHT (bookImage, 13)',
+        paramType: 'query',
+        img: 'cover',
+        pageSize: '120'
+      }, res => {
+        if (res.returnCode === 200) {
+          this.bookCoverList = res.data
+        }
+      })
+    },
+
+    handleCurrentChange(page) {
+      this.$router.push({ params: { page: page }})
+    }
+  },
+  created() {
+    this.getCoverList()
+  },
+  watch: {
+    $route: function(val) {
+      this.getCoverList()
+    }
+  }
+}
 </script>
+
 <style lang="stylus" rel="stylesheet/stylus">
 .wbc-wrapper
     clear left

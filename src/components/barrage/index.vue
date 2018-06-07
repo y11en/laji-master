@@ -130,136 +130,133 @@
 
 <script type="text/ecmascript-6">
   export default{
-    data(){
-      return{
-        searchForm:{
-        
+    data() {
+      return {
+        searchForm: {
+  
         },
-        pcommentList:{},
-        keywords:'',
-        selectType:'',
-        multipleSelection:[]
+        pcommentList: {},
+        keywords: '',
+        selectType: '',
+        multipleSelection: []
       }
     },
-    methods:{
-        getPcommentList(){
-            this.searchForm.page = this.$route.params.page;
-            if(this.selectType){
-                if((this.selectType==='bookId' || this.selectType==='userId') && !Number(this.keywords)){
-                  this.$message({message:'ID必需为数字',type:'warning'});
-                  return false
-                }
-                this.searchForm[this.selectType] = this.keywords
-            }
-            this.$ajax("/admin/BookParagraphCommentInfoList",this.searchForm,res=>{
-                if(res.returnCode===200){
-                    this.pcommentList = res.data
-                }else if(!res.data){
-                    this.pcommentList = {}
-                }
-            })
-        },
-        searchChapterCom(){
-            if(Number(this.$route.params.page)===1){
-                this.getPcommentList()
-            }else {
-                this.$router.push({params:{page:1}})
-            }
-        },
-        handleCurrentChange(page){
-            this.$router.push({params:{page:page}})
-        },
-        handleRowClick(row){
-            this.$refs.multipleTable.toggleRowSelection(row);
-        },
-  //          批量处理
-        toggleSelection(dType,item){
-            let idList = [];
-            let delData = ()=>{
-                let url,tip,subData;
-                if(dType==='book'){
-                    url = '/pcomm-delParagraphcommentBookId';
-                    tip = '此操作将永久删除书籍<span class="red">'+item.bookName+'</span>的全部吐槽, 是否继续?';
-                    subData = {
-                      bookid:idList.toString()
-                    }
-                }else if(dType==='user'){
-                    url = '/pcomm-delParagraphcommentUser';
-                    tip = '此操作将永久删除用户<span class="red">'+item.userName+'</span>的全部吐槽, 是否继续?';
-                    subData = {
-                      userid:idList.toString()
-                    }
-                }else if(dType==='cid'){
-                    url = '/pcomm-delParagraphcommentChapter';
-                    tip = '此操作将永久删除本章节<span class="red">'+item.chapterName+'</span>的全部吐槽, 是否继续?';
-                    subData = {
-                      chapterid:idList.toString()
-                    }
-                }else if(dType==='pid'){
-                    url = '/pcomm-delParagraphcommentPid';
-                    tip = '此操作将永久删除本段落的全部吐槽, 是否继续?';
-                    subData = {
-                      pid:idList.toString()
-                    }
-                }else {
-                    tip = '此操作将永久删除'+idList.length+'条吐槽, 是否继续?';
-                    url = '/pcomm-delParagraphcomment';
-                    subData = {
-                      id:idList.toString()
-                    }
-                }
-                this.$confirm(tip , '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    dangerouslyUseHTMLString:true,
-                    type: 'warning'
-                }).then(() => {
-                    this.$ajax(url,subData,res=>{
-                        if(res.returnCode===200){
-                            this.$message({message:'删除成功',type:'success'});
-                            this.getPcommentList()
-                        }
-                    })
-                })
-              
-            };
-        
-            if(item){
-                if(dType==='book'){
-                    idList.push(item.bookId)
-                }else if(dType==='user') {
-                    idList.push(item.userId)
-                }else if(dType==='cid'){
-                    idList.push(item.chapterId)
-                }else {
-                    idList.push(item.pid)
-                }
-            }else if(this.multipleSelection.length){
-                this.multipleSelection.forEach((item)=>{
-                    idList.push(item.id)
-                });
-            }
-            
-            if(idList.length){
-                delData()
-            }else {
-                this.$message({message:'请选取要删除的内容',type:'warning'});
-                return false
-            }
-            
-        },
-        
-        handleSelectionChange(val){
-            this.multipleSelection = val
+    methods: {
+      getPcommentList() {
+        this.searchForm.page = this.$route.params.page
+        if (this.selectType) {
+          if ((this.selectType === 'bookId' || this.selectType === 'userId') && !Number(this.keywords)) {
+            this.$message({ message: 'ID必需为数字', type: 'warning' })
+            return false
+          }
+          this.searchForm[this.selectType] = this.keywords
         }
-
+        this.$ajax('/admin/getBookParagraphCommentInfoList', this.searchForm, res => {
+          if (res.returnCode === 200) {
+            this.pcommentList = res.data
+          } else if (!res.data) {
+            this.pcommentList = {}
+          }
+        })
+      },
+      searchChapterCom() {
+        if (Number(this.$route.params.page) === 1) {
+          this.getPcommentList()
+        } else {
+          this.$router.push({ params: { page: 1 }})
+        }
+      },
+      handleCurrentChange(page) {
+        this.$router.push({ params: { page: page }})
+      },
+      handleRowClick(row) {
+        this.$refs.multipleTable.toggleRowSelection(row)
+      },
+  //          批量处理
+      toggleSelection(dType, item) {
+        const idList = []
+        const delData = () => {
+          let url, tip, subData
+          if (dType === 'book') {
+            url = '/pcomm-delParagraphcommentBookId'
+            tip = '此操作将永久删除书籍<span class="red">' + item.bookName + '</span>的全部吐槽, 是否继续?'
+            subData = {
+              bookid: idList.toString()
+            }
+          } else if (dType === 'user') {
+            url = '/pcomm-delParagraphcommentUser'
+            tip = '此操作将永久删除用户<span class="red">' + item.userName + '</span>的全部吐槽, 是否继续?'
+            subData = {
+              userid: idList.toString()
+            }
+          } else if (dType === 'cid') {
+            url = '/pcomm-delParagraphcommentChapter'
+            tip = '此操作将永久删除本章节<span class="red">' + item.chapterName + '</span>的全部吐槽, 是否继续?'
+            subData = {
+              chapterid: idList.toString()
+            }
+          } else if (dType === 'pid') {
+            url = '/pcomm-delParagraphcommentPid'
+            tip = '此操作将永久删除本段落的全部吐槽, 是否继续?'
+            subData = {
+              pid: idList.toString()
+            }
+          } else {
+            tip = '此操作将永久删除' + idList.length + '条吐槽, 是否继续?'
+            url = '/pcomm-delParagraphcomment'
+            subData = {
+              id: idList.toString()
+            }
+          }
+          this.$confirm(tip, '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            dangerouslyUseHTMLString: true,
+            type: 'warning'
+          }).then(() => {
+            this.$ajax(url, subData, res => {
+              if (res.returnCode === 200) {
+                this.$message({ message: '删除成功', type: 'success' })
+                this.getPcommentList()
+              }
+            })
+          })
+        }
+  
+        if (item) {
+          if (dType === 'book') {
+            idList.push(item.bookId)
+          } else if (dType === 'user') {
+            idList.push(item.userId)
+          } else if (dType === 'cid') {
+            idList.push(item.chapterId)
+          } else {
+            idList.push(item.pid)
+          }
+        } else if (this.multipleSelection.length) {
+          this.multipleSelection.forEach((item) => {
+            idList.push(item.id)
+          })
+        }
+  
+        if (idList.length) {
+          delData()
+        } else {
+          this.$message({ message: '请选取要删除的内容', type: 'warning' })
+          return false
+        }
+      },
+  
+      handleSelectionChange(val) {
+        this.multipleSelection = val
+      }
 
     },
-    created(){
+    created() {
       this.getPcommentList()
     },
-    watch:{
-      "$route":function (val) {
+    watch: {
+      '$route': function(val) {
         this.getPcommentList()
       }
     }

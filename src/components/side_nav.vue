@@ -17,62 +17,61 @@
 
 <script type="text/ecmascript-6">
     export default{
-      name:'lay-nav',
-      data(){
-        return{
-          CurrentHref:0,
-          sideNavList:[]
+      name: 'lay-nav',
+      data() {
+        return {
+          CurrentHref: 0,
+          sideNavList: []
         }
       },
-      methods:{
-        getNavList(){
-            this.$ajax("/admin-Logins",{
-              adminNanme:'张三',
-              adminPassword:'zhangshanadmin'
-            },json=>{
+      methods: {
+        getNavList() {
+          this.$ajax('/admin-Logins', {
+            adminNanme: '张三',
+            adminPassword: 'zhangshanadmin'
+          }, json => {
             //   console.log(json);
-              let navList = JSON.parse(JSON.stringify(json.data.roleMenuList))
-                ,newNav = [];
-              navList.forEach((item,$index)=>{
-                if(item.pid===0){
-                  navList[$index].show = false;
-                  newNav.push(item)
-                }
-              });
-              newNav.forEach((item1)=>{
-                navList.forEach((item2,$index2)=>{
-                  if(item1.id===item2.pid){
-                    if(!item1.ChildMenu){item1.ChildMenu=[];}
-                    item1.ChildMenu.push(item2)
-                  }
-                })
-              });
-              this.sideNavList = newNav;
-              // 顶部左侧菜单生成 [请求地址,过滤ID,是否展开,携带参数]
-//          vipNav.top_left(newNav,'side-top-left',false);
-              // 主体菜单生成 [请求地址,过滤ID,是否展开,携带参数]
-//          vipNav.main(this.sideNavList,'side-main',false);
-            //   console.log(this.sideNavList)
+            let navList = JSON.parse(JSON.stringify(json.data.roleMenuList)), newNav = []
+            navList.forEach((item, $index) => {
+              if (item.pid === 0) {
+                navList[$index].show = false
+                newNav.push(item)
+              }
             })
-          },
-        flexNav(index){
-            if(this.sideNavList[index].show){
-                this.sideNavList[index].show = false
-            }else {
-              this.sideNavList[index].show = true
-            }
+            newNav.forEach((item1) => {
+              navList.forEach((item2, $index2) => {
+                if (item1.id === item2.pid) {
+                  if (!item1.ChildMenu) { item1.ChildMenu = [] }
+                  item1.ChildMenu.push(item2)
+                }
+              })
+            })
+            this.sideNavList = newNav
+          // 顶部左侧菜单生成 [请求地址,过滤ID,是否展开,携带参数]
+//          vipNav.top_left(newNav,'side-top-left',false);
+          // 主体菜单生成 [请求地址,过滤ID,是否展开,携带参数]
+//          vipNav.main(this.sideNavList,'side-main',false);
+        //   console.log(this.sideNavList)
+          })
+        },
+        flexNav(index) {
+          if (this.sideNavList[index].show) {
+            this.sideNavList[index].show = false
+          } else {
+            this.sideNavList[index].show = true
+          }
         }
       },
-      created(){
+      created() {
         this.getNavList()
       },
-      watch:{
-          $route:function (val) {
+      watch: {
+        $route: function(val) {
             // console.log(document.body.classList);
-            if(document.body.className==='site-mobile'){
-               document.body.classList.remove('site-mobile')
-            }
+          if (document.body.className === 'site-mobile') {
+            document.body.classList.remove('site-mobile')
           }
+        }
       }
     }
 </script>

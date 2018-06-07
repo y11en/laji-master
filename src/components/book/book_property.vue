@@ -117,131 +117,128 @@
   export default {
     data() {
       return {
-        dialogType:'edit',
-        currentType:'label',
-        baseInfo:{},
-        load:{
-          max:true,
-          min:true
+        dialogType: 'edit',
+        currentType: 'label',
+        baseInfo: {},
+        load: {
+          max: true,
+          min: true
         },
-        dialogVisible:false,
-        subData:{
-          bookColor:'',
-          bookLableName:''
+        dialogVisible: false,
+        subData: {
+          bookColor: '',
+          bookLableName: ''
         },
         rules: {
-           bookColor: [
+          bookColor: [
             { required: true, message: '请选取颜色', trigger: 'blur' }
           ],
-           bookLableName: [
+          bookLableName: [
             { required: true, message: '内容不能为空', trigger: 'blur' }
           ],
-          classificationName:[
+          classificationName: [
             { required: true, message: '请输入分类名', trigger: 'blur' }
           ]
         }
       }
     },
     methods: {
-      getBookBaseInfo(){
-        this.$ajax("/book-EditBookEcho",'',res=>{
-          if(res.returnCode===200){
-            this.baseInfo = res.data;
+      getBookBaseInfo() {
+        this.$ajax('/book-EditBookEcho', '', res => {
+          if (res.returnCode === 200) {
+            this.baseInfo = res.data
           }
-        },'get')
+        }, 'get')
       },
-      handleEdit(type,item){
-        this.dialogVisible = true;
-        this.currentType = type;
-        this.$nextTick(()=>{
-          if(item){
-            this.dialogType = 'edit';
-            this.subData = JSON.parse(JSON.stringify(item));
-          }else {
-            this.dialogType = 'add';
-            if(type==='label'){
+      handleEdit(type, item) {
+        this.dialogVisible = true
+        this.currentType = type
+        this.$nextTick(() => {
+          if (item) {
+            this.dialogType = 'edit'
+            this.subData = JSON.parse(JSON.stringify(item))
+          } else {
+            this.dialogType = 'add'
+            if (type === 'label') {
               this.subData = {
-                bookColor:'',
-                bookLableName:''
+                bookColor: '',
+                bookLableName: ''
               }
-            }else {
+            } else {
               this.subData = {
-                classificationName:'',
-                classificationmaxlco:'',
-                classificationIco:'',
-                orders:this.baseInfo.classificationList.length+1
+                classificationName: '',
+                classificationmaxlco: '',
+                classificationIco: '',
+                orders: this.baseInfo.classificationList.length + 1
               }
             }
           }
-        });
+        })
       },
       handleDel(type) {
-        let edit = (url,id)=>{
+        const edit = (url, id) => {
           this.$refs['propertyForm'].validate((valid) => {
             if (valid) {
-              this.$myLoad(type==='del'?'正在删除中...':'正在更新中...');
-              this.$ajax(url,id,res=>{
-                this.dialogVisible = false;
-                this.$loading().close();
-                if(res.returnCode===200){
-                  this.$message({message:type==='del'?'删除成功':'更新成功',type:'success'});
+              this.$myLoad(type === 'del' ? '正在删除中...' : '正在更新中...')
+              this.$ajax(url, id, res => {
+                this.dialogVisible = false
+                this.$loading().close()
+                if (res.returnCode === 200) {
+                  this.$message({ message: type === 'del' ? '删除成功' : '更新成功', type: 'success' })
                   this.getBookBaseInfo()
                 }
-              });
+              })
             }
-          });
-          
-        };
-        
-       
-        if(this.currentType==='label'){
-            if(type==='del'){
-              edit('/admin/deleteAttributeLable',{id:this.subData.id})
-            }else if(type==='update') {
-              edit('/admin/updateAttributeLable',this.subData)
-            }else {
-              edit('/admin/addAttributeLable',this.subData)
-            }
-        }else if(this.currentType==='class'){
-            if(type==='del'){
-              edit('/admin/deleteClassification',{id:this.subData.id})
-            }else if(type==='update') {
-              edit('/admin/updateClassificationData',this.subData)
-            }else {
-              edit('/admin/addClassification',this.subData)
-            }
+          })
         }
-      },
-      uploadProgress1(event){
-        console.log(event);
-        this.load.max = false;
-      },
-      uploadEnd1(res){
-          this.load.max = true;
-          if(res.returnCode===200){
-            this.subData.classificationmaxlco = res.data;
-            this.getBookBaseInfo();
-          }else {
-              this.$message({message:res.msg,type:'warning'})
+
+        if (this.currentType === 'label') {
+          if (type === 'del') {
+            edit('/admin/deleteAttributeLable', { id: this.subData.id })
+          } else if (type === 'update') {
+            edit('/admin/updateAttributeLable', this.subData)
+          } else {
+            edit('/admin/addAttributeLable', this.subData)
           }
-      },
-      uploadProgress2(){
-        this.load.min = false;
-      },
-      uploadEnd2(res){
-        this.load.min = true;
-        if(res.returnCode===200){
-          this.subData.classificationIco = res.data;
-          this.getBookBaseInfo();
-        }else {
-          this.$message({message:res.msg,type:'warning'})
+        } else if (this.currentType === 'class') {
+          if (type === 'del') {
+            edit('/admin/deleteClassification', { id: this.subData.id })
+          } else if (type === 'update') {
+            edit('/admin/updateClassificationData', this.subData)
+          } else {
+            edit('/admin/addClassification', this.subData)
+          }
         }
       },
+      uploadProgress1(event) {
+        console.log(event)
+        this.load.max = false
+      },
+      uploadEnd1(res) {
+        this.load.max = true
+        if (res.returnCode === 200) {
+          this.subData.classificationmaxlco = res.data
+          this.getBookBaseInfo()
+        } else {
+          this.$message({ message: res.msg, type: 'warning' })
+        }
+      },
+      uploadProgress2() {
+        this.load.min = false
+      },
+      uploadEnd2(res) {
+        this.load.min = true
+        if (res.returnCode === 200) {
+          this.subData.classificationIco = res.data
+          this.getBookBaseInfo()
+        } else {
+          this.$message({ message: res.msg, type: 'warning' })
+        }
+      }
     },
-    created(){
-      this.getBookBaseInfo();
-     
-    }
+    created() {
+      this.getBookBaseInfo()
+  }
   }
 </script>
 

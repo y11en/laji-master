@@ -121,106 +121,104 @@
 
 <script type="text/ecmascript-6">
   export default{
-      
-    data(){
-      return{
-        checkList:[],
-        centerDialogVisible:false,
-        draftList:[],
-        cloneList:[],
-        updateData:{},
-        page:1,
-        multipleSelection:[],
-        newDrag:true,
-        keywords:''
+  
+    data() {
+      return {
+        checkList: [],
+        centerDialogVisible: false,
+        draftList: [],
+        cloneList: [],
+        updateData: {},
+        page: 1,
+        multipleSelection: [],
+        newDrag: true,
+        keywords: ''
       }
     },
-    methods:{
-      getAllChapterList(){
-        
-        this.$ajax("/admin/getAdminChapterList",{
-          page:this.$route.params.page,
-          searchCondition:this.keywords
-        },res=>{
-          if(res.returnCode===200){
+    methods: {
+      getAllChapterList() {
+        this.$ajax('/admin/getAdminChapterList', {
+          page: this.$route.params.page,
+          searchCondition: this.keywords
+        }, res => {
+          if (res.returnCode === 200) {
             this.draftList = res.data
           }
         })
       },
 
 //      批量删除
-      toggleRowSelection(){
-        if(this.multipleSelection.length){
-          let cid = [];
-          this.multipleSelection.forEach((item)=>{
-              cid.push(item.id)
-          });
-          this.$confirm('此操作将永久删除所选'+cid.length+'个章节, 是否继续?', '提示', {
+      toggleRowSelection() {
+        if (this.multipleSelection.length) {
+          const cid = []
+          this.multipleSelection.forEach((item) => {
+            cid.push(item.id)
+          })
+          this.$confirm('此操作将永久删除所选' + cid.length + '个章节, 是否继续?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-              this.$ajax('/chapter-deletechapter',{
-                  chapterid:cid.toString()
-              },res=>{
-                  if(res.returnCode===200){
-                      this.getAllChapterList();
-                      this.$message({
-                        type: 'success',
-                        message: '删除成功!'
-                      });
-                  }
-              });
-           
+            this.$ajax('/chapter-deletechapter', {
+              chapterid: cid.toString()
+            }, res => {
+              if (res.returnCode === 200) {
+                this.getAllChapterList()
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                })
+              }
+            })
           }).catch(() => {
             this.$message({
               type: 'info',
               message: '已取消删除'
-            });
-          });
-        }else {
-          this.$message({message:'请选取要删除的章节！',type:'warning',showClose:true})
+            })
+          })
+        } else {
+          this.$message({ message: '请选取要删除的章节！', type: 'warning', showClose: true })
         }
       },
-      
-      handleSelectionChange(val){
+  
+      handleSelectionChange(val) {
         this.multipleSelection = val
       },
 //      点击行选中
-      handleRowClick(row){
-        this.$refs.multipleTable.toggleRowSelection(row);
+      handleRowClick(row) {
+        this.$refs.multipleTable.toggleRowSelection(row)
       },
-      
-      handleClick(val,data){
-        if(val==='a'){
-          this.$router.push({path:'/edit_chapter/'+data.id})
-        }else if(val==='b'){
-        
+  
+      handleClick(val, data) {
+        if (val === 'a') {
+          this.$router.push({ path: '/edit_chapter/' + data.id })
+        } else if (val === 'b') {
+  
         }
       },
-      
-      handleCurrentChange(page){
-        this.page = page;
-        this.$router.push({params:{page:page}})
+  
+      handleCurrentChange(page) {
+        this.page = page
+        this.$router.push({ params: { page: page }})
       }
     },
-    created(){
+    created() {
       this.getAllChapterList()
     },
-    watch:{
-      $route:function () {
+    watch: {
+      $route: function() {
         this.getAllChapterList()
       }
     },
-    computed:{
-      nowTime:function () {
-        let time = new Date().getTime();
-        this.$ajax("/sys-getNetWorkDateTime",'',res=>{
-          if(res.returnCode===200){
+    computed: {
+      nowTime: function() {
+        let time = new Date().getTime()
+        this.$ajax('/sys-getNetWorkDateTime', '', res => {
+          if (res.returnCode === 200) {
             time = res.data.beijing
           }
-        },'get');
-        return time;
+        }, 'get')
+        return time
       }
     }
   }

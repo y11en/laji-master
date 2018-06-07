@@ -49,26 +49,26 @@
 </template>
 <script type="text/ecmascript-6">
   export default{
-    data(){
+    data() {
       var validateContent = (rule, value, callback) => {
-        if (this.$http.trim(value).length<1) {
-          callback(new Error('请添加详情内容！'));
+        if (this.$http.trim(value).length < 1) {
+          callback(new Error('请添加详情内容！'))
         } else {
-          callback();
+          callback()
         }
-      };
-      return{
+      }
+      return {
         ruleForm: {
-          adminName: '', //发布人
-          title:'', //标题
-          menuId:'',
+          adminName: '', // 发布人
+          title: '', // 标题
+          menuId: '',
 //          date1: new Date(), //发布时间
           delivery: false,
           type: [],
-          order:1,
-          content: '' //公告内容
+          order: 1,
+          content: '' // 公告内容
         },
-        editorOption:{
+        editorOption: {
           modules: {
             toolbar: [
               ['bold', 'italic', 'underline', 'strike'],
@@ -87,8 +87,8 @@
               ['link', 'image']
             ]
           },
-          keyboard:{
-            bindings:{
+          keyboard: {
+            bindings: {
               tab: {
                 key: 9,
                 handler: function(val) {
@@ -99,79 +99,79 @@
                 shiftKey: true,
                 handler: function(range, context) {
                 }
-              },
+              }
             }
           }
         },
-        editKey:null,
-        layedit:null,
+        editKey: null,
+        layedit: null,
         rules: {
-          menuId:{ required:true ,message:'请选取类型', trigger:'blur' },
+          menuId: { required: true, message: '请选取类型', trigger: 'blur' },
           title: [
             { required: true, message: '请输入活动名称', trigger: 'blur' },
             { min: 3, message: '长度不可少于3个字符', trigger: 'blur' }
           ],
-          adminName:[
-            { required:true ,message:'请填写发布人' , trigger:'blur' }
+          adminName: [
+            { required: true, message: '请填写发布人', trigger: 'blur' }
           ],
           type: [
             { type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }
           ],
           content: [
-            { required:true,message: '请填写活动形式', trigger: 'blur' }
+            { required: true, message: '请填写活动形式', trigger: 'blur' }
           ]
         }
-      };
-    },
-    methods:{
+      }
+  },
+    methods: {
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
-            let url = '/admin/addPublishanotice';
-            if(this.$route.name==='sysEditNotice'){
-                url = '/admin/updatePublishanotice'
-            }
+          let url = '/admin/addPublishanotice'
+          if (this.$route.name === 'sysEditNotice') {
+            url = '/admin/updatePublishanotice'
+          }
           if (valid) {
-            this.$ajax(url,this.ruleForm,res=>{
-              if(res.returnCode===200){
-                this.$message({message:res.msg,type:'success'});
-                if(this.$route.name==='sysEditNotice'){
+            this.$ajax(url, this.ruleForm, res => {
+              if (res.returnCode === 200) {
+                this.$message({ message: res.msg, type: 'success' })
+                if (this.$route.name === 'sysEditNotice') {
                   this.getNoticeById()
                 }
               }
             })
           } else {
-            this.$message({message:'请完善信息后提交！',type:'warning'});
-            return false;
+            this.$message({ message: '请完善信息后提交！', type: 'warning' })
+            return false
           }
-        });
+        })
       },
-      
-      getNoticeById(){
-        this.$ajax("/admin/sys-getNoticeById",{
-            noticeid:this.$route.params.id
-        },res=>{
-          if(res.returnCode===200){
-            delete res.data.releaseDate;
-            this.ruleForm = res.data;
+  
+      getNoticeById() {
+        this.$ajax('/admin/sys-getNoticeById', {
+          noticeid: this.$route.params.id
+        }, res => {
+          if (res.returnCode === 200) {
+            delete res.data.releaseDate
+            this.ruleForm = res.data
           }
-        },'get')
+        }, 'get')
       },
       resetForm() {
         this.getNoticeById()
       },
-      onEditorChange(editor,html,text){
+      onEditorChange(editor, html, text) {
 //
       },
-      onEditorReady(editor){
+      onEditorReady(editor) {
 //
       }
     },
-    created(){
-        if(this.$route.name==='sysEditNotice'){
-          this.getNoticeById();
-        }
-    },
-    
+    created() {
+      if (this.$route.name === 'sysEditNotice') {
+        this.getNoticeById()
+      }
+    }
+  
   }
 </script>
 <style lang="stylus" rel="stylesheet/stylus">

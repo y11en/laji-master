@@ -79,64 +79,64 @@
 <script type="text/ecmascript-6">
     export default{
       data() {
-        let checkBookName = (rule, value, callback) => {
-          let txt = this.$http.trim(value);
-          if (txt.length<1) {
-            return callback(new Error('作品名称不能为空'));
-          }else{
+        const checkBookName = (rule, value, callback) => {
+          const txt = this.$http.trim(value)
+          if (txt.length < 1) {
+            return callback(new Error('作品名称不能为空'))
+          } else {
 //            添加新书时校验书籍名称是否存在
-            let reg = /^[a-zA-Z0-9\u4e00-\u9fa5:：]{1,20}$/;
-            if(!reg.test(txt)){callback(new Error("书籍名称只能包含中文、数字、字母和冒号"));return false;}
-            this.$ajax("/book-checkName",
-              { bookName:txt},json=> {
-                if(json.returnCode!==200){
+            const reg = /^[a-zA-Z0-9\u4e00-\u9fa5:：]{1,20}$/
+            if (!reg.test(txt)) { callback(new Error('书籍名称只能包含中文、数字、字母和冒号')); return false }
+            this.$ajax('/book-checkName',
+              { bookName: txt }, json => {
+                if (json.returnCode !== 200) {
                   callback(new Error('作品名称已存在，请重新填写'))
-                }else{
+                } else {
                   callback()
                 }
-            })
+              })
           }
-        };
-        return {
-          fullLoading:false,
-          activeName:'base',
-          reloading:true,
-          baseData:{},
-          userList:[],
-          selectValue:{},
-          bookDetail: {
-            bookName:'',
-            writerName:'',
-            bookWriterId:'',
-            bookClassificationId:null,
-            bookLabId:[],
-            bookAuthorization:null,
-            bookIntroduction:''
-          },
-          rules1: {
-            bookName: [
-              { required: true,validator: checkBookName, message: '请输入书名', trigger: 'blur' },
-            ],
-            writerName: [
+        }
+    return {
+      fullLoading: false,
+      activeName: 'base',
+      reloading: true,
+      baseData: {},
+      userList: [],
+      selectValue: {},
+      bookDetail: {
+        bookName: '',
+        writerName: '',
+        bookWriterId: '',
+        bookClassificationId: null,
+        bookLabId: [],
+        bookAuthorization: null,
+        bookIntroduction: ''
+      },
+      rules1: {
+        bookName: [
+              { required: true, validator: checkBookName, message: '请输入书名', trigger: 'blur' }
+        ],
+        writerName: [
               { required: true, message: '请填写作者', trigger: 'blur' }
-            ],
-            bookClassificationId: [
-              { required: true,type:'number', message: '请选择作品分类', trigger: 'change' }
-            ],
-            bookLabId: [
-              { type: 'array',required: true,message: '至少选取2个标签',trigger: 'change' },
-              { type: 'array',min:2,max:5,message: '请选择2-5个标签',trigger: 'change'}
-            ],
-            bookAuthorization: [
-              { required: true,type:'number', message: '请选择发布状态', trigger: 'change' }
-            ],
-            bookIntroduction: [
+        ],
+        bookClassificationId: [
+              { required: true, type: 'number', message: '请选择作品分类', trigger: 'change' }
+        ],
+        bookLabId: [
+              { type: 'array', required: true, message: '至少选取2个标签', trigger: 'change' },
+              { type: 'array', min: 2, max: 5, message: '请选择2-5个标签', trigger: 'change' }
+        ],
+        bookAuthorization: [
+              { required: true, type: 'number', message: '请选择发布状态', trigger: 'change' }
+        ],
+        bookIntroduction: [
               { required: true, message: '请填写作品简介', trigger: 'blur' },
               { min: 1, max: 400, message: '长度在 1 到 400 个字符', trigger: 'blur' }
-            ]
-          }
-          
-        }
+        ]
+      }
+    
+    }
       },
       methods: {
         onSubmit(formName) {
@@ -145,87 +145,86 @@
             text: 'Loading',
             spinner: 'el-icon-loading',
             background: 'rgba(0, 0, 0, 0.7)'
-          });
-          let formData = JSON.parse(JSON.stringify(this.bookDetail));
-          formData.bookLabId = formData.bookLabId.toString();
-          formData.bookIntroduction = this.$http.trim(formData.bookIntroduction).replace(/\s*\n+\s*/g,'\n');
+          })
+          const formData = JSON.parse(JSON.stringify(this.bookDetail))
+          formData.bookLabId = formData.bookLabId.toString()
+          formData.bookIntroduction = this.$http.trim(formData.bookIntroduction).replace(/\s*\n+\s*/g, '\n')
           this.$refs[formName].validate((valid) => {
             if (valid) {
-              this.$ajax("/admin/addBookInfo",formData,res=>{
-                this.$nextTick(()=>{
-                  this.fullLoading.close();
-                });
-                if(res.returnCode===200){
+              this.$ajax('/admin/addBookInfo', formData, res => {
+                this.$nextTick(() => {
+                  this.fullLoading.close()
+                })
+                if (res.returnCode === 200) {
                   this.$confirm('创建成功, 可直接发布章节！', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                   }).then(() => {
-                    this.$router.push({path:'/add_new_chapter/'+res.data})
-                  });
+                    this.$router.push({ path: '/add_new_chapter/' + res.data })
+                  })
                 }
-              });
+              })
             } else {
-              this.$nextTick(()=>{
-                this.fullLoading.close();
-              });
-              this.$message({ message:'请完善信息后提交！',type:'warning'});
+              this.$nextTick(() => {
+                this.fullLoading.close()
+              })
+              this.$message({ message: '请完善信息后提交！', type: 'warning' })
             }
-          });
-        },
-        remoteMethod(query){
+          })
+    },
+        remoteMethod(query) {
           if (query !== '') {
-            this.reloading = true;
-            this.$ajax("/getAuthorIdByAuthorName",{key:this.$http.trim(query)},res=>{
-              if(res.returnCode===200){
-                this.reloading = false;
+            this.reloading = true
+            this.$ajax('/getAuthorIdByAuthorName', { key: this.$http.trim(query) }, res => {
+              if (res.returnCode === 200) {
+                this.reloading = false
                 this.userList = res.data.filter(item => {
                   return item.pseudonym.toLowerCase()
-                    .indexOf(query.toLowerCase()) > -1;
-                });
+                    .indexOf(query.toLowerCase()) > -1
+                })
               }
-            });
+            })
           } else {
-            this.userList = [];
+            this.userList = []
           }
         },
-        
-        getBaseInfo(){
-          this.$ajax("/book-EditBookEcho",'',res=>{
-            if(res.returnCode===200){
-              this.baseData = res.data;
+    
+        getBaseInfo() {
+          this.$ajax('/book-EditBookEcho', '', res => {
+            if (res.returnCode === 200) {
+              this.baseData = res.data
             }
-          },'get')
+          }, 'get')
         },
-        getBookDetail(){
-          this.$ajax("/book-showBookInfo",{bookid:this.$route.params.bid},res=>{
-            if(res.returnCode===200){
-              res.data.bookLabId =(()=>{
-                let arr = [];
-                res.data.bookLabId.split(",").forEach((item)=>{
+        getBookDetail() {
+          this.$ajax('/book-showBookInfo', { bookid: this.$route.params.bid }, res => {
+            if (res.returnCode === 200) {
+              res.data.bookLabId = (() => {
+                const arr = []
+                res.data.bookLabId.split(',').forEach((item) => {
                   arr.push(parseInt(item))
-                });
+                })
                 return arr
-              })();
-              res.data.bookClassificationId = parseInt(res.data.bookClassificationId);
-              this.bookDetail = res.data;
+              })()
+              res.data.bookClassificationId = parseInt(res.data.bookClassificationId)
+              this.bookDetail = res.data
             }
           })
         }
       },
-      created(){
+      created() {
         this.getBaseInfo()
       },
-      watch:{
-        "bookDetail.bookIntroduction":function (val) {
-          this.bookDetail.bookIntroduction = val.replace(/\s*\n+\s*/g,'\n\n')
+      watch: {
+        'bookDetail.bookIntroduction': function(val) {
+          this.bookDetail.bookIntroduction = val.replace(/\s*\n+\s*/g, '\n\n')
         },
-        "selectValue":function (val) {
-           if(val.name){
-             this.bookDetail.writerName = val.name;
-             this.bookDetail.bookWriterId = val.id;
-           }
-          
+        'selectValue': function(val) {
+          if (val.name) {
+            this.bookDetail.writerName = val.name
+            this.bookDetail.bookWriterId = val.id
+          }
         }
       }
     }

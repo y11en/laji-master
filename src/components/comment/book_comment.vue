@@ -77,111 +77,111 @@
 
 <script type="text/ecmascript-6">
   export default{
-    data(){
-      return{
-        searchForm:{
-        
+    data() {
+      return {
+        searchForm: {
+  
         },
-        bookCommentList:{},
-        keywords:'',
-        selectType:'',
-        multipleSelection:[]
+        bookCommentList: {},
+        keywords: '',
+        selectType: '',
+        multipleSelection: []
       }
     },
-    methods:{
-      getBookCommentList(){
-        this.searchForm = {};
-        this.searchForm.page = this.$route.params.page;
-        if(this.selectType){
-          if((this.selectType==='bookId' || this.selectType==='userId') && !Number(this.keywords)){
-            this.$message({message:'ID必需为数字',type:'warning'});
+    methods: {
+      getBookCommentList() {
+        this.searchForm = {}
+        this.searchForm.page = this.$route.params.page
+        if (this.selectType) {
+          if ((this.selectType === 'bookId' || this.selectType === 'userId') && !Number(this.keywords)) {
+            this.$message({ message: 'ID必需为数字', type: 'warning' })
             return false
           }
           this.searchForm[this.selectType] = this.keywords
         }
-        this.$ajax("/admin/bookCommentList",this.searchForm,res=>{
-          if(res.returnCode===200){
+        this.$ajax('/admin/bookCommentList', this.searchForm, res => {
+          if (res.returnCode === 200) {
             this.bookCommentList = res.data
-          }else if(!res.data){
+          } else if (!res.data) {
             this.bookCommentList = {}
           }
         })
       },
-      searchBookCom(){
-        if(Number(this.$route.params.page)===1){
+      searchBookCom() {
+        if (Number(this.$route.params.page) === 1) {
           this.getBookCommentList()
-        }else {
-          this.$router.push({params:{page:1}})
+        } else {
+          this.$router.push({ params: { page: 1 }})
         }
       },
-      handleCurrentChange(page){
-        this.$router.push({params:{page:page}})
+      handleCurrentChange(page) {
+        this.$router.push({ params: { page: page }})
       },
-      handleRowClick(row){
-        this.$refs.multipleTable.toggleRowSelection(row);
+      handleRowClick(row) {
+        this.$refs.multipleTable.toggleRowSelection(row)
       },
 //          批量处理
-      toggleSelection(dType,item){
-          let idList = [];
-          let delData = ()=>{
-              let code = 0,tip;
-              if(dType==='book'){
-                code = 2;
-                tip = '此操作将永久删除书籍<span class="red">'+item.bookName+'</span>的全部评论, 是否继续?';
-              }else if(dType==='user'){
-                code = 3;
-                tip = '此操作将永久删除用户<span class="red">'+item.userName+'</span>的全部评论, 是否继续?';
-              }else {
-                tip = '此操作将永久删除'+idList.length+'条评论, 是否继续?';
-                if(idList.length>1){
-                  code = 1
-                }else {
-                  code = 0
-                }
-              }
-              this.$confirm(tip , '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                dangerouslyUseHTMLString:true,
-                type: 'warning'
-              }).then(() => {
-                  this.$ajax("/comm-delcomminfo",{
-                      id:idList.toString(),
-                      type:code
-                  },res=>{
-                      if(res.returnCode===200){
-                          this.$message({message:'删除成功',type:'success'});
-                          this.getBookCommentList()
-                      }
-                  })
-              })
-          };
-        
-          if(item){
-              if(dType==='book'){
-                  idList.push(item.bookId)
-              }else {
-                  idList.push(item.userId)
-              }
-          }else if(this.multipleSelection.length){
-              this.multipleSelection.forEach((item)=>{
-                  idList.push(item.id)
-              });
-          }else {
-              this.$message({message:'请选取要删除的内容',type:'warning'});
-              return false
+      toggleSelection(dType, item) {
+        const idList = []
+        const delData = () => {
+          let code = 0, tip
+          if (dType === 'book') {
+            code = 2
+            tip = '此操作将永久删除书籍<span class="red">' + item.bookName + '</span>的全部评论, 是否继续?'
+          } else if (dType === 'user') {
+            code = 3
+            tip = '此操作将永久删除用户<span class="red">' + item.userName + '</span>的全部评论, 是否继续?'
+          } else {
+            tip = '此操作将永久删除' + idList.length + '条评论, 是否继续?'
+            if (idList.length > 1) {
+              code = 1
+            } else {
+              code = 0
+            }
           }
-          delData()
+          this.$confirm(tip, '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            dangerouslyUseHTMLString: true,
+            type: 'warning'
+          }).then(() => {
+            this.$ajax('/comm-delcomminfo', {
+              id: idList.toString(),
+              type: code
+            }, res => {
+              if (res.returnCode === 200) {
+                this.$message({ message: '删除成功', type: 'success' })
+                this.getBookCommentList()
+              }
+            })
+          })
+        }
+  
+        if (item) {
+          if (dType === 'book') {
+            idList.push(item.bookId)
+          } else {
+            idList.push(item.userId)
+          }
+        } else if (this.multipleSelection.length) {
+          this.multipleSelection.forEach((item) => {
+            idList.push(item.id)
+          })
+        } else {
+          this.$message({ message: '请选取要删除的内容', type: 'warning' })
+          return false
+        }
+        delData()
       },
-      handleSelectionChange(val){
+      handleSelectionChange(val) {
         this.multipleSelection = val
       }
     },
-    created(){
+    created() {
       this.getBookCommentList()
     },
-    watch:{
-      "$route":function () {
+    watch: {
+      '$route': function() {
         this.getBookCommentList()
       }
     }

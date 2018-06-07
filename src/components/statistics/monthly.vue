@@ -100,187 +100,187 @@
 <script type="text/ecmascript-6">
 import MounthComponent from '../../PKComponent/MounthComponent'
 export default{
-    
-    components: { MounthComponent },
 
-    data(){
-        return{
-            dialogVisible: false,
-            searchForm: {},
-            defaultValue: null,
-            pickerOptions: {
-                disabledDate(time) {
-                    return time.getTime() > Date.now()
-                }
-            },
-            reportCommentList: {},
-            keywords: '',
-            selectType: 'bookName',
-            multipleSelection: [],
-            userInfo: {},
-            date: '',
-            setTime: '',
-            isOpenEdit: false,
-            dateObj: {
-                starttime: '',
-                endtime: ''
-            }
+  components: { MounthComponent },
+
+  data() {
+    return {
+      dialogVisible: false,
+      searchForm: {},
+      defaultValue: null,
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > Date.now()
         }
-    },
+      },
+      reportCommentList: {},
+      keywords: '',
+      selectType: 'bookName',
+      multipleSelection: [],
+      userInfo: {},
+      date: '',
+      setTime: '',
+      isOpenEdit: false,
+      dateObj: {
+        starttime: '',
+        endtime: ''
+      }
+    }
+  },
 
-    created(){
+  created() {
+    this.getPublishTime()
+    this.getUserInfo()
+  },
+
+  methods: {
+
+    sendFather(val, type) {
+      if (type === 'succ') {
         this.getPublishTime()
         this.getUserInfo()
+      }
+      this.isOpenEdit = val
     },
-
-    methods:{
-
-        sendFather(val, type) {
-            if(type === 'succ'){
-                this.getPublishTime()
-                this.getUserInfo()
-            }
-            this.isOpenEdit = val
-        },
-        getReportStatisticList(){
-            let url = '/admin/getAuthorMonthlyreportAdminList'
-            this.searchForm = {}
-            this.searchForm.page = this.$route.params.page
-            if(this.$route.params.aid){
-                this.searchForm.authorid = this.$route.params.aid
-            }
-            if(this.selectType && this.keywords){
-                if((this.selectType==='bookId' || this.selectType==='userId') && !Number(this.keywords)){
-                    this.$message({message:'ID必需为数字',type:'warning'})
-                    return false
-                }
-                this.searchForm[this.selectType] = this.keywords
-            }
-            if(this.date){
-                this.searchForm.year = this.date.split("-")[0]
-                this.searchForm.month = this.date.split("-")[1]
-            }
-            if(this.$route.name==='authorMonReport'){
-                url = '/admin/getAuthorMonthlyreportByAuthormon'
-            }
-            this.$ajax(url,this.searchForm,res=>{
-                if(res.returnCode===200){
-                    if(this.$route.name==='authorMonReport'){
-                        this.$set(this.reportCommentList,'list',[res.data])
-                    } else {
-                        this.reportCommentList = res.data
-                    }
-                }else if(!res.data){
-                    this.reportCommentList = {}
-                }
-            })
-        },
-
-        searchReplyCom(){
-            if(Number(this.$route.params.page)===1){
-                this.getReportStatisticList()
-            }else {
-                this.$router.push({params:{page:1}})
-            }
-        },
-
-        handleCurrentChange(page){
-            this.$router.push({params:{page:page}})
-        },
-
-        getUserInfo(){
-            if(this.$route.params.aid){
-                this.$ajax("/person-SimplifyUserInfo",{ puserid:this.$route.params.aid },res=>{
-                    if(res.returnCode===200){
-                        this.userInfo = res.data
-                    }
-                })
-            }
-        },
-
-        excelProgress(res){
-            this.$myLoad('正在上传中...')
-        },
-
-        progressEnd(callback,file){
-            if(callback.returnCode===200){
-                this.$message({ message:callback.msg ,type:'success' })
-            }
-            this.$loading().close();
-        },
-
-        getPublishTime(){
-            this.$store.dispatch('getDataPosition').then(res => {
-                this.setTime = res
-                let time = new Date()
-                let year = time.getFullYear()
-                let month = time.getMonth()
-                this.date = year + '-' + month
-                this.getReportStatisticList()
-            })
-        },
-        
-        setPublishTime(){
-            if(this.setTime){
-                this.$ajax("/sys-setDataPosition",{date:this.setTime},res=>{
-                    if(res.returnCode===200){
-                        this.$message({message:res.msg,type:'success'})
-                        this.getPublishTime()
-                    }
-                },'get')
-            }else {
-                this.$message({message:"请选取月份",type:'warning'})
-            }
-        },
-
-        oneKeyMonthly(){
-            if(this.date){
-                let date = this.date.split('-')
-                let endtime = this.date + '-' + new Date(date[0],date[1],0).getDate() + ' 23:59:59'
-                let starttime = this.date + '-' + '01 00:00:00'
-                this.$ajax("/generateMonthlyreport",{
-                    startdate:starttime,
-                    enddate:endtime
-                },res=>{
-                    if(res.returnCode===200){
-                        this.$message({ message:res.msg,type:'success'})
-                        this.getReportStatisticList()
-                    }
-                },'get')
-            }else {
-                this.$message({message:'请选取时间',type:'warning'})
-            }
-        },
-
-        editMonthly(row){
-            if(this.date){
-                this.$router.push({ name:'authorEditMonReport',params:{ bid:row.bookid ,time:this.date }})
-            }else {
-                this.$message({ message:'请选取时间',type:'warning'})
-            }
-        },
-    },
-
-    computed:{
-        isAuthor:function () {
-            return this.$route.name!=='authorMonReport'
+    getReportStatisticList() {
+      let url = '/admin/getAuthorMonthlyreportAdminList'
+      this.searchForm = {}
+      this.searchForm.page = this.$route.params.page
+      if (this.$route.params.aid) {
+        this.searchForm.authorid = this.$route.params.aid
+      }
+      if (this.selectType && this.keywords) {
+        if ((this.selectType === 'bookId' || this.selectType === 'userId') && !Number(this.keywords)) {
+          this.$message({ message: 'ID必需为数字', type: 'warning' })
+          return false
         }
+        this.searchForm[this.selectType] = this.keywords
+      }
+      if (this.date) {
+        this.searchForm.year = this.date.split('-')[0]
+        this.searchForm.month = this.date.split('-')[1]
+      }
+      if (this.$route.name === 'authorMonReport') {
+        url = '/admin/getAuthorMonthlyreportByAuthormon'
+      }
+      this.$ajax(url, this.searchForm, res => {
+        if (res.returnCode === 200) {
+          if (this.$route.name === 'authorMonReport') {
+            this.$set(this.reportCommentList, 'list', [res.data])
+          } else {
+            this.reportCommentList = res.data
+          }
+        } else if (!res.data) {
+          this.reportCommentList = {}
+        }
+      })
     },
 
-    watch:{
-        "$route":function () {
+    searchReplyCom() {
+      if (Number(this.$route.params.page) === 1) {
+        this.getReportStatisticList()
+      } else {
+        this.$router.push({ params: { page: 1 }})
+      }
+    },
+
+    handleCurrentChange(page) {
+      this.$router.push({ params: { page: page }})
+    },
+
+    getUserInfo() {
+      if (this.$route.params.aid) {
+        this.$ajax('/person-SimplifyUserInfo', { puserid: this.$route.params.aid }, res => {
+          if (res.returnCode === 200) {
+            this.userInfo = res.data
+          }
+        })
+      }
+    },
+
+    excelProgress(res) {
+      this.$myLoad('正在上传中...')
+    },
+
+    progressEnd(callback, file) {
+      if (callback.returnCode === 200) {
+        this.$message({ message: callback.msg, type: 'success' })
+      }
+      this.$loading().close()
+    },
+
+    getPublishTime() {
+      this.$store.dispatch('getDataPosition').then(res => {
+        this.setTime = res
+        const time = new Date()
+        const year = time.getFullYear()
+        const month = time.getMonth()
+        this.date = year + '-' + month
+        this.getReportStatisticList()
+      })
+    },
+
+    setPublishTime() {
+      if (this.setTime) {
+        this.$ajax('/sys-setDataPosition', { date: this.setTime }, res => {
+          if (res.returnCode === 200) {
+            this.$message({ message: res.msg, type: 'success' })
+            this.getPublishTime()
+          }
+        }, 'get')
+      } else {
+        this.$message({ message: '请选取月份', type: 'warning' })
+      }
+    },
+
+    oneKeyMonthly() {
+      if (this.date) {
+        const date = this.date.split('-')
+        const endtime = this.date + '-' + new Date(date[0], date[1], 0).getDate() + ' 23:59:59'
+        const starttime = this.date + '-' + '01 00:00:00'
+        this.$ajax('/generateMonthlyreport', {
+          startdate: starttime,
+          enddate: endtime
+        }, res => {
+          if (res.returnCode === 200) {
+            this.$message({ message: res.msg, type: 'success' })
             this.getReportStatisticList()
-        },
+          }
+        }, 'get')
+      } else {
+        this.$message({ message: '请选取时间', type: 'warning' })
+      }
+    },
 
-        "date":function (val,old) {
-            if(old!==''){
-                this.getReportStatisticList()
-            }
-            this.$store.state.date = val
-        }
+    editMonthly(row) {
+      if (this.date) {
+        this.$router.push({ name: 'authorEditMonReport', params: { bid: row.bookid, time: this.date }})
+      } else {
+        this.$message({ message: '请选取时间', type: 'warning' })
+      }
     }
+  },
 
+  computed: {
+    isAuthor: function() {
+      return this.$route.name !== 'authorMonReport'
+    }
+  },
+
+  watch: {
+    '$route': function() {
+      this.getReportStatisticList()
+    },
+
+    'date': function(val, old) {
+      if (old !== '') {
+        this.getReportStatisticList()
+      }
+      this.$store.state.date = val
+    }
   }
+
+}
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">

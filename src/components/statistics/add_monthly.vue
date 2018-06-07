@@ -86,142 +86,141 @@
       return {
         rules: {
           bookName: [
-            { require:true,message:'请选取书籍', trigger: 'blur' }
+            { require: true, message: '请选取书籍', trigger: 'blur' }
           ],
           checkworkattendance: [
-            { required:true,message:'请添加考勤金额'},
-            { type:'number', message:'金额必需为数字'}
+            { required: true, message: '请添加考勤金额' },
+            { type: 'number', message: '金额必需为数字' }
           ],
           pepper: [
-            { required:true,message:'请添加打赏金额'},
-            { type:'number', message:'金额必需为数字'}
+            { required: true, message: '请添加打赏金额' },
+            { type: 'number', message: '金额必需为数字' }
           ],
           bubscribe: [
-            { required:true,message:'请添加订阅金额'},
-            { type:'number', message:'金额必需为数字'}
+            { required: true, message: '请添加订阅金额' },
+            { type: 'number', message: '金额必需为数字' }
           ],
           thirdPart: [
-            { required:true,message:'请添加第三方金额'},
-            { type:'number', message:'金额必需为数字'}
+            { required: true, message: '请添加第三方金额' },
+            { type: 'number', message: '金额必需为数字' }
           ],
           millet: [
-            { required:true,message:'请添加小米椒金额'},
-            { type:'number', message:'金额必需为数字'}
+            { required: true, message: '请添加小米椒金额' },
+            { type: 'number', message: '金额必需为数字' }
           ]
         },
-        bookInfo:'',
-        authorBook:[],
-        userInfo:{},
-        monthReport:{
-          bookid:'',
-          bookName:'',
-          checkworkattendance:'',
-          pepper:'',
-          bubscribe:'',
-          thirdPart:'',
-          millet:''
+        bookInfo: '',
+        authorBook: [],
+        userInfo: {},
+        monthReport: {
+          bookid: '',
+          bookName: '',
+          checkworkattendance: '',
+          pepper: '',
+          bubscribe: '',
+          thirdPart: '',
+          millet: ''
         }
-      };
-    },
+      }
+  },
     methods: {
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            let subData = JSON.parse(JSON.stringify(this.monthReport));
-            if(this.$route.name==='authorEditMonReport'){
-              this.$ajax("/admin/updateAuthorMonthlyreportByAuthormon",subData,res=>{
-                if(res.returnCode===200){
-                  this.$message({ message:res.msg,type:'success' });
+            const subData = JSON.parse(JSON.stringify(this.monthReport))
+            if (this.$route.name === 'authorEditMonReport') {
+              this.$ajax('/admin/updateAuthorMonthlyreportByAuthormon', subData, res => {
+                if (res.returnCode === 200) {
+                  this.$message({ message: res.msg, type: 'success' })
                   this.getBookMonthly()
                 }
               })
-            }else {
-              this.$ajax("/admin/addAuthorMonthlyreportByAuthormon",subData,res=>{
-                if(res.returnCode===200){
-                  this.$message({ message:'更新成功',type:'success' });
+            } else {
+              this.$ajax('/admin/addAuthorMonthlyreportByAuthormon', subData, res => {
+                if (res.returnCode === 200) {
+                  this.$message({ message: '更新成功', type: 'success' })
                   this.getAuthorBook()
                 }
               })
             }
-            
           } else {
-            this.$message({message:"请核对信息是否完整",type:'warning'});
-            return false;
-          }
-        });
-      },
-      getAuthorBook(){
-        this.$ajax("/admin/agetAuthorBookLists",{
-          authorId:this.$route.params.aid
-        },res=>{
-            if(res.returnCode===200){
-              let list = [];
-              res.data.forEach(function(item){
-                  if(item.bookCheckStatus){
-                      list.push(item);
-                  }
-              });
-              this.authorBook = list
-            }
-        })
-      },
-      getUserInfo(){
-        this.$ajax("/person-SimplifyUserInfo",{ puserid:this.$route.params.aid },res=>{
-          if(res.returnCode===200){
-            this.userInfo = res.data;
-            this.$set(this.monthReport,'authorid',res.data.userId);
-            this.$set(this.monthReport,'authorName',res.data.pseudonym);
+            this.$message({ message: '请核对信息是否完整', type: 'warning' })
+            return false
           }
         })
       },
-      getBookInfo(){
-          this.$ajax("/book-showBookInfo",{ bookid:this.$route.params.bid },res=>{
-              if(res.returnCode===200){
-                this.$set(this.monthReport,"bookid",res.data.bookId);
-                this.$set(this.monthReport,"bookName",res.data.bookName);
-                this.$set(this.monthReport,"authorid",res.data.bookWriterId);
-                this.$set(this.monthReport,"authorName",res.data.writerName);
+      getAuthorBook() {
+        this.$ajax('/admin/agetAuthorBookLists', {
+          authorId: this.$route.params.aid
+        }, res => {
+          if (res.returnCode === 200) {
+            const list = []
+            res.data.forEach(function(item) {
+              if (item.bookCheckStatus) {
+                list.push(item)
               }
-          })
-      },
-      getBookMonthly(){
-          let time = [];
-          if(this.$route.params.time){
-              time = this.$route.params.time.split('-');
-          }else {
-              time = sessionStorage.getItem('monthly_date').split('-')
+            })
+            this.authorBook = list
           }
-          this.$ajax("/admin/getAuthorMonthlyreportById",{
-             bookid:this.$route.params.bid,
-             year:time[0],
-             month:time[1],
-             type:2
-          },res=>{
-              if(res.returnCode===200){
-                 delete res.data.dataTime;
-                 delete  res.data.subTotalCount;
-                 this.monthReport = res.data
-              }
-          })
-      }
-    },
-    created(){
-      if(this.$route.params.time){
-          sessionStorage.setItem('monthly_date',this.$route.params.time)
-      }
-      if(this.$route.name==='authorAddMonReport'){
-        this.getUserInfo();
-        this.getAuthorBook();
-      }else {
-        this.getBookInfo();
-        this.getBookMonthly();
-      }
-    },
-    watch:{
-        bookInfo:function (val) {
-          this.monthReport.bookid = val.split(",")[0];
-          this.monthReport.bookName = val.split(",")[1];
+        })
+      },
+      getUserInfo() {
+        this.$ajax('/person-SimplifyUserInfo', { puserid: this.$route.params.aid }, res => {
+          if (res.returnCode === 200) {
+            this.userInfo = res.data
+            this.$set(this.monthReport, 'authorid', res.data.userId)
+            this.$set(this.monthReport, 'authorName', res.data.pseudonym)
+          }
+        })
+      },
+      getBookInfo() {
+        this.$ajax('/book-showBookInfo', { bookid: this.$route.params.bid }, res => {
+          if (res.returnCode === 200) {
+            this.$set(this.monthReport, 'bookid', res.data.bookId)
+            this.$set(this.monthReport, 'bookName', res.data.bookName)
+            this.$set(this.monthReport, 'authorid', res.data.bookWriterId)
+            this.$set(this.monthReport, 'authorName', res.data.writerName)
+          }
+        })
+      },
+      getBookMonthly() {
+        let time = []
+        if (this.$route.params.time) {
+          time = this.$route.params.time.split('-')
+        } else {
+          time = sessionStorage.getItem('monthly_date').split('-')
         }
+        this.$ajax('/admin/getAuthorMonthlyreportById', {
+          bookid: this.$route.params.bid,
+          year: time[0],
+          month: time[1],
+          type: 2
+        }, res => {
+          if (res.returnCode === 200) {
+            delete res.data.dataTime
+            delete res.data.subTotalCount
+            this.monthReport = res.data
+          }
+        })
+      }
+    },
+    created() {
+      if (this.$route.params.time) {
+        sessionStorage.setItem('monthly_date', this.$route.params.time)
+      }
+      if (this.$route.name === 'authorAddMonReport') {
+        this.getUserInfo()
+        this.getAuthorBook()
+      } else {
+        this.getBookInfo()
+        this.getBookMonthly()
+      }
+    },
+    watch: {
+      bookInfo: function(val) {
+        this.monthReport.bookid = val.split(',')[0]
+        this.monthReport.bookName = val.split(',')[1]
+      }
     }
   }
 </script>

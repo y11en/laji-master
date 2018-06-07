@@ -90,239 +90,239 @@
 import draggable from 'vuedraggable'
 export default{
 
-    components:{ draggable },
+  components: { draggable },
 
-    data(){
-        return{
-            checkList:[],
-            centerDialogVisible:false,
-            chapterList:[],
-            cloneList:[],
-            updateData:{},
-            page:1,
-            multipleSelection:[],
-            newDrag:true,
-            bookInfo:{},
-            $routeParams:''
+  data() {
+    return {
+      checkList: [],
+      centerDialogVisible: false,
+      chapterList: [],
+      cloneList: [],
+      updateData: {},
+      page: 1,
+      multipleSelection: [],
+      newDrag: true,
+      bookInfo: {},
+      $routeParams: ''
+    }
+  },
+
+  methods: {
+
+    getChapterList() {
+      this.$ajax('/books-adminChapterList/' + this.$route.params.bid, '', res => {
+        let arr = []
+        if (res.returnCode === 200) {
+          res.data.reverse().forEach((item) => {
+            if (item.resultList.length > 0) {
+              arr = arr.concat(item.resultList.reverse())
+            }
+          })
+          this.chapterList = arr.reverse()
         }
+      }, 'get')
     },
 
-    methods:{
+    getBookInfo() {
+      this.$ajax('/book-showBookInfo', { bookid: this.$route.params.bid }, res => {
+        if (res.returnCode === 200) {
+          this.bookInfo = res.data
+        }
+      })
+    },
 
-        getChapterList(){
-            this.$ajax("/books-adminChapterList/"+this.$route.params.bid,'', res=>{
-                let arr = []
-                if(res.returnCode===200){
-                    res.data.reverse().forEach((item)=>{
-                        if(item.resultList.length>0){
-                            arr = arr.concat(item.resultList)
-                        }
-                    })
-                    this.chapterList = arr
-                }
-            },'get')
-        },
-
-        getBookInfo(){
-            this.$ajax("/book-showBookInfo",{bookid:this.$route.params.bid},res=>{
-                if(res.returnCode===200){
-                    this.bookInfo = res.data
-                }
-            })
-        },
-
-        dragState(evt){
-            let val = evt.draggedContext
+    dragState(evt) {
+      const val = evt.draggedContext
             // console.log(val)
-            let moveState =  this.cloneList[val.index].volumeId === this.cloneList[val.futureIndex].volumeId && !this.cloneList[val.index].whetherPublic
-            if(!moveState){
-                if(this.newDrag){
-                    if(!this.cloneList[val.index].whetherPublic){
-                        this.$message({ message:'不同分卷不可调整顺序！', type:'warning', showClose:true })
-                    }
-                    this.newDrag = false
-                }
-            }
-            return moveState
-        },
+      const moveState = this.cloneList[val.index].volumeId === this.cloneList[val.futureIndex].volumeId && !this.cloneList[val.index].whetherPublic
+      if (!moveState) {
+        if (this.newDrag) {
+          if (!this.cloneList[val.index].whetherPublic) {
+            this.$message({ message: '不同分卷不可调整顺序！', type: 'warning', showClose: true })
+          }
+          this.newDrag = false
+        }
+      }
+      return moveState
+    },
 
         // 拖拽开始
-        dragStart(evt){
-            this.cloneList = JSON.parse(JSON.stringify(this.chapterList))
-            this.newDrag = true
-            if(this.cloneList[evt.oldIndex].whetherPublic){
-                this.$message({ message:'草稿箱内容不可调序',type:'warning',showClose:true})
-                return false
-            }
-        },
+    dragStart(evt) {
+      this.cloneList = JSON.parse(JSON.stringify(this.chapterList))
+      this.newDrag = true
+      if (this.cloneList[evt.oldIndex].whetherPublic) {
+        this.$message({ message: '草稿箱内容不可调序', type: 'warning', showClose: true })
+        return false
+      }
+    },
 
-        dragEnd(evt){
-            let oldNum = this.cloneList[evt.oldIndex]
-            let newNum = this.cloneList[evt.newIndex]
-            this.$myLoad()
-            this.$ajax("/sys-chapteOrderUpdate",{
-                startNum:oldNum.chapterOrder,
-                endNum:newNum.chapterOrder,
-                bookid:oldNum.bookId,
-                volumeid:oldNum.volumeId,
-                startChapterid:oldNum.id
-            },res=>{
-                this.$loading().close()
-                if(res.returnCode===200){
-                    this.getChapterList()
-                    this.$message({ message:'调整成功',type:'success',duration:2000,showClose:true})
-                }
-            })
-        },
+    dragEnd(evt) {
+      const oldNum = this.cloneList[evt.oldIndex]
+      const newNum = this.cloneList[evt.newIndex]
+      this.$myLoad()
+      this.$ajax('/sys-chapteOrderUpdate', {
+        startNum: oldNum.chapterOrder,
+        endNum: newNum.chapterOrder,
+        bookid: oldNum.bookId,
+        volumeid: oldNum.volumeId,
+        startChapterid: oldNum.id
+      }, res => {
+        this.$loading().close()
+        if (res.returnCode === 200) {
+          this.getChapterList()
+          this.$message({ message: '调整成功', type: 'success', duration: 2000, showClose: true })
+        }
+      })
+    },
 
         // 批量删除
-        toggleRowSelection(){
-            let idList = []
-            this.chapterList.forEach((item)=>{
-                if(item.check){
-                    idList.push(item.id)
-                }
-            })
-            if(idList.length){
-                this.$confirm('此操作将永久删除所选的 '+idList.length+' 个章节, 是否继续?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    this.$ajax("/admin/deletechapter",{
-                        chapterid:idList.toString()
-                    },res=>{
-                        if(res.returnCode===200){
-                            this.$message({message:'删除成功',type:'success'})
-                            this.getChapterList()
-                        }
-                    })
-                }).catch(() => {
-                    this.$message({
-                        type: 'info',
-                        message: '已取消删除'
-                    })
-                })
-            }else {
-                this.$message({message:'请选取要删除的章节！',type:'warning',showClose:true})
+    toggleRowSelection() {
+      const idList = []
+      this.chapterList.forEach((item) => {
+        if (item.check) {
+          idList.push(item.id)
+        }
+      })
+      if (idList.length) {
+        this.$confirm('此操作将永久删除所选的 ' + idList.length + ' 个章节, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$ajax('/admin/deletechapter', {
+            chapterid: idList.toString()
+          }, res => {
+            if (res.returnCode === 200) {
+              this.$message({ message: '删除成功', type: 'success' })
+              this.getChapterList()
             }
-        },
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+      } else {
+        this.$message({ message: '请选取要删除的章节！', type: 'warning', showClose: true })
+      }
+    },
 
-        selected(index){
-            let val = this.chapterList[index]
-            if(val.check){
-                this.$set(val,'check',false)
-            }else {
-                this.$set(val,'check',true)
-            }
-        },
+    selected(index) {
+      const val = this.chapterList[index]
+      if (val.check) {
+        this.$set(val, 'check', false)
+      } else {
+        this.$set(val, 'check', true)
+      }
+    },
 
-        selectAll(event){
-            if(event){
-                this.chapterList.forEach((item)=>{
-                    this.$set(item,'check',true)
-                })
-            }else{
-                this.chapterList.forEach((item)=>{
-                    this.$set(item,'check',false)
-                })
-            }
-        },
+    selectAll(event) {
+      if (event) {
+        this.chapterList.forEach((item) => {
+          this.$set(item, 'check', true)
+        })
+      } else {
+        this.chapterList.forEach((item) => {
+          this.$set(item, 'check', false)
+        })
+      }
+    },
 
-        handleSelectionChange(val){
-            this.multipleSelection = val
-        },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+    },
 
         // 点击行选中
-        handleRowClick(row){
-            this.$refs.multipleTable.toggleRowSelection(row)
-        },
-      
-        handleClick(val, data){
-            if(val==='a'){
-                this.$router.push({path:'/edit_chapter/'+data.id})
-            }else if(val==='b'){ }
-        },
-      
-        handleCurrentChange(page){
-            this.page = page
-            this.$router.push({params:{page:page}})
-        },
+    handleRowClick(row) {
+      this.$refs.multipleTable.toggleRowSelection(row)
+    },
+
+    handleClick(val, data) {
+      if (val === 'a') {
+        this.$router.push({ path: '/edit_chapter/' + data.id })
+      } else if (val === 'b') { }
+    },
+
+    handleCurrentChange(page) {
+      this.page = page
+      this.$router.push({ params: { page: page }})
+    },
 
         // 书籍上架下架
-        bookChangeState(val,data){
-            let state = data.bookCheckStatus,status = data.bookStatus
-            if(val==='a'){
+    bookChangeState(val, data) {
+      let state = data.bookCheckStatus, status = data.bookStatus
+      if (val === 'a') {
                 // 书籍审核
-                state = 1
-            }else if(val==='b'){
+        state = 1
+      } else if (val === 'b') {
                 // 书籍上架
-                if(data.bookCheckStatus===0){
-                    this.$message({message:'书籍暂未审核，请先审核通过！',type:'warning'})
-                }else {
-                    state = 2
-                }
-            }else if(val==='c'){
+        if (data.bookCheckStatus === 0) {
+          this.$message({ message: '书籍暂未审核，请先审核通过！', type: 'warning' })
+        } else {
+          state = 2
+        }
+      } else if (val === 'c') {
                 // 书籍下架
-                if(data.bookCheckStatus<=1){
-                    this.$message({message:'书籍已下架！',type:'warning'})
-                }else {
-                    state = 1
-                }
-            }else if(val==='d'){
-                status = 1
-            }
-            this.$ajax("/admin/sysbookupdate",{
-                bookId:data.bookId,
-                bookCheckStatus:state,
-                bookAuthorization:data.bookAuthorization,
-                bookStatus:status
-            },res=>{
-                if(res.returnCode===200){
-                    this.$message(res.msg)
-                    this.getBookList()
-                }
-            })
+        if (data.bookCheckStatus <= 1) {
+          this.$message({ message: '书籍已下架！', type: 'warning' })
+        } else {
+          state = 1
         }
-
-    },
-
-    created(){
-        this.getBookInfo()
-        this.getChapterList()
-    },
-
-    watch:{
-        $route:function () {
-            this.getChapterList()
+      } else if (val === 'd') {
+        status = 1
+      }
+      this.$ajax('/admin/sysbookupdate', {
+        bookId: data.bookId,
+        bookCheckStatus: state,
+        bookAuthorization: data.bookAuthorization,
+        bookStatus: status
+      }, res => {
+        if (res.returnCode === 200) {
+          this.$message(res.msg)
+          this.getBookList()
         }
-    },
+      })
+    }
 
-    computed:{
-        nowTime:function () {
-            let time = new Date().getTime()
-            this.$ajax("/sys-getNetWorkDateTime",'',res=>{
-                if(res.returnCode===200){
-                    time = res.data.beijing
-                }
-            },'get')
-            return time
-        },
-        authority:function () {
-            return this.$store.state.userInfo.adminRolemenuanduserrole?this.$store.state.userInfo.adminRolemenuanduserrole:{}
+  },
+
+  created() {
+    this.getBookInfo()
+    this.getChapterList()
+  },
+
+  watch: {
+    $route: function() {
+      this.getChapterList()
+    }
+  },
+
+  computed: {
+    nowTime: function() {
+      let time = new Date().getTime()
+      this.$ajax('/sys-getNetWorkDateTime', '', res => {
+        if (res.returnCode === 200) {
+          time = res.data.beijing
         }
+      }, 'get')
+      return time
     },
+    authority: function() {
+      return this.$store.state.userInfo.adminRolemenuanduserrole ? this.$store.state.userInfo.adminRolemenuanduserrole : {}
+    }
+  },
 
-    filters:{
-        checkState:function (val) {
+  filters: {
+    checkState: function(val) {
 //          for(let k=0,len=this.checkList.length;k<len;k++){
 //            if(val==this.checkList[i]){
 //                return true
 //            }
 //          }
-        }
     }
   }
+}
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">

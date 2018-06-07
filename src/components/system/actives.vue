@@ -143,136 +143,136 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import ElForm from "../../../node_modules/element-ui/packages/form/src/form";
-  export default{
-    components: {ElForm},
-    data(){
-      return{
-        custom:false,
-        currentType:'',
-        typeList:[],
-        searchValue:'', //推荐位类型ID
-        tableList:[],
-        dialogFormVisible:false,
-        formValue:{},
-        restaurant:[],
-        timeout:null,
-        dialogImageUrl:'',
-        dialogVisible:false
+  import ElForm from '../../../node_modules/element-ui/packages/form/src/form'
+export default{
+    components: { ElForm },
+    data() {
+      return {
+        custom: false,
+        currentType: '',
+        typeList: [],
+        searchValue: '', // 推荐位类型ID
+        tableList: [],
+        dialogFormVisible: false,
+        formValue: {},
+        restaurant: [],
+        timeout: null,
+        dialogImageUrl: '',
+        dialogVisible: false
       }
     },
-    methods:{
-      getRecommendList(){
-        this.$ajax('/sys-getRecommendedPosition',{},res=>{
-          if(res.returnCode===200){
-            this.typeList = res.data;
+    methods: {
+      getRecommendList() {
+        this.$ajax('/sys-getRecommendedPosition', {}, res => {
+          if (res.returnCode === 200) {
+            this.typeList = res.data
           }
         })
       },
-      getActivesRecommend(){
-          this.$ajax("/admin/sys-getActivityRecommendedPosition",res=>{
-              if(res.returnCode===200){
-                  this.tableList = res.data.app.concat(res.data.pc)
-              }
-          })
+      getActivesRecommend() {
+        this.$ajax('/admin/sys-getActivityRecommendedPosition', res => {
+          if (res.returnCode === 200) {
+            this.tableList = res.data.app.concat(res.data.pc)
+          }
+        })
       },
-      handleClick(val,type){
-        this.formValue = {};
-        this.$set(this.formValue,'showHide',val.showHide);
-        this.$set(this.formValue,'id',val.id);
-        this.$set(this.formValue,'diaType',type);
-        if(type==='small'){
-          this.$set(this.formValue,'activityImgURL','');
-        }else {
-          this.$set(this.formValue,'detailsImgAndPageURL','');
+      handleClick(val, type) {
+        this.formValue = {}
+        this.$set(this.formValue, 'showHide', val.showHide)
+        this.$set(this.formValue, 'id', val.id)
+        this.$set(this.formValue, 'diaType', type)
+        if (type === 'small') {
+          this.$set(this.formValue, 'activityImgURL', '')
+        } else {
+          this.$set(this.formValue, 'detailsImgAndPageURL', '')
         }
-        this.$nextTick(()=>{
-          this.dialogFormVisible = true;
-        });
+        this.$nextTick(() => {
+          this.dialogFormVisible = true
+        })
       },
-      handleCommand(e,row){
-          this.$ajax("/admin/HDupdateActivityRecommendedPosition",{
-              id:row.id,
-              showHide:row.showHide?0:1
-          },res=>{
-              if(res.returnCode===200){
-                  this.$message({message:res.msg,type:'success'});
-                  this.getActivesRecommend()
-              }
-          })
+      handleCommand(e, row) {
+        this.$ajax('/admin/HDupdateActivityRecommendedPosition', {
+          id: row.id,
+          showHide: row.showHide ? 0 : 1
+        }, res => {
+          if (res.returnCode === 200) {
+            this.$message({ message: res.msg, type: 'success' })
+            this.getActivesRecommend()
+          }
+        })
       },
 //      编辑推荐位信息
-      editActiveRecommend(){
-        let subData = ()=>{
-          delete this.formValue.diaType;
-          this.$ajax("/admin/HDupdateActivityRecommendedPosition",this.formValue,res=>{
-            this.dialogFormVisible = false;
-            if(res.returnCode===200){
-              this.$message({message:res.msg,type:'success'});
-              this.getActivesRecommend();
+      editActiveRecommend() {
+        const subData = () => {
+          delete this.formValue.diaType
+          this.$ajax('/admin/HDupdateActivityRecommendedPosition', this.formValue, res => {
+            this.dialogFormVisible = false
+            if (res.returnCode === 200) {
+              this.$message({ message: res.msg, type: 'success' })
+              this.getActivesRecommend()
             }
           })
-        };
-        if(this.formValue.diaType==='small'){
-          if(!this.formValue.activityImgURL ){
-            this.$message({message:'请先上传图片',type:'warning'});
-          }else {
+        }
+        if (this.formValue.diaType === 'small') {
+          if (!this.formValue.activityImgURL) {
+            this.$message({ message: '请先上传图片', type: 'warning' })
+          } else {
             subData()
           }
-        }else {
-          if(!this.custom){
-              if(this.formValue.detailsImgAndPageURL){
-                subData()
-              }else {
-                this.$message({message:'请先上传图片',type:'warning'});
-              }
-          }else {
-              if(!this.formValue.bookId){
-                this.$message({message:'请填写书籍ID',type:'warning'});
-                return false
-              }
+        } else {
+          if (!this.custom) {
+            if (this.formValue.detailsImgAndPageURL) {
               subData()
+            } else {
+              this.$message({ message: '请先上传图片', type: 'warning' })
+            }
+          } else {
+            if (!this.formValue.bookId) {
+              this.$message({ message: '请填写书籍ID', type: 'warning' })
+              return false
+            }
+            subData()
           }
         }
       },
-      onUploading(){
-          this.$loading({
-            lock: true,
-            text:'图片上传中...',
-            spinner: 'el-icon-loading',
-            background: 'rgba(0, 0, 0, 0.7)'
-          })
+      onUploading() {
+        this.$loading({
+          lock: true,
+          text: '图片上传中...',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        })
       },
-      beforeClose(){
-        this.custom = false;
+      beforeClose() {
+        this.custom = false
         this.dialogFormVisible = false
       },
-      handlePictureCard(file,filelist) {
-      
+      handlePictureCard(file, filelist) {
+  
       },
-      
+  
 //        上传成功后回调
-      successBack(res,file,filelist){
-        this.$loading().close();
-        if(res.returnCode===200){
-            if(this.formValue.diaType==='small'){
-                this.formValue.activityImgURL = res.data
-            }else {
-                this.formValue.detailsImgAndPageURL = res.data
-            }
-            this.$message({ message:'上传成功',type:"success" })
+      successBack(res, file, filelist) {
+        this.$loading().close()
+        if (res.returnCode === 200) {
+          if (this.formValue.diaType === 'small') {
+            this.formValue.activityImgURL = res.data
+          } else {
+            this.formValue.detailsImgAndPageURL = res.data
+          }
+          this.$message({ message: '上传成功', type: 'success' })
         }
       }
-    }
-    ,created(){
+    },
+    created() {
       this.getActivesRecommend()
-    }
-    ,watch:{
-      "searchValue":function () {
+    },
+    watch: {
+      'searchValue': function() {
         this.search()
       }
     }
-    
+  
   }
 </script>
 <style lang="stylus" rel="stylesheet/stylus">

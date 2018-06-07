@@ -6,17 +6,16 @@
 
 <script type="text/ecmascript-6">
 export default{
-    data() {
-        return {
-            title: ''
-        }
-    },
+  data() {
+    return {
+      title: ''
+    }
+  },
 
-    created() {
-        console.log(this.$store.state.system.str)
-        this.$store.dispatch('system/getPersonMmessage')
-    },
-
+  created() {
+    console.log(this.$store.state.system.str)
+    this.$store.dispatch('system/getPersonMmessage')
+  }
 
 }
 </script>

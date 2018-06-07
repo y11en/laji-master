@@ -94,51 +94,50 @@
 </template>
 <script type="text/ecmascript-6">
     export default{
-      data(){
-            return{
-              noticeType:[
-                {name:'首页公告',value:1},
-                {name:'滚动公告',value:2},
-                {name:'福利公告',value:3}
-              ],
-              currentType:1,
-              tableList:{}
-            };
-        },
-      methods:{
-        getNotice(){
-          this.$ajax("/admin/sys-getNotice",{menuId:this.currentType,page:this.$route.params.page},res=>{
-            if(res.returnCode===200){
+      data() {
+        return {
+          noticeType: [
+                { name: '首页公告', value: 1 },
+                { name: '滚动公告', value: 2 },
+                { name: '福利公告', value: 3 }
+          ],
+          currentType: 1,
+          tableList: {}
+        }
+  },
+      methods: {
+        getNotice() {
+          this.$ajax('/admin/sys-getNotice', { menuId: this.currentType, page: this.$route.params.page }, res => {
+            if (res.returnCode === 200) {
               this.tableList = res.data
             }
-          },'get')
+          }, 'get')
         },
-        delNotice(id){
+        delNotice(id) {
           this.$confirm('此操作将永久删除该公告, 是否继续?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            this.$ajax('/admin/sys-deleteNotice',{ id:id },res=>{
-              if(res.returnCode===200){
-                this.$message({message:'删除成功',type:'success'});
-                this.getNotice();
+            this.$ajax('/admin/sys-deleteNotice', { id: id }, res => {
+              if (res.returnCode === 200) {
+                this.$message({ message: '删除成功', type: 'success' })
+                this.getNotice()
               }
             })
           })
-          
         },
-        handleClick(val){
-          this.$router.push({path:'/system/edit_notice/'+val.id})
+        handleClick(val) {
+          this.$router.push({ path: '/system/edit_notice/' + val.id })
         }
       },
-      created(){
+      created() {
         this.getNotice()
       },
-      mounted(){
+      mounted() {
       },
-      watch:{
-        'currentType':function (val) {
+      watch: {
+        'currentType': function(val) {
           this.getNotice()
         }
       }

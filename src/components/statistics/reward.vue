@@ -106,94 +106,94 @@
 
 <script type="text/ecmascript-6">
   export default{
-    data(){
-      return{
-        searchForm:{
+    data() {
+      return {
+        searchForm: {
         },
-        defaultValue:null,
-        pickerOptions:{
+        defaultValue: null,
+        pickerOptions: {
           shortcuts: [{
             text: '本月',
             onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setDate(1);
-              picker.$emit('pick', [start,end]);
+              const end = new Date()
+              const start = new Date()
+              start.setDate(1)
+              picker.$emit('pick', [start, end])
             }
           }],
-          disabledDate(time){
+          disabledDate(time) {
             return time.getTime() > Date.now()
           }
         },
-        rewardCommentList:{},
-        keywords:'',
-        selectType:'bookName',
-        multipleSelection:[],
-        userInfo:{},
-        date:''
+        rewardCommentList: {},
+        keywords: '',
+        selectType: 'bookName',
+        multipleSelection: [],
+        userInfo: {},
+        date: ''
       }
     },
-    methods:{
-      getRewardStatisticList(){
-        this.searchForm = {};
-        this.searchForm.page = this.$route.params.page;
-        if(this.$route.params.uid){
-            this.searchForm.userId = this.$route.params.uid
+    methods: {
+      getRewardStatisticList() {
+        this.searchForm = {}
+        this.searchForm.page = this.$route.params.page
+        if (this.$route.params.uid) {
+          this.searchForm.userId = this.$route.params.uid
         }
-        if(this.selectType && this.keywords){
-          if((this.selectType==='bookId' || this.selectType==='userId') && !Number(this.keywords)){
-            this.$message({message:'ID必需为数字',type:'warning'});
+        if (this.selectType && this.keywords) {
+          if ((this.selectType === 'bookId' || this.selectType === 'userId') && !Number(this.keywords)) {
+            this.$message({ message: 'ID必需为数字', type: 'warning' })
             return false
           }
           this.searchForm[this.selectType] = this.keywords
         }
-        if(this.date){
-          this.searchForm.startdate	 = this.date[0] + ' 00:00:00';
+        if (this.date) {
+          this.searchForm.startdate	 = this.date[0] + ' 00:00:00'
           this.searchForm.enddate	 = this.date[1] + ' 23:59:59'
         }
-        this.$ajax("/admin/getAdminSpicyirewardticketList",this.searchForm,res=>{
-          if(res.returnCode===200){
+        this.$ajax('/admin/getAdminSpicyirewardticketList', this.searchForm, res => {
+          if (res.returnCode === 200) {
             this.rewardCommentList = res.data
-          }else if(!res.data){
+          } else if (!res.data) {
             this.rewardCommentList = {}
           }
         })
       },
-      searchReplyCom(){
-        if(this.$route.params.page==1){
+      searchReplyCom() {
+        if (this.$route.params.page == 1) {
           this.getRewardStatisticList()
-        }else {
-          this.$router.push({params:{page:1}})
+        } else {
+          this.$router.push({ params: { page: 1 }})
         }
       },
-      handleCurrentChange(page){
-        this.$router.push({params:{page:page}})
+      handleCurrentChange(page) {
+        this.$router.push({ params: { page: page }})
       },
-      getUserInfo(){
-          if(this.$route.params.uid){
-            this.$ajax("/person-SimplifyUserInfo",{puserid:this.$route.params.uid},res=>{
-                if(res.returnCode===200){
-                    this.userInfo = res.data
-                }
-            })
-          }
+      getUserInfo() {
+        if (this.$route.params.uid) {
+          this.$ajax('/person-SimplifyUserInfo', { puserid: this.$route.params.uid }, res => {
+            if (res.returnCode === 200) {
+              this.userInfo = res.data
+            }
+          })
+        }
       }
     },
-    created(){
-      if(this.$route.name==='staUserReward'){
-        this.date = [this.$formTime(new Date(new Date().setDate(1)),'sort'),this.$formTime(new Date(),'sort')]
+    created() {
+      if (this.$route.name === 'staUserReward') {
+        this.date = [this.$formTime(new Date(new Date().setDate(1)), 'sort'), this.$formTime(new Date(), 'sort')]
       }
-      this.getRewardStatisticList();
+      this.getRewardStatisticList()
       this.getUserInfo()
     },
-    watch:{
-      "$route":function () {
+    watch: {
+      '$route': function() {
         this.getRewardStatisticList()
       },
-      "date":function (val,old) {
-          if(old!==''){
-            this.getRewardStatisticList()
-          }
+      'date': function(val, old) {
+        if (old !== '') {
+          this.getRewardStatisticList()
+        }
       }
     }
   }

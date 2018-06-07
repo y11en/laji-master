@@ -60,145 +60,139 @@
 
 <script>
 export default {
-    data() {
-        return {
-            sensitiveWordsList: [],
-            sensitiveWordsVisible: false,
-            sensitiveWordsValue: '',
+  data() {
+    return {
+      sensitiveWordsList: [],
+      sensitiveWordsVisible: false,
+      sensitiveWordsValue: '',
 
-            stopWordsList: [],
-            stopWordsVisible: false,
-            stopWordsValue: '',
+      stopWordsList: [],
+      stopWordsVisible: false,
+      stopWordsValue: '',
 
-            warningWordsList: [],
-            warningWordsVisible: false,
-            warningWordsValue: '',
-            responseWord: function() {
-                this.$store.dispatch('getSensitiveWords').then(res => {
-                    this.sensitiveWordsList = res.sensitiveWords
-                    this.stopWordsList = res.stopWordsList
-                    this.warningWordsList = res.warningWords
-                })
-            },
+      warningWordsList: [],
+      warningWordsVisible: false,
+      warningWordsValue: '',
+      responseWord: function() {
+        this.$store.dispatch('getSensitiveWords').then(res => {
+          this.sensitiveWordsList = res.sensitiveWords
+          this.stopWordsList = res.stopWordsList
+          this.warningWordsList = res.warningWords
+        })
+      },
             // 判断元素是否在数组中存在
-            contains: function(arr, obj) {
-                var i = arr.length
-                while (i--) {
-                    if (arr[i] === obj) return true
-                }
-                return false
-            }
-
+      contains: function(arr, obj) {
+        var i = arr.length
+        while (i--) {
+          if (arr[i] === obj) return true
         }
-    },
-    methods: {
+        return false
+      }
 
-        handleAddWord(str) {
-            if(str === '敏感词') {
-                let word = this.sensitiveWordsValue
-                if (word) {
-                    if(this.contains(this.sensitiveWordsList, word))
-                        this.$message({ message: '词汇重复，请重新输入！', type: 'warning' })
-                    else{
-                        this.$store.dispatch('changeSensitiveWords', { type: '1', world: word })
-                        .then(res => {
-                            this.responseWord()
-                            this.$message({ message: '添加成功！', type: 'success' })
-                            this.sensitiveWordsVisible = false
-                            this.sensitiveWordsValue = ''
-                        })
-                    }
-                }else this.sensitiveWordsVisible = false
-            }else if(str === '停顿词') {
-                let word = this.stopWordsValue
-                if (word) {
-                    if(this.contains(this.stopWordsList, word))
-                        this.$message({ message: '词汇重复，请重新输入！', type: 'warning' })
-                    else{
-                        this.$store.dispatch('changeSensitiveWords', { type: '2', world: word })
-                        .then(res => {
-                            this.responseWord()
-                            this.$message({ message: '添加成功！', type: 'success' })
-                            this.stopWordsVisible = false
-                            this.stopWordsValue = ''
-                        })
-                    }
-                }else this.stopWordsVisible = false
-            }else if(str === '警告词') {
-                let word = this.warningWordsValue
-                if (word) {
-                    if(this.contains(this.warningWordsList, word))
-                        this.$message({ message: '词汇重复，请重新输入！', type: 'warning' })
-                    else{
-                        this.$store.dispatch('changeSensitiveWords', { type: '3', world: word })
-                        .then(res => {
-                            this.responseWord()
-                            this.$message({ message: '添加成功！', type: 'success' })
-                            this.warningWordsVisible = false
-                            this.warningWordsValue = ''
-                        })
-                    }
-                }else this.warningWordsVisible = false
-            }
-        },
-
-        handleDeleteWord(str, tag) {
-            this.$confirm('确定删除该词语, 是否继续?', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            }).then(() => {
-                if(str === '敏感词') {
-                    this.$store.dispatch('changeSensitiveWords', { type: '4', world: tag }).then(res => {
-                        this.responseWord()
-                        this.$message({ message: '添加成功！', type: 'success' })
-                        this.sensitiveWordsVisible = false
-                        this.sensitiveWordsValue = ''
-                    })
-                }else if(str === '停顿词') {
-                    this.$store.dispatch('changeSensitiveWords', { type: '5', world: tag }).then(res => {
-                        this.responseWord()
-                        this.$message({ message: '添加成功！', type: 'success' })
-                        this.stopWordsVisible = false
-                        this.stopWordsValue = ''
-                    })
-                }else if(str === '警告词') {
-                    this.$store.dispatch('changeSensitiveWords', { type: '6', world: tag }).then(res => {
-                        this.responseWord()
-                        this.$message({ message: '添加成功！', type: 'success' })
-                        this.warningWordsVisible = false
-                        this.warningWordsValue = ''
-                    })
-                }
-            }).catch(() => {
-                this.$message({ type: 'info', message: '已取消删除' })
-            })
-        },
-
-        showInput(str) {
-            if(str === '敏感词') {
-                this.sensitiveWordsVisible = true
-                this.$nextTick(_ => {
-                    this.$refs.sensitiveWordsValue.$refs.input.focus()
-                })
-            }else if(str === '停顿词') {
-                this.stopWordsVisible = true
-                this.$nextTick(_ => {
-                    this.$refs.stopWordsValue.$refs.input.focus()
-                })
-            }else if(str === '警告词') {
-                this.warningWordsVisible = true
-                this.$nextTick(_ => {
-                    this.$refs.warningWordsValue.$refs.input.focus()
-                })
-            }
-        }
-        
-    },
-    created(){
-        this.responseWord()
     }
+  },
+  methods: {
+
+    handleAddWord(str) {
+      if (str === '敏感词') {
+        const word = this.sensitiveWordsValue
+        if (word) {
+          if (this.contains(this.sensitiveWordsList, word)) { this.$message({ message: '词汇重复，请重新输入！', type: 'warning' }) } else {
+            this.$store.dispatch('changeSensitiveWords', { type: '1', world: word })
+                        .then(res => {
+                          this.responseWord()
+                          this.$message({ message: '添加成功！', type: 'success' })
+                          this.sensitiveWordsVisible = false
+                          this.sensitiveWordsValue = ''
+                        })
+          }
+        } else this.sensitiveWordsVisible = false
+      } else if (str === '停顿词') {
+        const word = this.stopWordsValue
+        if (word) {
+          if (this.contains(this.stopWordsList, word)) { this.$message({ message: '词汇重复，请重新输入！', type: 'warning' }) } else {
+            this.$store.dispatch('changeSensitiveWords', { type: '2', world: word })
+                        .then(res => {
+                          this.responseWord()
+                          this.$message({ message: '添加成功！', type: 'success' })
+                          this.stopWordsVisible = false
+                          this.stopWordsValue = ''
+                        })
+          }
+        } else this.stopWordsVisible = false
+      } else if (str === '警告词') {
+        const word = this.warningWordsValue
+        if (word) {
+          if (this.contains(this.warningWordsList, word)) { this.$message({ message: '词汇重复，请重新输入！', type: 'warning' }) } else {
+            this.$store.dispatch('changeSensitiveWords', { type: '3', world: word })
+                        .then(res => {
+                          this.responseWord()
+                          this.$message({ message: '添加成功！', type: 'success' })
+                          this.warningWordsVisible = false
+                          this.warningWordsValue = ''
+                        })
+          }
+        } else this.warningWordsVisible = false
+      }
+    },
+
+    handleDeleteWord(str, tag) {
+      this.$confirm('确定删除该词语, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        if (str === '敏感词') {
+          this.$store.dispatch('changeSensitiveWords', { type: '4', world: tag }).then(res => {
+            this.responseWord()
+            this.$message({ message: '添加成功！', type: 'success' })
+            this.sensitiveWordsVisible = false
+            this.sensitiveWordsValue = ''
+          })
+        } else if (str === '停顿词') {
+          this.$store.dispatch('changeSensitiveWords', { type: '5', world: tag }).then(res => {
+            this.responseWord()
+            this.$message({ message: '添加成功！', type: 'success' })
+            this.stopWordsVisible = false
+            this.stopWordsValue = ''
+          })
+        } else if (str === '警告词') {
+          this.$store.dispatch('changeSensitiveWords', { type: '6', world: tag }).then(res => {
+            this.responseWord()
+            this.$message({ message: '添加成功！', type: 'success' })
+            this.warningWordsVisible = false
+            this.warningWordsValue = ''
+          })
+        }
+      }).catch(() => {
+        this.$message({ type: 'info', message: '已取消删除' })
+      })
+    },
+
+    showInput(str) {
+      if (str === '敏感词') {
+        this.sensitiveWordsVisible = true
+        this.$nextTick(_ => {
+          this.$refs.sensitiveWordsValue.$refs.input.focus()
+        })
+      } else if (str === '停顿词') {
+        this.stopWordsVisible = true
+        this.$nextTick(_ => {
+          this.$refs.stopWordsValue.$refs.input.focus()
+        })
+      } else if (str === '警告词') {
+        this.warningWordsVisible = true
+        this.$nextTick(_ => {
+          this.$refs.warningWordsValue.$refs.input.focus()
+        })
+      }
+    }
+
+  },
+  created() {
+    this.responseWord()
   }
+}
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">

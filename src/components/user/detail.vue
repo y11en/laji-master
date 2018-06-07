@@ -256,42 +256,42 @@
   export default {
     data() {
       var checkAutograph = (rule, value, callback) => {
-        if (value && value.length>20) {
-          callback(new Error("总长度不可超过20个字符"));
-        }else {
+        if (value && value.length > 20) {
+          callback(new Error('总长度不可超过20个字符'))
+        } else {
           callback()
         }
-      };
-  
+      }
+
       var checkCradId = (rule, value, callback) => {
         if (value) {
-          let state = this.$checkCardId(value);
-          if(!state.pass){
+          const state = this.$checkCardId(value)
+          if (!state.pass) {
             callback(new Error(state.msg))
-          }else {
+          } else {
             callback()
           }
-        }else {
+        } else {
           callback()
         }
-      };
-      
+      }
+  
       var checkAge = (rule, value, callback) => {
         if (!value) {
-          return callback(new Error('年龄不能为空'));
+          return callback(new Error('年龄不能为空'))
         }
         setTimeout(() => {
           if (!Number.isInteger(value)) {
-            callback(new Error('请输入数字值'));
+            callback(new Error('请输入数字值'))
           } else {
             if (value < 18) {
-              callback(new Error('必须年满18岁'));
+              callback(new Error('必须年满18岁'))
             } else {
-              callback();
+              callback()
             }
           }
-        }, 1000);
-      };
+        }, 1000)
+      }
       return {
         rules: {
           userAutograph: [
@@ -301,51 +301,51 @@
             { validator: checkCradId, trigger: 'blur' }
           ]
         },
-        userDetailInfo:{
-          userAutograph:'',
-          userIdentityCard:''
+        userDetailInfo: {
+          userAutograph: '',
+          userIdentityCard: ''
         }
-      };
-    },
+      }
+  },
     methods: {
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            let subData = JSON.parse(JSON.stringify(this.userDetailInfo));
-            subData.userBorndate = subData.userBorndate + ' 00:00:00';
-            this.$ajax("/admin/updateUserInfo",subData,res=>{
-              if(res.returnCode===200){
-                this.$message({ message:'更新成功',type:'success' });
+            const subData = JSON.parse(JSON.stringify(this.userDetailInfo))
+            subData.userBorndate = subData.userBorndate + ' 00:00:00'
+            this.$ajax('/admin/updateUserInfo', subData, res => {
+              if (res.returnCode === 200) {
+                this.$message({ message: '更新成功', type: 'success' })
                 this.getUserInfo()
               }
             })
           } else {
-            this.$message({message:"请检查信息是否完整",type:'warning'});
-            return false;
+            this.$message({ message: '请检查信息是否完整', type: 'warning' })
+            return false
           }
-        });
+        })
       },
       resetForm(formName) {
-        this.$refs[formName].resetFields();
+        this.$refs[formName].resetFields()
       },
-      
-      getUserInfo(){
-        this.$ajax("/admin/showUserInfo",{userid:this.$route.params.rid},res=>{
-            if(res.returnCode===200){
-              delete res.data.userPassword;
-              res.data.originGrade = JSON.parse(JSON.stringify(res.data.integration));
-              res.data.integration = '';
-              res.data.lastLogTime = this.$formTime(res.data.lastLogTime,'long');
-              res.data.nowLoginTime = this.$formTime(res.data.nowLoginTime,'long');
-              res.data.userBorndate = this.$formTime(res.data.userBorndate);
-              res.data.userCreateDate = this.$formTime(res.data.userCreateDate,'long');
-              this.userDetailInfo = res.data;
-            }
+  
+      getUserInfo() {
+        this.$ajax('/admin/showUserInfo', { userid: this.$route.params.rid }, res => {
+          if (res.returnCode === 200) {
+            delete res.data.userPassword
+            res.data.originGrade = JSON.parse(JSON.stringify(res.data.integration))
+            res.data.integration = ''
+            res.data.lastLogTime = this.$formTime(res.data.lastLogTime, 'long')
+            res.data.nowLoginTime = this.$formTime(res.data.nowLoginTime, 'long')
+            res.data.userBorndate = this.$formTime(res.data.userBorndate)
+            res.data.userCreateDate = this.$formTime(res.data.userCreateDate, 'long')
+            this.userDetailInfo = res.data
+          }
         })
       }
     },
-    created(){
-        this.getUserInfo()
+    created() {
+      this.getUserInfo()
     }
   }
 </script>

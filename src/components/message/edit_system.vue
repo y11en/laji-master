@@ -33,83 +33,83 @@
 </template>
 <script type="text/ecmascript-6">
   export default{
-    data(){
-      let validateContent = (rule, value, callback) => {
-        if (this.$http.trim(value).length<1) {
-          callback(new Error('请添加详情内容！'));
+    data() {
+      const validateContent = (rule, value, callback) => {
+        if (this.$http.trim(value).length < 1) {
+          callback(new Error('请添加详情内容！'))
         } else {
-          callback();
+          callback()
         }
-      };
-      return{
+      }
+      return {
         ruleForm: {
-          userId:'',
-          userName: '', //发布人
-          title:'', //标题
-          messageContent: '' //公告内容
+          userId: '',
+          userName: '', // 发布人
+          title: '', // 标题
+          messageContent: '' // 公告内容
         },
         rules: {
           title: [
             { required: true, message: '请输入活动名称', trigger: 'blur' },
             { min: 3, message: '长度不可少于3个字符', trigger: 'blur' }
           ],
-          userName:[
-            { required:true ,message:'请填写发布人' , trigger:'blur' }
+          userName: [
+            { required: true, message: '请填写发布人', trigger: 'blur' }
           ],
           messageContent: [
-            { required:true,message: '请填写内容', trigger: 'blur' }
+            { required: true, message: '请填写内容', trigger: 'blur' }
           ]
         }
-      };
-    },
-    methods:{
+      }
+  },
+    methods: {
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
-          let url = '/admin/sys-addsMessage';
-          if(this.$route.name==='mesEditMessage'){
+          let url = '/admin/sys-addsMessage'
+          if (this.$route.name === 'mesEditMessage') {
             url = '/admin/updatePublishanotice'
           }
           if (valid) {
-            let copy = JSON.parse(JSON.stringify(this.ruleForm));
-            copy.messageContent = copy.messageContent.replace(/ +|　+/g,'');
-            this.$ajax(url,copy,res=>{
-              if(res.returnCode===200){
-                this.$message({message:res.msg,type:'success'});
-                if(this.$route.name==='mesEditMessage'){
+            const copy = JSON.parse(JSON.stringify(this.ruleForm))
+            copy.messageContent = copy.messageContent.replace(/ +|　+/g, '')
+            this.$ajax(url, copy, res => {
+              if (res.returnCode === 200) {
+                this.$message({ message: res.msg, type: 'success' })
+                if (this.$route.name === 'mesEditMessage') {
                   this.getMessageById()
                 }
               }
             })
           } else {
-            this.$message({message:'请完善信息后提交！',type:'warning'});
-            return false;
+            this.$message({ message: '请完善信息后提交！', type: 'warning' })
+            return false
           }
-        });
+        })
       },
-      getMessageById(){
-        this.$ajax("/admin/sys-getMessageById",{
-          noticeid:this.$route.params.id
-        },res=>{
-          if(res.returnCode===200){
-            delete res.data.releaseDate;
-            this.ruleForm = res.data;
+      getMessageById() {
+        this.$ajax('/admin/sys-getMessageById', {
+          noticeid: this.$route.params.id
+        }, res => {
+          if (res.returnCode === 200) {
+            delete res.data.releaseDate
+            this.ruleForm = res.data
           }
-        },'get')
+        }, 'get')
       },
       resetForm() {
         this.getMessageById()
       }
     },
-    created(){
-      this.ruleForm.userId = this.$store.state.userInfo.adminInfo.userId;
-      if(this.$route.name==='mesEditMessage'){
-        this.getMessageById();
+    created() {
+      this.ruleForm.userId = this.$store.state.userInfo.adminInfo.userId
+      if (this.$route.name === 'mesEditMessage') {
+        this.getMessageById()
       }
     },
-    watch:{
-        "ruleForm.messageContent":function (val) {
-          this.ruleForm.messageContent = val.replace(/\s*\n\s*/g,'\n　　')
-        }
+    watch: {
+      'ruleForm.messageContent': function(val) {
+        this.ruleForm.messageContent = val.replace(/\s*\n\s*/g, '\n　　')
+      }
     }
   }
 </script>

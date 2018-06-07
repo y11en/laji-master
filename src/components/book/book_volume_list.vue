@@ -90,135 +90,134 @@
 
 <script type="text/ecmascript-6">
     export default{
-      data(){
-        let validateVolume =(rule, value, callback)=>{
-          if(!this.$http.trim(value).length){
-              return callback(new Error('请填写分卷名'))
-          }else {
-              return callback()
-          }
-        };
-        return{
-          dialogType:'add',
-          bookInfo:{},
-          centerDialogVisible:false,
-          volumeList:[],
-          subData:{
-            volumeName:'',
-            bookName:'',
-            bookid:''
-          },
-          page:1,
-          multipleSelection:[],
-          rules:{
-            volumeName:[
-                {validator: validateVolume, trigger: 'blur' }
-            ],
-            volumeOrder:[
-              {required:true,type:'number',message:'卷序列号不能为空'},
-              {type:'number',message:'序列号必须为数字'}
-            ]
+      data() {
+        const validateVolume = (rule, value, callback) => {
+          if (!this.$http.trim(value).length) {
+            return callback(new Error('请填写分卷名'))
+          } else {
+            return callback()
           }
         }
+    return {
+      dialogType: 'add',
+      bookInfo: {},
+      centerDialogVisible: false,
+      volumeList: [],
+      subData: {
+        volumeName: '',
+        bookName: '',
+        bookid: ''
       },
-      methods:{
-        getBookInfo(){
-         this.$ajax("/book-showBookInfo",{ bookid:this.$route.params.bid },res=>{
-           if(res.returnCode===200){
-             this.bookInfo = res.data;
-             this.getVolumeList()
-           }
-         })
+      page: 1,
+      multipleSelection: [],
+      rules: {
+        volumeName: [
+                { validator: validateVolume, trigger: 'blur' }
+        ],
+        volumeOrder: [
+              { required: true, type: 'number', message: '卷序列号不能为空' },
+              { type: 'number', message: '序列号必须为数字' }
+        ]
+      }
+    }
+      },
+      methods: {
+        getBookInfo() {
+          this.$ajax('/book-showBookInfo', { bookid: this.$route.params.bid }, res => {
+            if (res.returnCode === 200) {
+              this.bookInfo = res.data
+              this.getVolumeList()
+            }
+          })
         },
-        getVolumeList(){
-          this.$ajax("/books-getvolume",{ bookId:this.$route.params.bid },res=>{
-            if(res.returnCode===200){
+        getVolumeList() {
+          this.$ajax('/books-getvolume', { bookId: this.$route.params.bid }, res => {
+            if (res.returnCode === 200) {
               this.volumeList = res.data
             }
           })
         },
 //        新建分卷/编辑分卷
-        submitForm(formName){
+        submitForm(formName) {
           this.$refs[formName].validate((valid) => {
-            this.subData.volumeName = this.$http.trim(this.subData.volumeName);
-            if(Math.floor(this.subData.volumeOrder)<1 || this.subData.volumeOrder!==Math.floor(this.subData.volumeOrder)){this.$message({message:'序列号必须用大于0的正整数！',type:'error'});return false}
+            this.subData.volumeName = this.$http.trim(this.subData.volumeName)
+            if (Math.floor(this.subData.volumeOrder) < 1 || this.subData.volumeOrder !== Math.floor(this.subData.volumeOrder)) { this.$message({ message: '序列号必须用大于0的正整数！', type: 'error' }); return false }
             if (valid) {
-              if(this.dialogType==='edit'){
-                
-                this.$ajax("/books-updatevolume",this.subData,res=>{
-                  this.centerDialogVisible = false;
-                  if(res.returnCode===200){
-                    this.getVolumeList();
-                    this.$message({message:'修改成功',type:'success'})
+              if (this.dialogType === 'edit') {
+                this.$ajax('/books-updatevolume', this.subData, res => {
+                  this.centerDialogVisible = false
+                  if (res.returnCode === 200) {
+                    this.getVolumeList()
+                    this.$message({ message: '修改成功', type: 'success' })
                   }
                 })
-              }else {
-                this.$ajax('/books-getCheckVolume',{
-                  bookid:this.subData.bookid,
-                  volumeName:this.subData.volumeName
-                },res=>{
-                  if(res.returnCode===200){
-                    this.$ajax("/books-addvolume",this.subData,res2=>{
-                      this.centerDialogVisible = false;
-                      if(res2.returnCode===200){
-                        this.getVolumeList();
-                        this.$message({ message:'创建成功！',type:'success' })
+              } else {
+                this.$ajax('/books-getCheckVolume', {
+                  bookid: this.subData.bookid,
+                  volumeName: this.subData.volumeName
+                }, res => {
+                  if (res.returnCode === 200) {
+                    this.$ajax('/books-addvolume', this.subData, res2 => {
+                      this.centerDialogVisible = false
+                      if (res2.returnCode === 200) {
+                        this.getVolumeList()
+                        this.$message({ message: '创建成功！', type: 'success' })
                       }
                     })
-                  }else {
+                  } else {
                     this.centerDialogVisible = false
                   }
                 })
               }
             } else {
-              this.$message({message:'请完善信息后提交！',type:'warning'});
-              return false;
+              this.$message({ message: '请完善信息后提交！', type: 'warning' })
+              return false
             }
-          });
-        },
+          })
+    },
 
 //        调用弹窗
-        handleVolume(type,row){
-          this.dialogType = type;
-          this.centerDialogVisible = true;
-          if(row){
+        handleVolume(type, row) {
+          this.dialogType = type
+          this.centerDialogVisible = true
+          if (row) {
             this.subData = row
-          }else {
+          } else {
             this.subData = {
-              volumeName:'',
-              bookName:this.bookInfo.bookName,
-              bookid:this.bookInfo.bookId,
-              volumeOrder:this.maxOrder+1
+              volumeName: '',
+              bookName: this.bookInfo.bookName,
+              bookid: this.bookInfo.bookId,
+              volumeOrder: this.maxOrder + 1
             }
           }
         },
 //        删除分卷
-        handleDelete(row){
-          this.$ajax("/books-deletevolume",{volumeId:row.id},res=>{
-              if(res.returnCode===200){
-                  this.getVolumeList();
-                  this.$message({message:'删除成功',type:'success'})
-              }
+        handleDelete(row) {
+          this.$ajax('/books-deletevolume', { volumeId: row.id }, res => {
+            if (res.returnCode === 200) {
+              this.getVolumeList()
+              this.$message({ message: '删除成功', type: 'success' })
+            }
           })
         }
       },
-      created(){
+      created() {
         this.getBookInfo()
       },
-      watch:{
-        $route:function () {
+      watch: {
+        $route: function() {
           this.getVolumeList()
         }
       },
-      computed:{
-          maxOrder:function () {
-            let arr = [];
-            this.volumeList.forEach((item)=>{
-              arr.push(item.volumeOrder)
-            });
-            let order = Math.max.apply(null,arr);
-            return order
-          }
+      computed: {
+        maxOrder: function() {
+          const arr = []
+          this.volumeList.forEach((item) => {
+            arr.push(item.volumeOrder)
+          })
+          const order = Math.max.apply(null, arr)
+          return order
+        }
       }
     }
 </script>
