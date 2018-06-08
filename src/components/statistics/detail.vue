@@ -101,53 +101,63 @@
         </el-pagination>
     </el-row>
 
-    <el-dialog title="提示" :visible.sync="outerVisible" width="30%">
+    <el-dialog title="提示" :visible.sync="outerVisible">
         <p class="title">请选择时间</p>
         <el-date-picker
-            v-model="timeRange"
-            type="daterange"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期">
+          v-model="timeRange"
+          type="date"
+          style="margin: 20px 0"
+          placeholder="选择日期">
         </el-date-picker>
-        <div v-if="performanceReview[0].counts != 0">
-            <p>{{'书籍名称：' + performanceReview[0].bookTitle}}</p>
-            <p>{{'发布字数：' + performanceReview[0].sumWorld}}</p>
-            <p>{{'发布数量：' + performanceReview[0].counts}}</p>
-            <p>{{'创建字数：' + performanceReview[1].sumWorld}}</p>
-            <p>{{'创建数量：' + performanceReview[1].counts}}</p>
-            <i class="fa fa-eye" @click="ChapterInfoByTime()"></i>
-        </div>
-        <div v-if="performanceReview[0].counts == 0">
-            <p>暂无数据</p>
-        </div>
-        <span slot="footer" class="dialog-footer">
-            <el-button @click="outerVisible = false; timeRange = []">取 消</el-button>
-            <el-button type="primary" @click="queryInfo()">确 定</el-button>
-        </span>
-         
-        <el-dialog  width="30%" title="内层 Dialog" :visible.sync="innerVisible" append-to-body>
-            <el-table :data="byTimeData" style="width: 100%" border>
-                <el-table-column prop="bookId" label="ID"></el-table-column>
-                <el-table-column prop="bookTitle" label="书籍名"></el-table-column>
-                <el-table-column prop="chapterTitle" label="章节名"></el-table-column>
-                <el-table-column prop="chapterLength" label="章节字数"></el-table-column>
-                <el-table-column label="创建时间">
-                    <template slot-scope="scope">
-                        <span >{{ scope.row.createChapterTime | time('long') }}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column label="发布时间">
-                    <template slot-scope="scope">
-                        <span >{{ scope.row.releaseTime | time('long') }}</span>
-                    </template>
-                </el-table-column>
-      
-            </el-table>
-        </el-dialog>
-    </el-dialog>
 
-    
+        <el-button @click="queryInfo()" type="primary" round style="float: right; margin: 20px;">查 询</el-button>
+
+        <el-table  :data="performanceReview" style="width: 100%; margin-bottom: 40px" border>
+          <el-table-column prop="bookTitle" label="书籍名称"></el-table-column>
+          <el-table-column prop="sumWorld1" label="发布字数"></el-table-column>
+          <el-table-column prop="counts1" label="发布数量"></el-table-column>
+          <el-table-column prop="sumWorld2" label="创建字数"></el-table-column>
+          <el-table-column prop="counts2" label="创建数量"></el-table-column>
+          <el-table-column prop="releaseTime" label="发布是否过审">
+            <template slot-scope="scope">
+              <i class="el-icon-success" v-if="scope.row.releaseTime >= 7"></i>
+              <i class="el-icon-error" v-if="scope.row.releaseTime < 7"></i>
+            </template>
+          </el-table-column>
+          <el-table-column label="创建是否过审">
+            <template slot-scope="scope">
+              <i class="el-icon-success" v-if="scope.row.createUpdateCount >= 7"></i>
+              <i class="el-icon-error" v-if="scope.row.createUpdateCount < 7"></i>
+            </template>
+          </el-table-column>
+          <el-table-column prop="counts2" label="操作">
+            <template slot-scope="scope">
+              <el-button @click="chapterInfoByTime()" type="text" size="small">更新预览</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        
+        <el-table :data="byTimeData" style="width: 100%" border height="300">
+          <el-table-column prop="bookId" label="ID"></el-table-column>
+          <el-table-column prop="bookTitle" label="书籍名"></el-table-column>
+          <el-table-column prop="chapterTitle" label="章节名"></el-table-column>
+          <el-table-column prop="chapterLength" label="章节字数"></el-table-column>
+          <el-table-column label="创建时间">
+            <template slot-scope="scope">
+              <span >{{ scope.row.createChapterTime | time('long') }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="发布时间">
+            <template slot-scope="scope">
+                <span >{{ scope.row.releaseTime | time('long') }}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="outerVisible = false">关 闭</el-button>
+        </span>
+    </el-dialog>
 </div>
 </template>
 
@@ -169,8 +179,8 @@ export default{
       innerVisible: false,
       timeRange: [],
       bookId: '',
-      performanceReview: [{ counts: 0 }, { counts: 0 }],
-      byTimeData: {}
+      performanceReview: [],
+      byTimeData: []
     }
   },
 
@@ -204,7 +214,7 @@ export default{
       }
     },
 
-        // 批量删除书籍
+    // 批量删除书籍
     toggleSelection() {
       if (this.multipleSelection.length) {
         const id = []
@@ -266,7 +276,7 @@ export default{
       this.$router.push({ params: { page: page }})
     },
 
-        // 书籍上架下架
+    // 书籍上架下架
     bookChangeState(val, data) {
       let state = data.bookCheckStatus, status = data.bookStatus
       if (val === 'a') {
@@ -309,23 +319,36 @@ export default{
     },
 
     queryInfo() {
+      this.performanceReview = []
       var data = {
         bookId: this.bookId,
-        startTime: this.format(this.timeRange[0], 'start'),
-        endTime: this.format(this.timeRange[1], 'end')
+        startTime: this.format(new Date(this.timeRange-31*24*3600*1000), 'start'),
+        endTime: this.format(this.timeRange, 'end')
       }
       this.$store.dispatch('getAuthorPerformanceReview', data).then(res => {
         if (res.returnCode === 200) {
-          this.performanceReview = res.data
+          if(res.data[0].counts !=0) {
+            var obj = {}
+            obj.bookTitle = res.data[0].bookTitle
+            obj.sumWorld1 = res.data[0].sumWorld
+            obj.counts1 = res.data[0].counts
+            obj.sumWorld2 = res.data[1].sumWorld
+            obj.counts2 = res.data[1].counts
+            obj.releaseTime = res.data[2].releaseTime
+            obj.createUpdateCount = res.data[2].createUpdateCount
+            this.performanceReview.push(obj)
+          }
         }
       })
     },
-        // 某个时间段的章节更新详细信息
-    ChapterInfoByTime() {
+
+    // 某个时间段的章节更新详细信息
+    chapterInfoByTime() {
+      this.byTimeData = []
       var data = {
         bookId: this.bookId,
-        startTime: this.format(this.timeRange[0], 'start'),
-        endTime: this.format(this.timeRange[1], 'end')
+        startTime: this.format(new Date(this.timeRange-31*24*3600*1000), 'start'),
+        endTime: this.format(this.timeRange, 'end')
       }
       this.$store.dispatch('getChapterInfoByTime', data).then(res => {
         if (res.returnCode === 200) {
@@ -335,7 +358,7 @@ export default{
       })
     },
 
-        // 时间格式化
+    // 时间格式化
     format(time, type) {
       const year = time.getFullYear()
       const month = time.getMonth() + 1 < 10 ? '0' + (time.getMonth() + 1) : time.getMonth() + 1
@@ -346,16 +369,30 @@ export default{
         var newTime = year + '-' + month + '-' + date + ' 23:59:59'
       }
       return newTime
+    },
+
+    // 默认时间
+    defaultTime() {
+      var date = new Date()
+      this.timeRange = date
     }
   },
 
   created() {
     this.getBookList()
+    this.defaultTime()
   },
 
   watch: {
     $route: function() {
       this.getBookList()
+    },
+    outerVisible: function(value) {
+      if(value === false) {
+        this.defaultTime()
+        this.byTimeData = []
+        this.performanceReview = []
+      }
     }
   }
 }

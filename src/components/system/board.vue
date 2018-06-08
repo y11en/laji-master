@@ -76,27 +76,19 @@
                 </el-col>
             </el-row>
         </div>
-
+        <div id="chinaCensus" style="width: 100%; height: 600px;"></div>
         <!-- <div id="tswkCartogram" style="width: 100%; height:800px;"></div> -->
         <!-- <div id="watchCartogram" style="width: 100%; height:800px;"></div> -->
     </div>
 </template>
 <script type="text/ecmascript-6">
-import Vue from 'vue'
 export default{
   data() {
     return {
       module1: false,
       module2: false,
       module3: false,
-
       today: '',
-      getToday: () => {
-        var time = new Date()
-        var month = time.getMonth() >= 10 ? time.getMonth() : '0' + time.getMonth()
-        var second = time.getSeconds() >= 10 ? time.getSeconds() : '0' + time.getSeconds()
-        return time.getFullYear() + '年' + month + '月' + time.getDate() + '日 ' + this.weekDay[time.getDay()] + ' ' + time.getHours() + ':' + time.getMinutes() + ':' + second
-      },
       weekDay: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
       timing: null,
 
@@ -114,6 +106,12 @@ export default{
             break
           case 'totalIP':
             msg = '总点击'
+            break
+          case 'WapPV':
+            msg = 'WapPV'
+            break
+          case 'WapUV':
+            msg = 'WapUV'
             break
 
           case 'NewBookRecordCount':
@@ -288,53 +286,19 @@ export default{
           case 'webLoginCount':
             msg = 'PC登录数量'
             break
-
-          case '/api/person-info':
-            msg = '查询用户信息'
-            break
-          case '/api/book-bookInfo':
-            msg = '获取书籍信息'
-            break
-          case '/api/comm-HotCommentInfo':
-            msg = '加载热评'
-            break
-          case '/api/book-read':
-            msg = '阅读小说'
-            break
-          case '/api/userRmemberChose':
-            msg = 'getRmemberChose'
-            break
-          case '/api/bookshelf-recommendPosition':
-            msg = '获取书架推荐'
-            break
-          case '/api/user-signinstate':
-            msg = '校验用户是否签到'
-            break
-          case '/api/bookshelf-getuserbookshelf':
-            msg = '获取用户书架'
-            break
-          case '/api/hot/homePageRecommended':
-            msg = '加载首页推荐位APP数据'
-            break
-          case '/api/comm-getcomminfo':
-            msg = '获取评论信息'
-            break
-          case '/api/person-messageCount':
-            msg = '获取用户私信条数'
-            break
           default:
             msg = '未知'
         }
         return msg
       },
 
-            // 当天各项统计数据数组
+      // 当天各项统计数据数组
       todayData: [],
-            // 当天各设备点击数据对象——echart
+      // 各设备点击次数统计对象——echart
       todayClickData: {
         title: {
           text: '各设备点击次数统计',
-                    // subtext: '纯属虚构',
+          // subtext: '纯属虚构',
           x: 'center'
         },
         tooltip: {
@@ -363,7 +327,7 @@ export default{
           }
         ]
       },
-
+      // 本周数据统计图
       tswkOption: {
         title: {
           text: '本周数据统计图'
@@ -395,7 +359,11 @@ export default{
         },
         series: []
       },
-            // 一周数据统计
+      // 全国浏览量统计
+      chinaPVData: {},
+
+
+      // 一周数据统计
       tswk: function() {
         this.$store.dispatch('getSiteaccessrecordsInfo').then(res => {
           if (res.returnCode === 200) {
@@ -429,7 +397,7 @@ export default{
           }
         })
       },
-            // 当天 TOP10
+      // 当天 TOP10
       todayTopData: [],
       todayIPTopData: [],
 
@@ -486,12 +454,20 @@ export default{
   },
 
   methods: {
+    // 获取当前时间
+    getToday() {
+      var time = new Date()
+      var month = time.getMonth() >= 10 ? time.getMonth() : '0' + time.getMonth()
+      var second = time.getSeconds() >= 10 ? time.getSeconds() : '0' + time.getSeconds()
+      return time.getFullYear() + '年' + month + '月' + time.getDate() + '日 ' + this.weekDay[time.getDay()] + ' ' + time.getHours() + ':' + time.getMinutes() + ':' + second
+    },
+
     canvasRepeat() {
       document.getElementById('today').innerHTML = '<div id="todayClick" style="width: 100%; height: 270px;"></div>'
       echarts.init(document.getElementById('todayClick')).setOption(this.todayClickData, true)
     },
 
-        // 请求/绘制当天统计数据
+    // 请求/绘制当天统计数据
     responseTodayData: function() {
       this.$store.dispatch('getControlPanel').then(res => {
         if (res.returnCode === 200) {
@@ -505,7 +481,7 @@ export default{
             }
             this.IPCity(a, b)
           }
-                    // ----------------------------------------------------------------------
+          // --------------------------------------------------------------------------------------------------------------------------------------------
           var todayClick = res.data.accesslogAnalysisInfo
           delete todayClick.totalIP
           for (var key in todayClick) {
@@ -515,7 +491,7 @@ export default{
             this.todayClickData.series[0].data.push(obj)
           }
           echarts.init(document.getElementById('todayClick')).setOption(this.todayClickData)
-                    // ----------------------------------------------------------------------
+          // --------------------------------------------------------------------------------------------------------------------------------------------
           const todayObj = res.data
           delete todayObj.accesslogAnalysisInfo
           delete todayObj.VisitInfo
@@ -525,11 +501,13 @@ export default{
             obj.value = todayObj[key]
             this.todayData.push(obj)
           }
+          // --------------------------------------------------------------------------------------------------------------------------------------------
+          
         }
       })
     },
 
-        // 第三方IP接口
+    // 第三方IP接口
     IPCity: function(a, b) {
       var arr1 = [], arr2 = []
       for (let k = 0; k < a.length; k++) {

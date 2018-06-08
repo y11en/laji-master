@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import axios from 'axios'
+import $ from 'jquery'
 Vue.use(Router)
 
 const router = new Router({
@@ -194,33 +195,38 @@ const router = new Router({
 
 router.beforeEach((to, form, next) => {
   if (Number(router.app.$cookie('login_key'))) {
-    // axios({
-    //   url: 'https://www.lajixs.com' + to.path,
-    //   method: 'get',
-    //   withCredentials: true
-    // }).then(res => {
-    //   console.log(res)
-    // })
-    axios({
-      url: 'https://www.lajixs.com/api/admin-isLogin',
-      // url: 'http://192.168.0.136:8081/api/admin-isLogin',
-      method: 'post',
-      withCredentials: true
-    }).then(res => {
-      if (res.data.returnCode === 200) {
-        if (to.name === 'login') {
-          next({ path: '/index' })
-        } else {
-          next()
-        }
-      } else if (res.returnCode === 503) {
-        window.location.reload()
-      } else {
-        router.app.$cookie('login_key', '', -1)
-        sessionStorage.removeItem('user_info')
-        next({ path: '/login' })
-      }
-    })
+    if(to.fullPath != '/login') {
+      // axios({
+      //   url: 'https://www.lajixs.com/api/dominate' + to.path,
+      //   method: 'get',
+      //   withCredentials: true
+      // }).then(res => {
+      //   if(res.data.returnCode === 500){
+      //     console.log(500)
+      //   }else{
+          axios({
+            url: 'https://www.lajixs.com/api/admin-isLogin',
+            // url: 'http://192.168.0.136:8081/api/admin-isLogin',
+            method: 'post',
+            withCredentials: true
+          }).then(res => {
+            if (res.data.returnCode === 200) {
+              if (to.name === 'login') {
+                next({ path: '/index' })
+              } else {
+                next()
+              }
+            } else if (res.returnCode === 503) {
+              window.location.reload()
+            } else {
+              router.app.$cookie('login_key', '', -1)
+              sessionStorage.removeItem('user_info')
+              next({ path: '/login' })
+            }
+          })
+        // }
+      // }).catch(err => {})
+    }
   } else {
     if (to.name === 'login') {
       next()
@@ -229,12 +235,13 @@ router.beforeEach((to, form, next) => {
     }
   }
 })
-
+      
 router.afterEach(() => {
-    // setTimeout(()=>{
+  // setTimeout(()=>{
   window.scrollTo(0, 0)
-        // console.log(1)
-    // },500)
+  // console.log(1)
+  // },500)
 })
 
 export default router
+        
