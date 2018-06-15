@@ -127,15 +127,6 @@
           </template>
         </template>
 
-        <el-submenu index="/census" >
-          <template slot="title">
-            <img src="../static/img/icon/wxb.png" alt="">
-            <span slot="title">应用统计</span>
-          </template>
-          <el-menu-item index="/census/index">数据概览</el-menu-item>
-          <el-menu-item index="/census/recharge">充值</el-menu-item>
-          <el-menu-item index="/census/createBook">创书</el-menu-item>
-        </el-submenu>
       </el-menu>
     </nav>
 

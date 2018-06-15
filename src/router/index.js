@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import axios from 'axios'
-import $ from 'jquery'
 Vue.use(Router)
 
 const router = new Router({
@@ -10,7 +9,7 @@ const router = new Router({
   scrollBehavior: () => ({ y: 0 }),
   linkActiveClass: '',
   routes: [
-    { path: '/', redirect: '/login' },
+    { path: '/', name: 'welcome', components: require('../components/welcome.vue') },
     { path: '/login', name: 'login', components: require('../components/login.vue') },
     // 管理后台首页
 
@@ -186,61 +185,59 @@ const router = new Router({
     { path: '/image/cover/:page', name: 'imgCover', components: require('../components/image/cover.vue') },
 
     // 统计管理
-    { path: '/census', redirect: '/census/index' },
-    { path: '/census/index', name: 'census', component: () => import('@/components/census/index.vue') },
-    { path: '/census/recharge', name: 'recharge', component: () => import('@/components/census/recharge.vue') },
-    { path: '/census/createBook', name: 'createBook', component: () => import('@/components/census/createBook.vue') }
+    { path: '/appstatistics/dataview', name: 'census', components: require('../components/census/index.vue') },
+    { path: '/appstatistics/recharge', name: 'recharge', components: require('../components/census/recharge.vue')  },
+    { path: '/appstatistics/newbook', name: 'createBook', component: () => import('@/components/census/createBook.vue') },
+    { path: '/error', component: () => import('@/components/404.vue') },
+    { path: '*', component: () => import('@/components/404.vue') }
   ]
 })
 
 router.beforeEach((to, form, next) => {
-  if (Number(router.app.$cookie('login_key'))) {
-    if(to.fullPath != '/login') {
-      // axios({
-      //   url: 'https://www.lajixs.com/api/dominate' + to.path,
-      //   method: 'get',
-      //   withCredentials: true
-      // }).then(res => {
-      //   if(res.data.returnCode === 500){
-      //     console.log(500)
-      //   }else{
-          axios({
-            url: 'https://www.lajixs.com/api/admin-isLogin',
-            // url: 'http://192.168.0.136:8081/api/admin-isLogin',
-            method: 'post',
-            withCredentials: true
-          }).then(res => {
-            if (res.data.returnCode === 200) {
-              if (to.name === 'login') {
-                next({ path: '/index' })
-              } else {
-                next()
-              }
-            } else if (res.returnCode === 503) {
-              window.location.reload()
-            } else {
-              router.app.$cookie('login_key', '', -1)
-              sessionStorage.removeItem('user_info')
-              next({ path: '/login' })
-            }
-          })
-        // }
-      // }).catch(err => {})
-    }
-  } else {
-    if (to.name === 'login') {
-      next()
+    if (Number(router.app.$cookie('login_key'))) {
+        if(to.fullPath != '/login') {
+            axios({
+                url: 'https://www.lajixs.com/api/dominate' + to.path,
+                method: 'get',
+                withCredentials: true
+            }).then(res => {
+                if(res.data.returnCode === 500){
+                    alert(res.data.msg)
+                }else{
+                    axios({
+                        url: 'https://www.lajixs.com/api/admin-isLogin',
+                        // url: 'http://192.168.0.136:8081/api/admin-isLogin',
+                        method: 'post',
+                        withCredentials: true
+                    }).then(res => {
+                        if (res.data.returnCode === 200) {
+                            if (to.name === 'login') {
+                                next({ path: '/' })
+                            } else {
+                                next()
+                            }
+                        } else if (res.returnCode === 503) {
+                            window.location.reload()
+                        } else {
+                            router.app.$cookie('login_key', '', -1)
+                            sessionStorage.removeItem('user_info')
+                            next({ path: '/login' })
+                        }
+                    })
+                }
+            }).catch(err => {})
+        }
     } else {
-      next({ path: '/login' })
+        if (to.name === 'login') {
+            next()
+        } else {
+            next({ path: '/login' })
+        }
     }
-  }
 })
       
 router.afterEach(() => {
-  // setTimeout(()=>{
-  window.scrollTo(0, 0)
-  // console.log(1)
-  // },500)
+    window.scrollTo(0, 0)
 })
 
 export default router

@@ -165,8 +165,58 @@ const actions = {
   async getChapterInfoByTime({}, data) {
     const res = await service.getChapterInfoByTime(data).catch(err => console.error(err))
     return res
-  }
+  },
+
+  /**
+   * 实时刷新数据
+   */
+  async getRefreshTime({}) {
+    const res = await service.getRefreshTime().catch(err => console.error(err))
+    return res
+  },
+
+    /**
+     * 统计：一周android、IOS创建书籍统计
+     */
+    async getExtensionstatisticsData({}, data) {
+        const res = await service.getExtensionstatisticsData(data).catch(err => console.error(err))
+        return res
+    },
+
+    /**
+     * 统计：一周android、IOS创建书籍统计
+     */
+    async getUserExtensionstatistics({}, data) {
+        const res = await service.getUserExtensionstatistics(data).catch(err => console.error(err))
+        return res
+    },
+
+    /**
+     * 统计：一周android、IOS创建书籍统计
+     */
+    async getUserExtensionstatisticsCreateBookInfo({}, data) {
+        const res = await service.getUserExtensionstatisticsCreateBookInfo(data).catch(err => console.error(err))
+        return res
+    },
+    
+    /**
+     * 统计：一周android、IOS创建书籍统计
+     */
+    async RechargeRecordStatistics({}, data) {
+        const res = await service.RechargeRecordStatistics(data).catch(err => console.error(err))
+        return res
+    },
+
+    /**
+     * 统计：数据概览
+     */
+    async getPromotioninfoData({}, data) {
+        const res = await service.getPromotioninfoData(data).catch(err => console.error(err))
+        return res
+    },
+    
 }
+
 
 const getters = {
   userInfo: state => {

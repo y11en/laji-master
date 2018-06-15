@@ -80,7 +80,7 @@ export default{
                             this.$store.state.userInfo = res.data
                             this.$cookie('login_key', res.data.adminInfo.userId)
                             sessionStorage.setItem('user_info',JSON.stringify(res.data))
-                            this.$router.push("/index")
+                            this.$router.push("/")
                         }
                     },'post','json')
                 } else {
@@ -95,9 +95,6 @@ export default{
         }
     },
 
-    // mounted() {
-        // whale()
-    // },
 }
 </script>
 

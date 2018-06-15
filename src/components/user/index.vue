@@ -151,8 +151,8 @@ export default{
     IPCity(data) {
       for (let i = 0, len = data.list.length; i < len; i++) {
         var p = new Promise(function(resolve, reject) {
-          $.getScript('https://int.dpool.sina.com.cn/iplookup/iplookup.php?format=js&ip=' + data.list[i].userIpAddress, function() {
-            data.list[i].city = remote_ip_info['province'] + ' ' + remote_ip_info['city']
+          $.getScript('https://ip.ws.126.net/ipquery?ip=' + data.list[i].userIpAddress, function() {
+            data.list[i].city = localAddress.province + ' ' + localAddress.city
             resolve()
           })
         })

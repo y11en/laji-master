@@ -176,3 +176,52 @@ export function getChapterInfoByTime(data) {
   return ax.post('/admin/getChapterInfoByTime', data)
             .then(res => res.data)
 }
+
+/**
+ * 某个时间段的章节更新详细信息
+ */
+export function getRefreshTime() {
+  return ax.post('/getRefreshTime')
+            .then(res => res.data)
+}
+
+/**
+ * 统计：一周android、IOS创建书籍统计
+ */
+export function getExtensionstatisticsData(data) {
+    return ax.post('/getExtensionstatisticsData', data)
+              .then(res => res.data)
+}
+
+/**
+ * 统计：列表
+ */
+export function getUserExtensionstatisticsCreateBookInfo(data) {
+    return ax.post('/getUserExtensionstatisticsCreateBookInfo', data)
+              .then(res => res.data)
+}
+
+
+/**
+ * 统计：充值统计
+ */
+export function getUserExtensionstatistics(data) {
+    return ax.post('/getUserExtensionstatistics', data)
+              .then(res => res.data)
+}
+
+/**
+ * 统计：充值统计
+ */
+export function RechargeRecordStatistics(data) {
+    return ax.post('/sys-RechargeRecordStatistics', data)
+              .then(res => res.data)
+}
+
+/**
+ * 统计：数据概览
+ */
+export function getPromotioninfoData(data) {
+    return ax.post('/getPromotioninfoData', data)
+              .then(res => res.data)
+}

@@ -318,7 +318,8 @@
       getDroitList() {
         this.$ajax('/admin-RefreshRoleMenu', '', res => {
           if (res.returnCode === 200) {
-            this.droitList = JSON.parse(sessionStorage.getItem('user_info')).roleMenuList
+            // this.droitList = JSON.parse(sessionStorage.getItem('user_info')).allRoleMenuList
+            this.droitList = res.data.allRoleMenuList
           }
         })
       },
