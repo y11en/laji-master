@@ -80,7 +80,8 @@ export default{
                             this.$store.state.userInfo = res.data
                             this.$cookie('login_key', res.data.adminInfo.userId)
                             sessionStorage.setItem('user_info',JSON.stringify(res.data))
-                            this.$router.push("/")
+                            var url = JSON.parse(sessionStorage.getItem('user_info')).roleMenuList[0].menuURL
+                            this.$router.push(url)
                         }
                     },'post','json')
                 } else {

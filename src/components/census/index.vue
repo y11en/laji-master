@@ -141,32 +141,32 @@ export default {
                     {
                         name: '安装量',
                         type: 'line',
-                        data: [2,3,4,7,5,6,7]
+                        data: []
                     },
                     {
                         name: '下载量',
                         type: 'line',
-                        data: [4,5,3,9,8,1,5]
+                        data: []
                     },
                     {
                         name: '注册量',
                         type: 'line',
-                        data: [,7,4,6,9,2,1,6]
+                        data: []
                     },
                     {
                         name: '1日留存',
                         type: 'line',
-                        data: [3,6,9,8,4,2,7]
+                        data: []
                     },
                     {
                         name: '7日留存',
                         type: 'line',
-                        data: [7,2,8,4,5,9,3]
+                        data: []
                     },
                     {
                         name: '30日留存',
                         type: 'line',
-                        data: [3,7,5,6,9,2,5]
+                        data: []
                     }
                 ]
             },
@@ -235,7 +235,7 @@ export default {
                             this.allDateArr.wap[2].push(0)
                         }
                         var a = this.groupA(res.data.AndroidUserRetainCountGroup1).indexOf(xAxis[i])
-                        if(a >= 0) this.allDateArr.android[3].push(res.data.userRetainCount1[a].counts)
+                        if(a >= 0) this.allDateArr.android[3].push(res.data.AndroidUserRetainCountGroup1[a].counts)
                         else this.allDateArr.android[3].push(0)
 
                         var b = this.groupA(res.data.AndroidUserRetainCountGroup7).indexOf(xAxis[i])

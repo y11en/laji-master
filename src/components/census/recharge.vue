@@ -239,6 +239,7 @@ export default {
 
             tableList: [],
             tableDate: {
+                channelId: 'LG20180608001',
                 page: 1,
                 type: 1,
                 dateTime: this.dateTiming(new Date().getTime(), 'start'),

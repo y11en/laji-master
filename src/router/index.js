@@ -9,7 +9,7 @@ const router = new Router({
   scrollBehavior: () => ({ y: 0 }),
   linkActiveClass: '',
   routes: [
-    { path: '/', name: 'welcome', components: require('../components/welcome.vue') },
+    // { path: '/', name: 'welcome', components: require('../components/welcome.vue') },
     { path: '/login', name: 'login', components: require('../components/login.vue') },
     // 管理后台首页
 
@@ -185,6 +185,7 @@ const router = new Router({
     { path: '/image/cover/:page', name: 'imgCover', components: require('../components/image/cover.vue') },
 
     // 统计管理
+    { path: '/appstatistics', redirect: '/appstatistics/dataview' },
     { path: '/appstatistics/dataview', name: 'census', components: require('../components/census/index.vue') },
     { path: '/appstatistics/recharge', name: 'recharge', components: require('../components/census/recharge.vue')  },
     { path: '/appstatistics/newbook', name: 'createBook', component: () => import('@/components/census/createBook.vue') },
@@ -197,35 +198,35 @@ router.beforeEach((to, form, next) => {
     if (Number(router.app.$cookie('login_key'))) {
         if(to.fullPath != '/login') {
             axios({
-                url: 'https://www.lajixs.com/api/dominate' + to.path,
-                method: 'get',
+                url: 'https://www.lajixs.com/api/admin-isLogin',
+                // url: 'http://192.168.0.136:8081/api/admin-isLogin',
+                method: 'post',
                 withCredentials: true
             }).then(res => {
-                if(res.data.returnCode === 500){
-                    alert(res.data.msg)
-                }else{
-                    axios({
-                        url: 'https://www.lajixs.com/api/admin-isLogin',
-                        // url: 'http://192.168.0.136:8081/api/admin-isLogin',
-                        method: 'post',
-                        withCredentials: true
-                    }).then(res => {
-                        if (res.data.returnCode === 200) {
-                            if (to.name === 'login') {
-                                next({ path: '/' })
-                            } else {
+                if (res.data.returnCode === 200) {
+                    if (to.name === 'login') {
+                        next({ path: '/' })
+                    } else {
+                        // axios({
+                        //     url: 'https://www.lajixs.com/api/dominate' + to.path,
+                        //     method: 'get',
+                        //     withCredentials: true
+                        // }).then(res => {
+                        //     if(res.data.returnCode === 500){
+                        //         alert(res.data.msg)
+                        //     }else{
                                 next()
-                            }
-                        } else if (res.returnCode === 503) {
-                            window.location.reload()
-                        } else {
-                            router.app.$cookie('login_key', '', -1)
-                            sessionStorage.removeItem('user_info')
-                            next({ path: '/login' })
-                        }
-                    })
+                            // }
+                        // }).catch(err => {})
+                    }
+                } else if (res.returnCode === 503) {
+                    window.location.reload()
+                } else {
+                    router.app.$cookie('login_key', '', -1)
+                    sessionStorage.removeItem('user_info')
+                    next({ path: '/login' })
                 }
-            }).catch(err => {})
+            })
         }
     } else {
         if (to.name === 'login') {
