@@ -169,7 +169,6 @@
         }
       },
       submitImageFile(callback){
-            // console.log(this.canvasOption);
           if(this.icon_url!=='error'){
             if(this.icon_url===''){
                 return callback({returnCode:200})
@@ -177,8 +176,8 @@
             var formData = new FormData();   //这里连带form里的其他参数也一起提交了,如果不需要提交其他参数可以直接FormData无参数的构造函数
             //convertBase64UrlToBlob函数是将base64编码转换为Blob
             //append函数的第一个参数是后台获取数据的参数名,和html标签的input的name属性功能相同
-            var blob = this.dataURLtoBlob(this.icon_url);
-            formData.append('file',blob,'avatar-image.png');
+            var blob = this.dataURLtoBlob(this.icon_url)
+            formData.append('file',blob,'avatar-image.png')
             
             for(let k in this.data){
                 formData.append(k,this.data[k])
@@ -206,7 +205,6 @@
                 
               },
               error:(err)=>{
-                console.log(err);
                 this.$loading().close();
               },
               xhr:function(){            //在jquery函数中直接使用ajax的XMLHttpRequest对象
@@ -222,15 +220,16 @@
               this.$message({message:'无法获取剪切数据，请重新尝试！',type:'warning'})
           }
       },
-      dataURLtoBlob(dataurl) {
-        var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
-            bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-        while(n--){
-          u8arr[n] = bstr.charCodeAt(n);
-        }
-        var blob = new Blob([u8arr], {type:mime,filename:'image.png'});
-        return blob;
-      },
+        dataURLtoBlob(dataurl) {
+            console.log(dataurl)
+            var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+                bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+            while(n--){
+            u8arr[n] = bstr.charCodeAt(n);
+            }
+            var blob = new Blob([u8arr], {type:mime,filename:'image.png'});
+            return blob;
+        },
       resetCrop(){
         let self = this;
         this.$preview = $('#preview-pane');

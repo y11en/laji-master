@@ -1,27 +1,5 @@
 import ax from './axios'
 
-/**
- *
- *
- * @export  获取敏感词、敏感词、警告词
- * @returns res.data
- */
-export function getSensitiveWords() {
-  return ax.get('/admin/getSensitiveWords')
-            .then(res => res.data)
-}
-
-/**
- *
- *
- * @export  增删敏感词、敏感词、警告词
- * @param {obj} { type:1-6, world: world }
- * @returns 状态码200
- */
-export function changeSensitiveWords(data) {
-  return ax.get('/admin/addSensitiveWords', { params: data })
-            .then(res => res.data)
-}
 
 /**
  *
@@ -105,29 +83,6 @@ export function getSiteaccessrecordsInfo() {
             .then(res => res.data)
 }
 
-/**
- * 用户列表
- */
-export function getUserList(data) {
-  return ax.post('/admin/getUserList', data)
-            .then(res => res.data)
-}
-
-/**
- * 模糊搜索书籍
- */
-export function stacksSearch(data) {
-  return ax.post('/stacks-search', data)
-            .then(res => res.data)
-}
-
-/**
- * 书籍列表
- */
-export function getbookInfoList(data) {
-  return ax.post('/admin/getBookInfoList', data)
-            .then(res => res.data)
-}
 
 /**
  * 书籍导出
@@ -185,43 +140,149 @@ export function getRefreshTime() {
             .then(res => res.data)
 }
 
+
+// ==============================================================================================================> 管理员权限相关管理
+    // 判断是否登陆
+    export function adminIsLogin() {
+        return ax.post('/admin-isLogin')
+                .then(res => res.data)
+    }
+
+    // 后端判断路由权限
+    export function dominate(data) {
+        return ax.get('/dominate' + data)
+                .then(res => res.data)
+    }
+
+    // 管理员登陆
+    export function adminLogins(data) {
+        return ax.post('/admin-Logins', data)
+                .then(res => res.data)
+    }
+
+
+
+// ==============================================================================================================> 用户相关管理
+
+
+// 书籍管理
+export function getBookInfoList(data) {
+    return ax.post('/admin/getBookInfoList', data)
+              .then(res => res.data)
+}
+
+// 用户管理
+export function getUserList(data) {
+    return ax.post('/admin/getUserList', data)
+              .then(res => res.data)
+}
+
+
+// ==============================================================================================================> 系统管理
+
+
+// 获取公告
+export function getNotice(data) {
+    return ax.get('/admin/sys-getNotice', { params: data })
+              .then(res => res.data)
+}
+
+// 删除公告
+export function deleteNotice(data) {
+    return ax.post('/admin/sys-deleteNotice', data)
+              .then(res => res.data)
+}
+
+// 获取敏感词、敏感词、警告词
+export function getSensitiveWords() {
+    return ax.get('/admin/getSensitiveWords')
+              .then(res => res.data)
+}
+
 /**
- * 统计：一周android、IOS创建书籍统计
+ *
+ *
+ * @export  增删敏感词、敏感词、警告词
+ * @param {obj} { type:1-6, world: world }
+ * @returns 状态码200
  */
+export function changeSensitiveWords(data) {
+    return ax.get('/admin/addSensitiveWords', { params: data })
+              .then(res => res.data)
+}
+
+// 版本更新时间轴
+export function getVersionList() {
+    return ax.get('/getVersionList')
+              .then(res => res.data)
+}
+
+// 版本更新
+export function versionUpdate(data) {
+    return new Promise((resolve, reject) => {
+        var file = ax.post('/admin/appPackgetUpload', data.file).then(res => res.data.data)
+        var info = ax.get('/version/addUpdate', { params: data.info }).then(res => res.data.data)
+        resolve([file, info])
+    })
+}
+
+// 模糊搜索书籍
+export function stacksSearch(data) {
+    return ax.post('/stacks-search', data)
+              .then(res => res.data)
+}
+
+
+
+
+// ==============================================================================================================> 北京九山海
+
+// 统计：一周android、IOS创建书籍统计
 export function getExtensionstatisticsData(data) {
     return ax.post('/getExtensionstatisticsData', data)
-              .then(res => res.data)
+            .then(res => res.data)
 }
 
-/**
- * 统计：列表
- */
+// 统计：列表
 export function getUserExtensionstatisticsCreateBookInfo(data) {
     return ax.post('/getUserExtensionstatisticsCreateBookInfo', data)
-              .then(res => res.data)
+            .then(res => res.data)
 }
 
-
-/**
- * 统计：充值统计
- */
+// 统计：充值统计
 export function getUserExtensionstatistics(data) {
     return ax.post('/getUserExtensionstatistics', data)
-              .then(res => res.data)
+            .then(res => res.data)
 }
 
-/**
- * 统计：充值统计
- */
+// 统计：充值统计
 export function RechargeRecordStatistics(data) {
     return ax.post('/sys-RechargeRecordStatistics', data)
-              .then(res => res.data)
+            .then(res => res.data)
 }
 
-/**
- * 统计：数据概览
- */
+// 统计：数据概览
 export function getPromotioninfoData(data) {
     return ax.post('/getPromotioninfoData', data)
-              .then(res => res.data)
+            .then(res => res.data)
 }
+
+// ==============================================================================================================> 小说分销平台
+// 小说分销平台 - 充值数据统计
+export function getRechargerecordByTypeStatistics(data) {
+    return ax.get('/getRechargerecordByTypeStatistics', { params: data })
+            .then(res => res.data)
+}
+
+// 小说分销平台 - 充值表格数据统计
+export function getRechargerecordByTypeDetailed(data) {
+    return ax.get('/getRechargerecordByTypeDetailed', { params: data })
+            .then(res => res.data)
+}
+
+// 小说分销平台 - 书籍数据统计
+export function getAdminSubscriptionStatisticsInfoByTime(data) {
+    return ax.post('/getAdminSubscriptionStatisticsInfoByTime', data)
+            .then(res => res.data)
+}
+

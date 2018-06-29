@@ -74,7 +74,7 @@ export default {
       warningWordsVisible: false,
       warningWordsValue: '',
       responseWord: function() {
-        this.$store.dispatch('getSensitiveWords').then(res => {
+        this.$store.dispatch('system/getSensitiveWords').then(res => {
           this.sensitiveWordsList = res.sensitiveWords
           this.stopWordsList = res.stopWordsList
           this.warningWordsList = res.warningWords
@@ -98,7 +98,7 @@ export default {
         const word = this.sensitiveWordsValue
         if (word) {
           if (this.contains(this.sensitiveWordsList, word)) { this.$message({ message: '词汇重复，请重新输入！', type: 'warning' }) } else {
-            this.$store.dispatch('changeSensitiveWords', { type: '1', world: word })
+            this.$store.dispatch('system/changeSensitiveWords', { type: '1', world: word })
                         .then(res => {
                           this.responseWord()
                           this.$message({ message: '添加成功！', type: 'success' })
@@ -111,7 +111,7 @@ export default {
         const word = this.stopWordsValue
         if (word) {
           if (this.contains(this.stopWordsList, word)) { this.$message({ message: '词汇重复，请重新输入！', type: 'warning' }) } else {
-            this.$store.dispatch('changeSensitiveWords', { type: '2', world: word })
+            this.$store.dispatch('system/changeSensitiveWords', { type: '2', world: word })
                         .then(res => {
                           this.responseWord()
                           this.$message({ message: '添加成功！', type: 'success' })
@@ -124,7 +124,7 @@ export default {
         const word = this.warningWordsValue
         if (word) {
           if (this.contains(this.warningWordsList, word)) { this.$message({ message: '词汇重复，请重新输入！', type: 'warning' }) } else {
-            this.$store.dispatch('changeSensitiveWords', { type: '3', world: word })
+            this.$store.dispatch('system/changeSensitiveWords', { type: '3', world: word })
                         .then(res => {
                           this.responseWord()
                           this.$message({ message: '添加成功！', type: 'success' })
@@ -143,21 +143,21 @@ export default {
         type: 'warning'
       }).then(() => {
         if (str === '敏感词') {
-          this.$store.dispatch('changeSensitiveWords', { type: '4', world: tag }).then(res => {
+          this.$store.dispatch('system/changeSensitiveWords', { type: '4', world: tag }).then(res => {
             this.responseWord()
             this.$message({ message: '添加成功！', type: 'success' })
             this.sensitiveWordsVisible = false
             this.sensitiveWordsValue = ''
           })
         } else if (str === '停顿词') {
-          this.$store.dispatch('changeSensitiveWords', { type: '5', world: tag }).then(res => {
+          this.$store.dispatch('system/changeSensitiveWords', { type: '5', world: tag }).then(res => {
             this.responseWord()
             this.$message({ message: '添加成功！', type: 'success' })
             this.stopWordsVisible = false
             this.stopWordsValue = ''
           })
         } else if (str === '警告词') {
-          this.$store.dispatch('changeSensitiveWords', { type: '6', world: tag }).then(res => {
+          this.$store.dispatch('system/changeSensitiveWords', { type: '6', world: tag }).then(res => {
             this.responseWord()
             this.$message({ message: '添加成功！', type: 'success' })
             this.warningWordsVisible = false

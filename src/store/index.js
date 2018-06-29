@@ -4,41 +4,37 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import AdminModule from './modules/admin'
+import UserModule from './modules/user'
 import BookModule from './modules/book'
 import SystemModule from './modules/system'
+import CensusModule from './modules/census'
 
 import service from '../api'
 Vue.use(Vuex)
 
 const state = {
-  userInfo: {},
+//   userInfo: {},
   message: {},
   count: 0,
   hasNotice: false,
   bookAuthorization: null,
-  date: ''
+  date: '',
+  
 }
 
 const mutations = {
 
   keep_bookAuthorization(state, num) {
     state.bookAuthorization = num
-  }
+  },
+
 
 }
 
 const actions = {
-  updateUserInfo: ({ commit }) => commit('updateUserInfo'),
 
-  async getSensitiveWords() {
-    const res = await service.getSensitiveWords().catch(err => console.error(err))
-    if (res.returnCode === 200) return res.data
-  },
 
-  async changeSensitiveWords({}, data) {
-    const res = await service.changeSensitiveWords(data).catch(err => console.error(err))
-    if (res.returnCode === 200) return res
-  },
+
 
   async getChapterSensitiveWords({}) {
     const res = await service.getChapterSensitiveWords().catch(err => console.error(err))
@@ -92,30 +88,6 @@ const actions = {
      */
   async getSiteaccessrecordsInfo() {
     const res = await service.getSiteaccessrecordsInfo().catch(err => console.error(err))
-    return res
-  },
-
-    /**
-     * 获取用户列表
-     */
-  async getUserList({}, data) {
-    const res = await service.getUserList(data).catch(err => console.error(err))
-    return res
-  },
-
-    /**
-     * 模糊搜索书籍
-     */
-  async stacksSearch({}, data) {
-    const res = await service.stacksSearch(data).catch(err => console.error(err))
-    return res
-  },
-
-    /**
-     * 书籍列表
-     */
-  async getBookInfoList({}, data) {
-    const res = await service.getBookInfoList(data).catch(err => console.error(err))
     return res
   },
 
@@ -175,63 +147,24 @@ const actions = {
     return res
   },
 
-    /**
-     * 统计：一周android、IOS创建书籍统计
-     */
-    async getExtensionstatisticsData({}, data) {
-        const res = await service.getExtensionstatisticsData(data).catch(err => console.error(err))
-        return res
-    },
-
-    /**
-     * 统计：一周android、IOS创建书籍统计
-     */
-    async getUserExtensionstatistics({}, data) {
-        const res = await service.getUserExtensionstatistics(data).catch(err => console.error(err))
-        return res
-    },
-
-    /**
-     * 统计：一周android、IOS创建书籍统计
-     */
-    async getUserExtensionstatisticsCreateBookInfo({}, data) {
-        const res = await service.getUserExtensionstatisticsCreateBookInfo(data).catch(err => console.error(err))
-        return res
-    },
     
-    /**
-     * 统计：一周android、IOS创建书籍统计
-     */
-    async RechargeRecordStatistics({}, data) {
-        const res = await service.RechargeRecordStatistics(data).catch(err => console.error(err))
-        return res
-    },
-
-    /**
-     * 统计：数据概览
-     */
-    async getPromotioninfoData({}, data) {
-        const res = await service.getPromotioninfoData(data).catch(err => console.error(err))
-        return res
-    },
     
+
 }
 
 
-const getters = {
-  userInfo: state => {
-    return state.userInfo
-  }
-}
+
+
 
 export default new Vuex.Store({
-  state,
-  mutations,
-  actions,
-  getters,
-  modules: {
-    admin: AdminModule,
-    book: BookModule,
-    system: SystemModule
-  }
+    state,
+    mutations,
+    actions,
+    modules: {
+        admin: AdminModule,
+        user: UserModule,
+        book: BookModule,
+        system: SystemModule,
+        census: CensusModule
+    }
 })

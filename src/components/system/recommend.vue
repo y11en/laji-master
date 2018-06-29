@@ -172,7 +172,7 @@
           dialogImageUrl: '',
           dialogVisible: false,
           bookclassid: '',
-          bookClassList: ''
+        //   bookClassList: ''
         }
       },
       methods: {
@@ -281,7 +281,7 @@
     }
       },
   created() {
-        this.getBookClass()
+        // this.getBookClass()
         this.getRecommendList()
       }
     

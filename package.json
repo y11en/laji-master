@@ -21,6 +21,8 @@
     "echarts": "^4.1.0",
     "element-ui": "^2.3.9",
     "jquery": "^1.12.4",
+    "js-base64": "^2.4.5",
+    "md5": "^2.2.1",
     "vue": "^2.5.13",
     "vue-quill-editor": "^3.0.4",
     "vue-router": "^3.0.1",

@@ -98,7 +98,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import MounthComponent from '../../PKComponent/MounthComponent'
+import MounthComponent from '../MounthComponent'
 export default{
 
   components: { MounthComponent },

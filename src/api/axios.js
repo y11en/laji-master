@@ -2,10 +2,11 @@ import axios from 'axios'
 import querystring from 'querystring'
 
 const ax = axios.create({
-  baseURL: 'https://www.lajixs.com/api',
-    // baseURL: 'http://192.168.0.136:8081/api',
-  headers: { 'content-type': 'application/x-www-form-urlencoded' },
-  withCredentials: true
+    baseURL: 'https://www.lajixs.com/api',
+        // baseURL: 'http://192.168.0.136:8081/api',
+    // headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    // headers: { 'Content-Type': 'multipart/form-data' },
+    withCredentials: true
 })
 
 // 拦截器

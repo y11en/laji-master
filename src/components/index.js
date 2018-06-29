@@ -1,7 +1,6 @@
 /**
  * Created by Administrator on 2017/11/14.
  */
-import Vue from 'vue'
 import SideNav from './side_nav.vue'
 
 const components = [

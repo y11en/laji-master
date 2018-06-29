@@ -290,13 +290,13 @@ exports.install = function(Vue, options) {
         }, 'get')
     }
 
-  /**
+    /**
      *
      *
      * @export  重置时间格式
      * @param {date} 毫秒数
-     * @param {string} 类型：开始时间/结束时间
-     * @returns 00-00-00 00::00:00
+     * @param {string} 类型：start / end
+     * @returns 00-00-00 00:00:00 / 00-00-00 23:59:59
      */
     Vue.prototype.dateTiming = (value, type) => {
         var newDate = new Date(value)
@@ -314,14 +314,29 @@ exports.install = function(Vue, options) {
      *
      *
      * @export  重置时间格式
+     * @param {date} 毫秒数
+     * @param {string} 类型：start / end
+     * @returns 00-00-00 00:00:00 / 00-00-00 23:59:59
+     */
+    Vue.prototype.dateMonthTiming = (value) => {
+        var newDate = new Date(value)
+        var year = newDate.getFullYear()
+        var month = newDate.getMonth() + 1 > 9 ? newDate.getMonth() + 1 : '0' + (newDate.getMonth() + 1)
+        return year + '-' + month + '-' + '31 ' + '23:59:59'
+    }
+
+    /**
+     *
+     *
+     * @export  重置时间格式
      * @param   {date} 毫秒数
      * @returns 00-00-00
      */
     Vue.prototype.FunWeekTime = (value) =>{
         var newDate = new Date(value)
         var year = newDate.getFullYear()
-        var month = newDate.getMonth() + 1
-        var day = newDate.getDate()
+        var month = (newDate.getMonth()+1) > 9 ? newDate.getMonth()+1 : '0' + (newDate.getMonth()+1)
+        var day = newDate.getDate() > 9 ? newDate.getDate() : '0' + newDate.getDate()
         return year + '-' + month + '-' + day
     }
 
@@ -335,7 +350,25 @@ exports.install = function(Vue, options) {
     Vue.prototype.RecectMonth = (value) => {
         var newDate = new Date(value)
         var year = newDate.getFullYear()
-        var month = newDate.getMonth() + 1
+        var month = newDate.getMonth() + 1 > 9 ? newDate.getMonth() + 1 : '0' + (newDate.getMonth() + 1)
         return year + '-' + month
+    }
+
+    /**
+     *
+     *
+     * @export  重置时间格式
+     * @param   {date} 毫秒数
+     * @returns 00-00-00 00:00:00
+     */
+    Vue.prototype.nowDate = (value) => {
+        var newDate = new Date(value)
+        var year = newDate.getFullYear()
+        var month = newDate.getMonth() + 1 > 9 ? newDate.getMonth() + 1 : '0' + (newDate.getMonth() + 1)
+        var day = newDate.getDate() > 9 ? newDate.getDate() : '0' + newDate.getDate()
+        var hours = newDate.getHours()
+        var minutes = newDate.getMinutes()
+        var seconds = newDate.getSeconds()
+        return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds
     }
 }

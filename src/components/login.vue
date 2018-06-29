@@ -1,5 +1,5 @@
 <template>
-    <div class="login-wrap">
+    <div class="login-wrap" v-loading="this.$store.state.admin.loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading">
         <div id="whale" :style="{height: whaleHeight + 'px'}"></div>
 
         <el-dialog
@@ -67,26 +67,10 @@ export default{
         submitForm(formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
-                    const loading = this.$loading({
-                        lock: true,
-                        text: '正在登陆中...',
-                        spinner: 'el-icon-loading',
-                        background: 'rgba(0, 0, 0, 0.7)'
-                    })
-                    this.$ajax("/admin-Logins",this.ruleForm2,(res)=>{
-                        this.$loading().close()
-                        if(res.returnCode===200){
-                            this.$message({message:"登录成功",type:'success'})
-                            this.$store.state.userInfo = res.data
-                            this.$cookie('login_key', res.data.adminInfo.userId)
-                            sessionStorage.setItem('user_info',JSON.stringify(res.data))
-                            var url = JSON.parse(sessionStorage.getItem('user_info')).roleMenuList[0].menuURL
-                            this.$router.push(url)
-                        }
-                    },'post','json')
+                    this.$store.dispatch('admin/adminLogins', this.ruleForm2)
                 } else {
                     this.$message({message:'请完善用户名和密码',type:'warning'})
-                    return false;
+                    return false
                 }
             })
         },

@@ -337,8 +337,9 @@ export default{
         watchInterval: null,
         xTime: [],
         uvData: [0, 0, 0, 0, 0, 0, 0, 0, 0],
-        pvData: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        connectionsData: [0, 0, 0, 0, 0, 0, 0, 0, 0],
         qpsData: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        waitingData: [0, 0, 0, 0, 0, 0, 0, 0, 0],
         watchOption: {
             title: {
                 text: '实时监听点击数量'
@@ -350,7 +351,7 @@ export default{
                 }
             },
             legend: {
-                data:['UV', 'PV', 'QPS' ]
+                data:['UV', '当前连接数', 'QPS', '等待连接数' ]
             },
             grid: {
                 top: 70,
@@ -366,24 +367,30 @@ export default{
                 }
             ],
             series: [
-            {
-                name:'UV',
-                type: 'line',
-                itemStyle : { normal: {label : {show: true}}},
-                data: this.uvData
-            },
-            {
-                name:'PV',
-                type: 'line',
-                itemStyle : { normal: {label : {show: true}}},
-                data: this.pvData
-            },
-            {
-                name:'QPS',
-                type: 'line',
-                itemStyle : { normal: {label : {show: true}}},
-                data: this.qpsData
-            }
+                {
+                    name:'UV',
+                    type: 'line',
+                    itemStyle : { normal: {label : {show: true}}},
+                    data: this.uvData
+                },
+                {
+                    name:'当前连接数',
+                    type: 'line',
+                    itemStyle : { normal: {label : {show: true}}},
+                    data: this.connectionsData
+                },
+                {
+                    name:'QPS',
+                    type: 'line',
+                    itemStyle : { normal: {label : {show: true}}},
+                    data: this.qpsData
+                },
+                {
+                    name:'等待连接数',
+                    type: 'line',
+                    itemStyle : { normal: {label : {show: true}}},
+                    data: this.waitingData
+                }
             ]
         },
 
@@ -566,66 +573,68 @@ export default{
     // 请求/绘制当天统计数据
     responseTodayData(){
        this.$store.dispatch('getControlPanel').then(res => {
-         if (res.returnCode === 200) {
-          // 当天IP访问量
-          var todayTopDate = res.data.VisitInfo.split('\n')
-          if(todayTopDate != ''){
-            var a = todayTopDate.slice(1, 11)
-            var b = todayTopDate.slice(11)
-            for (let i = 0; i < a.length; i++) {
-              a[i] = a[i].split(' ')
-              b[i] = b[i].split(' ')
-            }
-            this.IPCity(a, b)
-          }
-          // --------------------------------------------------------------------------------------------------------------------------------------------
-          // 各设备点击次数统计
-          var todayClick = res.data.accesslogAnalysisInfo
-          // 地域数据统计
-          var worldData = todayClick.provinceData
-          var res = []
-            for (let key in worldData) {
-                var geoCoord = this.geoCoordMap[key]
-                if (geoCoord) {
-                    res.push({
-                        name: key,
-                        value: geoCoord.concat(worldData[key])
-                    })
+            if (res.returnCode === 200) {
+                // 当天IP访问量
+                var todayTopDate = res.data.VisitInfo.split('\n')
+                if(todayTopDate != ''){
+                    var a = todayTopDate.slice(1, 11)
+                    var b = todayTopDate.slice(11)
+                    for (let i = 0; i < a.length; i++) {
+                    a[i] = a[i].split(' ')
+                    b[i] = b[i].split(' ')
+                    }
+                    this.IPCity(a, b)
                 }
+                // --------------------------------------------------------------------------------------------------------------------------------------------
+                // 各设备点击次数统计
+                var todayClick = res.data.accesslogAnalysisInfo
+                // 地域数据统计
+                echarts.registerMap("china", chinaMap)
+                var chart = echarts.init(this.$refs.map)
+                chart.showLoading()
+                var worldData = todayClick.provinceData
+                var newArr = []
+                if(JSON.stringify(worldData) != "{}") {
+                    for (let key in worldData) {
+                        var geoCoord = this.geoCoordMap[key]
+                        if (geoCoord) {
+                            newArr.push({
+                                name: key,
+                                value: geoCoord.concat(worldData[key])
+                            })
+                        }
+                    }
+                }
+                newArr.unshift({name:'地区', value: ['经度', '纬度', '登录量']})
+                this.option.series[0].data = newArr
+
+                chart.setOption(this.option)
+                chart.hideLoading()
+
+                delete todayClick.WapPV
+                delete todayClick.totalIP
+                delete todayClick.provinceData
+                for (var key in todayClick) {
+                    var obj = new Object()
+                    obj.name = this.matchTitle(key)
+                    obj.value = todayClick[key]
+                    this.todayClickData.series[0].data.push(obj)
+                }
+                echarts.init(document.getElementById('todayClick')).setOption(this.todayClickData)
+                // --------------------------------------------------------------------------------------------------------------------------------------------
+                // 当天所有统计
+                var todayObj = res.data
+                delete todayObj.accesslogAnalysisInfo
+                delete todayObj.VisitInfo
+                for (var key in todayObj) {
+                    var obj = new Object()
+                    obj.name = this.matchTitle(key)
+                    obj.value = todayObj[key]
+                    this.todayData.push(obj)
+                }
+                // --------------------------------------------------------------------------------------------------------------------------------------------
             }
-            res.unshift({name:'地区', value: ['经度', '纬度', '登录量']})
-            this.option.series[0].data = res
-
-            var chart = echarts.init(this.$refs.map)
-            chart.showLoading()
-            echarts.registerMap("china", chinaMap)
-            chart.setOption(this.option)
-            chart.hideLoading()
-
-          delete todayClick.WapPV
-          delete todayClick.totalIP
-          delete todayClick.provinceData
-          for (var key in todayClick) {
-            var obj = new Object()
-            obj.name = this.matchTitle(key)
-            obj.value = todayClick[key]
-            this.todayClickData.series[0].data.push(obj)
-          }
-          echarts.init(document.getElementById('todayClick')).setOption(this.todayClickData)
-          // --------------------------------------------------------------------------------------------------------------------------------------------
-          // 当天所有统计
-          const todayObj = res.data
-          delete todayObj.accesslogAnalysisInfo
-          delete todayObj.VisitInfo
-          for (var key in todayObj) {
-            var obj = new Object()
-            obj.name = this.matchTitle(key)
-            obj.value = todayObj[key]
-            this.todayData.push(obj)
-          }
-          // --------------------------------------------------------------------------------------------------------------------------------------------
-        }
-      })
+        })
     },
 
     // 实时更新统计图
@@ -634,8 +643,9 @@ export default{
         this.$store.dispatch('getRefreshTime').then(res => {
             if(res.returnCode === 200) {
                 this.uvData.push(res.data.UV)
-                this.pvData.push(res.data.PV)
+                this.connectionsData.push(res.data.connections)
                 this.qpsData.push(Number(res.data.QPS))
+                this.waitingData.push(Number(res.data.waiting))
                 var date = new Date().getTime()
                 function dateForm(val) {
                     var newDate = new Date(val)
@@ -649,20 +659,23 @@ export default{
                 }
                 this.watchOption.xAxis.data = this.xTime
                 this.watchOption.series[0].data = this.uvData
-                this.watchOption.series[1].data = this.pvData
+                this.watchOption.series[1].data = this.connectionsData
                 this.watchOption.series[2].data = this.qpsData
+                this.watchOption.series[3].data = this.waitingData
                 myChart.setOption(this.watchOption, true)
                 
                 this.watchInterval = setInterval(() => {
                     this.$store.dispatch('getRefreshTime').then(res => {
                         if(res.returnCode === 200) {
                             this.uvData.shift()
-                            this.pvData.shift()
+                            this.connectionsData.shift()
                             this.qpsData.shift()
+                            this.waitingData.shift()
                             this.xTime.shift()
                             this.uvData.push(res.data.UV)
-                            this.pvData.push(res.data.PV)
+                            this.connectionsData.push(res.data.connections)
                             this.qpsData.push(Number(res.data.QPS))
+                            this.waitingData.push(Number(res.data.waiting))
                             this.xTime.push(dateForm(new Date().getTime()))
                         }
                     })
@@ -678,20 +691,26 @@ export default{
                                 data: this.uvData
                             },
                             {
-                                name:'PV',
+                                name:'当前连接数',
                                 type: 'line',
                                 itemStyle : { normal: {label : {show: true}}},
-                                data: this.pvData
+                                data: this.connectionsData
                             },
                             {
                                 name:'QPS',
                                 type: 'line',
                                 itemStyle : { normal: {label : {show: true}}},
                                 data: this.qpsData
+                            },
+                            {
+                                name:'等待连接数',
+                                type: 'line',
+                                itemStyle : { normal: {label : {show: true}}},
+                                data: this.waitingData
                             }
                         ]
                     })
-                }, 3000)
+                }, 5000)
             }
         })
     }

@@ -56,11 +56,7 @@ export default{
 
   methods: {
     querySearchAsync(queryString, cb) {
-      this.$store.dispatch('stacksSearch', {
-        keyWord: queryString,
-        isHotWorld: 0,
-        startPage: 1
-      }).then(res => {
+      this.$store.dispatch('system/stacksSearch', { keyWord: queryString, isHotWorld: 0, startPage: 1 }).then(res => {
         if (res.returnCode === 200) {
           const bookList = res.data.list
           const list = []
