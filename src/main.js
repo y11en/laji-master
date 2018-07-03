@@ -16,6 +16,9 @@ import 'quill/dist/quill.bubble.css'
 import echarts from 'echarts/dist/echarts.min.js'
 Vue.use(echarts)
 
+import VueClipboards from 'vue-clipboards'
+Vue.use(VueClipboards)
+
 Vue.use(require('./api/common.js'))
 
 import Zepto from 'zepto'

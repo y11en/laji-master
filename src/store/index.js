@@ -35,7 +35,7 @@ const actions = {
 
 
 
-
+ 
   async getChapterSensitiveWords({}) {
     const res = await service.getChapterSensitiveWords().catch(err => console.error(err))
     console.log(res.data)
@@ -48,7 +48,7 @@ const actions = {
   },
 
   async book_showBookInfo({ commit }, data) {
-    const res = await service.book_showBookInfo(data).catch(err => console.error(err))
+    const res = await service.bookShowBookInfo(data).catch(err => console.error(err))
     if (res.returnCode === 200) {
       commit('keep_bookAuthorization', res.data.bookAuthorization)
       return res.data

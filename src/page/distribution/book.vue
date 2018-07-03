@@ -50,7 +50,6 @@
         </div>
 
         <el-pagination
-            class="page-counts"
             @current-change="handleCurrentChange"
             :current-page="bookTableObj.pageNum"
             :page-size="bookTableObj.pageSize"

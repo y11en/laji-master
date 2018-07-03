@@ -133,9 +133,9 @@
                 </template>
 
                 <!-- <el-submenu index="/distribution/data">
-                    <template slot="title">多媒体统计</template>
-                    <el-menu-item index="/distribution/data">数据统计</el-menu-item>
-                    <el-menu-item index="/distribution/book">书籍统计</el-menu-item>
+                    <template slot="title">小说分销平台</template>
+                    <el-menu-item index="/extend/bookList/1">小说列表</el-menu-item>
+                    <el-menu-item index="/extend/link/1">推广链接</el-menu-item>
                 </el-submenu> -->
                 
             </el-menu>
@@ -165,43 +165,43 @@ export default {
 
     methods: {
         getNavList() {
-        const setList = () => {
-            let info = JSON.parse(sessionStorage.getItem('user_info')),
-            navList = JSON.parse(JSON.stringify(info.roleMenuList)),
-            newNav = []
+            const setList = () => {
+                let info = JSON.parse(sessionStorage.getItem('user_info')),
+                navList = JSON.parse(JSON.stringify(info.roleMenuList)),
+                newNav = []
 
-            this.$store.state.userInfo = info
-            navList.forEach((item, $index) => {
-            if (item.pid === 0) {
-                navList[$index].show = false
-                newNav.push(item)
+                this.$store.state.userInfo = info
+                navList.forEach((item, $index) => {
+                    if (item.pid === 0) {
+                        navList[$index].show = false
+                        newNav.push(item)
+                    }
+                })
+                newNav.forEach((item1) => {
+                    navList.forEach((item2) => {
+                        if (item1.id === item2.pid) {
+                            if (!item1.ChildMenu) { item1.ChildMenu = [] }
+                            item1.ChildMenu.push(item2)
+                        }
+                    })
+                })
+                this.sideNavList = newNav
+                // console.log(this.sideNavList)
             }
-            })
-            newNav.forEach((item1) => {
-            navList.forEach((item2) => {
-                if (item1.id === item2.pid) {
-                if (!item1.ChildMenu) { item1.ChildMenu = [] }
-                item1.ChildMenu.push(item2)
-                }
-            })
-            })
-            this.sideNavList = newNav
-                    // console.log(this.sideNavList)
-        }
 
-        if (!sessionStorage.getItem('user_info')) {
-            this.$ajax('/admin-RefreshRoleMenu', '', res => {
-            if (res.returnCode === 200) {
-                sessionStorage.setItem('user_info', JSON.stringify(res.data))
-                setList()
+            if (!sessionStorage.getItem('user_info')) {
+                this.$ajax('/admin-RefreshRoleMenu', '', res => {
+                    if (res.returnCode === 200) {
+                        sessionStorage.setItem('user_info', JSON.stringify(res.data))
+                        setList()
+                    } else {
+                        this.$cookie('login_key', '', -1)
+                        this.$router.push('/login')
+                    }
+                })
             } else {
-                this.$cookie('login_key', '', -1)
-                this.$router.push('/login')
+                setList()
             }
-            })
-        } else {
-            setList()
-        }
         },
 
         exit() {

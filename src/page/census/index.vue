@@ -170,6 +170,8 @@ export default {
     mounted() {
         if(JSON.parse(sessionStorage.getItem('user_info')).adminInfo.userName === '北京九山海') {
             this.defaultDate.channelId = this.$store.state.census.spreadNameList[1].id
+        }else if(JSON.parse(sessionStorage.getItem('user_info')).adminInfo.userName === '哔哩哔哩') {
+            this.defaultDate.channelId = this.$store.state.census.spreadNameList[3].id
         }else {
             this.defaultDate.channelId = this.$store.state.census.spreadNameList[0].id
         }

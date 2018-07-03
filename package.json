@@ -24,6 +24,7 @@
     "js-base64": "^2.4.5",
     "md5": "^2.2.1",
     "vue": "^2.5.13",
+    "vue-clipboards": "^1.2.4",
     "vue-quill-editor": "^3.0.4",
     "vue-router": "^3.0.1",
     "vue-upload-component": "^2.7.4",

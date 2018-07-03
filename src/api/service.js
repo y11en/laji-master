@@ -23,10 +23,6 @@ export function book_EditBookEcho(data) {
             .then(res => res.data)
 }
 
-export function book_showBookInfo(data) {
-  return ax.post('/book-showBookInfo', data)
-            .then(res => res.data)
-}
 
 export function getBookDataView(data) {
   return ax.post('/admin/getBookDataView', data)
@@ -171,6 +167,19 @@ export function getBookInfoList(data) {
               .then(res => res.data)
 }
 
+// 书籍详情
+export function bookShowBookInfo(data) {
+    return ax.post('/book-showBookInfo', data)
+              .then(res => res.data)
+}
+
+// 章节列表
+// 书籍详情
+export function chapterList(data) {
+    return ax.get('/books-adminChapterList/' + data)
+              .then(res => res.data)
+}
+
 // 用户管理
 export function getUserList(data) {
     return ax.post('/admin/getUserList', data)
@@ -286,3 +295,14 @@ export function getAdminSubscriptionStatisticsInfoByTime(data) {
             .then(res => res.data)
 }
 
+// 生成推广链接
+export function addExtensionLink(data) {
+    return ax.post('/addExtensionLink', data)
+            .then(res => res.data)
+}
+
+// 获取推广链接
+export function getExtensionLink(data) {
+    return ax.post('/getExtensionLink', data)
+            .then(res => res.data)
+}

@@ -9,6 +9,7 @@ const state = {
         {name: '辣鸡小说', id: 'LG20180608000'},
         {name: '北京九山海', id: 'LG20180608001'},
         {name: '德绚', id: 'LGDMT20180627'},
+        {name: '哔哩哔哩', id: 'LG20180703002'},
     ],
     // 小说分销 - 当日订单
     rechargeDay: { succCounts: 0, succMoney: 0, errCounts: 0, errCounts: 0 },
@@ -23,6 +24,8 @@ const state = {
     orderTableList: [],
     // 小说分销 - 书籍对象
     bookTableObj: {},
+    // 推广链接数据
+    extendLinkObj: {}
 }
 
 const mutations = {
@@ -148,6 +151,15 @@ const mutations = {
     getBookTable(state, data) {
         state.bookTableObj = data
         state.loading = false
+    },
+
+    // 推广链接数据
+    extendLinkObj(state, data) {
+        state.extendLinkObj = {}
+        for(let i=0; i<data.list.length; i++) {
+            data.list[i].show = false
+        }
+        state.extendLinkObj = data
     }
 }
 
@@ -223,6 +235,23 @@ const actions = {
         if(res.returnCode === 200) commit('getBookTable', res.data)
         else Message.error(res.msg)
     },
+
+    // 生成推广链接
+    async addExtensionLink({ commit }, data) {
+        const res = await service.addExtensionLink(data).catch(err => console.error(err))
+        if(res.returnCode === 200) Message.success(res.msg)
+        else Message.error(res.msg)
+    },
+
+    // 获取推广链接
+    async getExtensionLink({ commit }, data) {
+        // commit('openLoading')
+        const res = await service.getExtensionLink(data).catch(err => console.error(err))
+        if(res.returnCode === 200) commit('extendLinkObj', res.data)
+        else Message.error(res.msg)
+    },
+
+
 
 }
 

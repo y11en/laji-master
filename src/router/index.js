@@ -184,18 +184,34 @@ const router = new Router({
         { path: '/image/cover', redirect: 'image/cover/1' },
         { path: '/image/cover/:page', name: 'imgCover', component: () => import('@/page/picture/cover.vue') },
 
-        // 统计管理
+        // 应用统计
         { path: '/appstatistics', redirect: '/appstatistics/dataview' },
+        // 数据统计
         { path: '/appstatistics/dataview', name: 'census', component: () => import('@/page/census/index.vue') },
+        // 充值统计
         { path: '/appstatistics/recharge', name: 'recharge', component: () => import('@/page/census/recharge.vue') },
+        // 新增书籍
         { path: '/appstatistics/newbook', name: 'createBook', component: () => import('@/page/census/createBook.vue') },
         
-        // 小说分销平台
+        // 新媒体统计
         { path: '/multimedia', redirect: '/multimedia/paystatistics' },
+        // 充值统计
         { path: '/multimedia/paystatistics', name: 'data', component: () => import('@/page/distribution/data.vue') },
+        // 订阅统计
         { path: '/multimedia/subscribestatistic', redirect: '/multimedia/subscribestatistic/1' },
         { path: '/multimedia/subscribestatistic/:page', name: 'book', component: () => import('@/page/distribution/book.vue') },
-
+        
+        // 小说分销
+        { path: '/bookdistribution', redirect: '/bookdistribution/booklist/1' },
+        // 推广书籍列表
+        { path: '/bookdistribution/booklist', redirect: '/bookdistribution/booklist/1' },
+        { path: '/bookdistribution/booklist/:page', name: 'extendBookList', component: () => import('@/page/extend/bookList.vue') },
+        // 推广章节列表
+        { path: '/extend/chapterList/:bookId', name: 'extendChapterList', component: () => import('@/page/extend/chapterList.vue') },
+        // 推广链接
+        { path: '/bookdistribution/extensionlink', redirect: '/bookdistribution/extensionlink/1' },
+        { path: '/bookdistribution/extensionlink/:page', name: 'extendLink', component: () => import('@/page/extend/extendLink.vue') },
+        // 404
         { path: '/error', component: () => import('@/page/404.vue') },
         { path: '*', component: () => import('@/page/404.vue') }
     ]
