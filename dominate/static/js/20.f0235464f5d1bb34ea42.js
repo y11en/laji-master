@@ -1,0 +1,2 @@
+webpackJsonp([20],{"13vF":function(e,t,n){"use strict";function c(e){n("8HDB")}Object.defineProperty(t,"__esModule",{value:!0});var r={},u=function(){var e=this,t=e.$createElement;e._self._c;return e._m(0)},l=[function(){var e=this,t=e.$createElement,n=e._self._c||t;return n("div",[n("h1",[e._v("清除缓存")])])}],i=n("18Nq"),a=c,f=Object(i.a)(r,u,l,!1,a,null,null);t.default=f.exports},"8HDB":function(e,t){}});
+//# sourceMappingURL=20.f0235464f5d1bb34ea42.js.map

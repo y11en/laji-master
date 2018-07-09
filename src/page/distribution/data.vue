@@ -1,7 +1,7 @@
 <template>
     <div class="data" v-loading="this.$store.state.census.loading">
         <template v-if="this.$store.state.userInfo.adminInfo.userName === '张三'">
-            <canalID @canalParam="canalParam"></canalID>
+            <canalID @canalParam="canalParam" :list="canalIDList"></canalID>
         </template>
 
         <p class="title">订单统计</p>
@@ -96,6 +96,8 @@ export default {
 
     data() {
         return {
+            canalIDList: [],
+
             orderParams: {
                 page: 1,
                 channelId: '',
@@ -114,11 +116,13 @@ export default {
 
     created() {
         if(JSON.parse(sessionStorage.getItem('user_info')).adminInfo.userName === '德绚') {
-            this.orderParams.channelId = this.$store.state.census.spreadNameList[2].id
-            this.tableParams.channelId = this.$store.state.census.spreadNameList[2].id
+            this.canalIDList = this.$store.state.census.dexuanList
+            this.orderParams.channelId = this.$store.state.census.dexuanList[0].id
+            this.tableParams.channelId = this.$store.state.census.dexuanList[0].id
         }else {
-            this.orderParams.channelId = this.$store.state.census.spreadNameList[0].id
-            this.tableParams.channelId = this.$store.state.census.spreadNameList[0].id
+            this.canalIDList = this.$store.state.census.extendList
+            this.orderParams.channelId = this.$store.state.census.extendList[0].id
+            this.tableParams.channelId = this.$store.state.census.extendList[0].id
         }
         this.$store.dispatch('census/getRechargerecordByTypeStatistics', this.orderParams)
         this.$store.dispatch('census/getRechargerecordByTypeDetailed', {params: this.tableParams, type: this.tableParams.type})

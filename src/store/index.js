@@ -3,11 +3,11 @@
  */
 import Vue from 'vue'
 import Vuex from 'vuex'
-import AdminModule from './modules/admin'
-import UserModule from './modules/user'
-import BookModule from './modules/book'
-import SystemModule from './modules/system'
-import CensusModule from './modules/census'
+import AdminModule from './admin'
+import UserModule from './user'
+import BookModule from './book'
+import SystemModule from './system'
+import CensusModule from './census'
 
 import service from '../api'
 Vue.use(Vuex)
@@ -91,13 +91,7 @@ const actions = {
     return res
   },
 
-    /**
-     * 书籍导出
-     */
-  async chapterContentImport({}, data) {
-    const res = await service.chapterContentImport(data).catch(err => console.error(err))
-    return res
-  },
+   
 
     /**
      * 书籍导出
@@ -139,13 +133,7 @@ const actions = {
     return res
   },
 
-  /**
-   * 实时刷新数据
-   */
-  async getRefreshTime({}) {
-    const res = await service.getRefreshTime().catch(err => console.error(err))
-    return res
-  },
+  
 
     
     

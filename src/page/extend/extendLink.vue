@@ -19,7 +19,7 @@
                 <p class="extend-url">
                     <span>{{scope.row.url}}</span>
                     <el-tooltip effect="dark" content="复制链接" placement="top">
-                        <i class="fa fa-copy" v-clipboard="scope.row.url"></i>
+                        <i class="fa fa-copy" v-clipboard="scope.row.url" @click="copyMessige()"></i>
                     </el-tooltip>
                 </p>
                 <p class="extend-time">创建时间：{{scope.row.addTime | extendTime()}}</p>
@@ -47,15 +47,16 @@
 
         <el-table-column label="操作" width="200" align="center">
             <template slot-scope="scope">
-                <el-button class="more-btn" size="mini" @click="scope.row.show = !scope.row.show">
+                <!-- <el-button class="more-btn" size="mini" @click="scope.row.show = !scope.row.show">
                     更多 <i class="fa fa-caret-down"></i>
                     <el-collapse-transition>
                         <ul class="tool-list" v-show="scope.row.show">
                             <li><a @click="openDialog(scope.row)"><i class="fa fa-edit"></i> 修改链接</a></li>
-                            <li><a><i class="fa fa-trash-o"></i> 删除</a></li>
+                            <li><a @click="deleteLink(scope.row)"><i class="fa fa-trash-o"></i> 删除</a></li>
                         </ul>
                     </el-collapse-transition>
-                </el-button>
+                </el-button> -->
+                <el-button class="more-btn" size="mini" @click="deleteLink(scope.row)"><i class="fa fa-trash-o"></i> 删除</el-button>
             </template>
         </el-table-column>
     </el-table>
@@ -135,6 +136,25 @@ export default {
         openDialogTable(arr) {
             this.recordList = arr
             this.dialogVisibleTable = true
+        },
+
+        copyMessige() {
+            this.$message({ message: '复制成功！', type: 'success' })
+        },
+
+        deleteLink(row) {
+            this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.$store.dispatch('census/deleteExtensionLink', { id: row._id }).then(res => {
+                    this.$message({ type: 'success', message: res.msg })
+                    this.$store.dispatch('census/getExtensionLink', this.extendLinkParams)
+                })
+            }).catch(() => {
+                this.$message({ type: 'info', message: '已取消删除' })
+            })
         },
 
         handleCurrentChange(page) {

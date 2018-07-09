@@ -88,13 +88,7 @@ export function chapterZipDownload(data) {
             .then(res => res.data)
 }
 
-/**
- * 书籍导出生成
- */
-export function chapterContentImport(data) {
-  return ax.post('/admin/chapterContentImport', data)
-            .then(res => res.data)
-}
+
 
 /**
  * 修改书籍信息
@@ -135,6 +129,24 @@ export function getRefreshTime() {
   return ax.post('/getRefreshTime')
             .then(res => res.data)
 }
+
+
+
+// ==============================================================================================================> 书籍相关管理
+
+
+
+// 获取属性管理
+export function editBookEcho() {
+    return ax.get('/book-EditBookEcho')
+            .then(res => res.data)
+}
+
+
+
+
+
+
 
 
 // ==============================================================================================================> 管理员权限相关管理
@@ -190,6 +202,17 @@ export function getUserList(data) {
 // ==============================================================================================================> 系统管理
 
 
+
+
+
+
+
+// 书籍导出生成
+export function chapterContentImport(data) {
+    return ax.post('/admin/chapterContentImport', data)
+              .then(res => res.data)
+}
+
 // 获取公告
 export function getNotice(data) {
     return ax.get('/admin/sys-getNotice', { params: data })
@@ -230,10 +253,35 @@ export function getVersionList() {
 export function versionUpdate(data) {
     return new Promise((resolve, reject) => {
         var file = ax.post('/admin/appPackgetUpload', data.file).then(res => res.data.data)
-        var info = ax.get('/version/addUpdate', { params: data.info }).then(res => res.data.data)
-        resolve([file, info])
+        // var info = ax.get('/version/addUpdate', { params: data.info }).then(res => res.data.data)
+        // resolve([file, info])
+        resolve(file)
     })
 }
+
+
+
+// 获取限时免费数据
+export function getFreetimelimit(data) {
+    return ax.post('/admin/sys-getFreetimelimit', data)
+              .then(res => res.data)
+}
+
+
+
+// 获取活动推荐数据
+export function getActivityRecommendedPosition() {
+    return ax.post('/admin/sys-getActivityRecommendedPosition')
+              .then(res => res.data)
+}
+
+// 修改推荐位（活动推荐位）
+export function HDupdateActivityRecommendedPosition(data) {
+    return ax.post('/admin/HDupdateActivityRecommendedPosition', data)
+              .then(res => res.data)
+}
+
+
 
 // 模糊搜索书籍
 export function stacksSearch(data) {
@@ -304,5 +352,11 @@ export function addExtensionLink(data) {
 // 获取推广链接
 export function getExtensionLink(data) {
     return ax.post('/getExtensionLink', data)
+            .then(res => res.data)
+}
+
+// 删除推广链接
+export function deleteExtensionLink(data) {
+    return ax.post('/deleteExtensionLink', data)
             .then(res => res.data)
 }

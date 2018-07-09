@@ -1,8 +1,8 @@
 <template>
 <div class="recharge">
 
-    <template v-if="this.$store.state.userInfo.adminInfo.userName === '张三'">
-        <canalID @canalParam="canalParam"></canalID>
+    <template>
+        <canalID @canalParam="canalParam" :list="canalIDList"></canalID>
     </template>
 
     <div class="echart">
@@ -137,9 +137,10 @@ import canalID from '../../components/census/canalID'
 export default {
     components: { canalID },
 
-  data() {
+    data() {
         return {
             
+            canalIDList: [],
             // up
             showUp: false, // echart下拉菜单
             beginMonUp: '', // 起始月份
@@ -311,22 +312,29 @@ export default {
             }
         }
     },
-    mounted() {
+
+    created() {
         if(JSON.parse(sessionStorage.getItem('user_info')).adminInfo.userName === '北京九山海') {
-            this.defaultDate.channelId = this.$store.state.census.spreadNameList[1].id
-            this.tableDate.channelId = this.$store.state.census.spreadNameList[1].id
+            this.canalIDList = this.$store.state.census.jiushanhaiList
+            this.defaultDate.channelId = this.$store.state.census.jiushanhaiList[0].id
+            this.tableDate.channelId = this.$store.state.census.jiushanhaiList[0].id
         }else if(JSON.parse(sessionStorage.getItem('user_info')).adminInfo.userName === '哔哩哔哩') {
-            this.defaultDate.channelId = this.$store.state.census.spreadNameList[3].id
-            this.tableDate.channelId = this.$store.state.census.spreadNameList[3].id
+            this.canalIDList = this.$store.state.census.bilibiliList
+            this.defaultDate.channelId = this.$store.state.census.bilibiliList[0].id
+            this.tableDate.channelId = this.$store.state.census.bilibiliList[0].id
         }else {
-            this.defaultDate.channelId = this.$store.state.census.spreadNameList[0].id
-            this.tableDate.channelId = this.$store.state.census.spreadNameList[0].id
+            this.canalIDList = this.$store.state.census.censusList
+            this.defaultDate.channelId = this.$store.state.census.censusList[0].id
+            this.tableDate.channelId = this.$store.state.census.censusList[0].id
         }
         var date = new Date().getTime()
         for (var i=0; i<7; i++) {
             this.option.xAxis[0].data.unshift(this.FunWeekTime(date - i*1000*60*60*24))
             this.moneyOption.xAxis[0].data.unshift(this.FunWeekTime(date - i*1000*60*60*24))
         }
+    },
+
+    mounted() {
         this.bookChart()
         this.bookTable()
     },

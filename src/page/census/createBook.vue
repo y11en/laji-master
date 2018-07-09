@@ -1,8 +1,8 @@
 <template>
 <div class="create-book">
     
-    <template v-if="this.$store.state.userInfo.adminInfo.userName === '张三'">
-        <canalID @canalParam="canalParam"></canalID>
+    <template>
+        <canalID @canalParam="canalParam" :list="canalIDList"></canalID>
     </template>
 
     <div class="echart">
@@ -106,7 +106,7 @@
     </div>
 
     <div class="table-box">
-        <el-table :data="tableList" stripe border style="width: 100%">
+        <el-table :data="tableData.list" stripe border style="width: 100%">
             <el-table-column prop="bookId" label="用户ID"></el-table-column>
             <el-table-column prop="bookName" label="书名"></el-table-column>
             <el-table-column prop="writerName" label="作者"></el-table-column>
@@ -128,8 +128,16 @@
                     </div>
                 </template>
             </el-table-column>
-    
         </el-table>
+
+        <el-pagination
+            style="margin: 20px 0 150px 0;"
+            @current-change="handleCurrentChange"
+            :current-page="tableData.pageNum"
+            :page-size="tableData.pageSize"
+            layout="total, prev, pager, next, jumper"
+            :total="tableData.total">
+        </el-pagination>
     </div>
 </div>
 </template>
@@ -139,8 +147,10 @@ import echarts from 'echarts'
 import canalID from '../../components/census/canalID'
 export default {
     components: { canalID },
+
     data() {
         return {
+            canalIDList: [],
             myChart: null,
 
             // up
@@ -222,35 +232,44 @@ export default {
                 ]
             },
 
-            tableList: [],
+            tableData: {},
             tableDate: {
+                page: 1,
                 userCode: '',
                 dateTime: this.dateTiming(new Date().getTime(), 'start'),
                 endTime: this.dateTiming(new Date().getTime(), 'end')
             }
         }
     },
-    mounted() {
+
+    created() {
         if(JSON.parse(sessionStorage.getItem('user_info')).adminInfo.userName === '北京九山海') {
-            this.defaultDate.channelId = this.$store.state.census.spreadNameList[1].id
-            this.tableDate.userCode = this.$store.state.census.spreadNameList[1].id
+            this.canalIDList = this.$store.state.census.jiushanhaiList
+            this.defaultDate.channelId = this.$store.state.census.jiushanhaiList[0].id
+            this.tableDate.userCode = this.$store.state.census.jiushanhaiList[0].id
         }else if(JSON.parse(sessionStorage.getItem('user_info')).adminInfo.userName === '哔哩哔哩') {
-            this.defaultDate.channelId = this.$store.state.census.spreadNameList[3].id
-            this.tableDate.userCode = this.$store.state.census.spreadNameList[3].id
+            this.canalIDList = this.$store.state.census.bilibiliList
+            this.defaultDate.channelId = this.$store.state.census.bilibiliList[0].id
+            this.tableDate.userCode = this.$store.state.census.bilibiliList[0].id
         }else {
-            this.defaultDate.channelId = this.$store.state.census.spreadNameList[0].id
-            this.tableDate.userCode = this.$store.state.census.spreadNameList[0].id
+            this.canalIDList = this.$store.state.census.censusList
+            this.defaultDate.channelId = this.$store.state.census.censusList[0].id
+            this.tableDate.userCode = this.$store.state.census.censusList[0].id
         }
         var date = new Date().getTime()
         for (var i=0; i<7; i++) {
             this.option.xAxis[0].data.unshift(this.FunWeekTime(date - i*1000*60*60*24))
         }
+    },
+
+    mounted() {
         this.bookChart()
         this.bookTable()
     },
     destroyed() {
         this.myChart = null
     },
+
     methods: {
         // echart
         async bookChart() {
@@ -332,6 +351,7 @@ export default {
             this.bookChart()
             this.bookTable()
         },
+
         // 更换设备参数
         changeDevice(val) {
             this.active = val
@@ -347,6 +367,10 @@ export default {
                 this.defaultDate.terminal = 1
             }
             this.bookChart()
+        },
+
+        handleCurrentChange(page) {
+            this.$router.push({ params: { page: page }})
         },
 
         // echart打开时间插件
@@ -413,11 +437,11 @@ export default {
 
         // table
         bookTable() {
-            this.tableList = []
+            this.tableData = {}
             var data = this.tableDate
             this.$store.dispatch('census/getUserExtensionstatisticsCreateBookInfo', data).then(res => {
                 if(res.returnCode === 200) {
-                    this.tableList = res.data
+                    this.tableData = res.data
                 }
             })
         },
@@ -442,6 +466,13 @@ export default {
                 this.tableDate.bookName = this.userInput
                 this.bookTable()
             }
+        }
+    },
+
+    watch: {
+        $route: function(val) {
+            this.tableDate.page = val.params.page
+            this.bookTable()
         }
     }
 }
@@ -494,7 +525,6 @@ export default {
                 position absolute
                 z-index 1000
                 width 180px
-                // padding 10px
                 box-shadow border-box
                 top 60px
                 right 0
@@ -528,7 +558,6 @@ export default {
             width 100%
             height 360px
     .table
-        padding 0 60px
         height 80px
         line-height 80px
         margin-top 60px
@@ -539,6 +568,7 @@ export default {
             position relative
             width 120px
             height 80px
+            margin-left 20px
             display inline-block
             .title
                 width 100%

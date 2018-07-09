@@ -1,7 +1,7 @@
 <template>
     <div class="book" v-loading="this.$store.state.census.loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading">
         <template v-if="this.$store.state.userInfo.adminInfo.userName === '张三'">
-            <canalID class="canal" @canalParam="canalParam"></canalID>
+            <canalID class="canal" @canalParam="canalParam" :list="canalIDList"></canalID>
         </template>
         <p class="title">书籍统计</p>
 
@@ -66,6 +66,7 @@ export default {
 
     data() {
         return {
+            canalIDList: [],
             dateList: [new Date(new Date()-1000*60*60*24*6), new Date()],
             bookParams: {
                 page: this.$route.params.page,
@@ -76,11 +77,13 @@ export default {
         }
     },
 
-    mounted() {
+    created() {
         if(JSON.parse(sessionStorage.getItem('user_info')).adminInfo.userName === '德绚') {
-            this.bookParams.userCode = this.$store.state.census.spreadNameList[2].id
+            this.canalIDList = this.$store.state.census.dexuanList
+            this.bookParams.userCode = this.$store.state.census.dexuanList[0].id
         }else {
-            this.bookParams.userCode = this.$store.state.census.spreadNameList[0].id
+            this.canalIDList = this.$store.state.census.extendList
+            this.bookParams.userCode = this.$store.state.census.extendList[0].id
         }
         this.$store.dispatch('census/getAdminSubscriptionStatisticsInfoByTime', this.bookParams)
     },

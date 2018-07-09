@@ -33,7 +33,7 @@
             <div class="dialog-item">
                 <p>渠道名称</p>
                 <el-select v-model="caralParams.newMediaId" placeholder="请选择" @change="changeCaral()">
-                    <el-option v-for="(item, index) in this.$store.state.census.spreadNameList" :key="index" :label="item.name" :value="item.id"></el-option>
+                    <el-option v-for="(item, index) in this.$store.state.census.dexuanList" :key="index" :label="item.name" :value="item.id"></el-option>
                 </el-select>
             </div>
             <div class="dialog-tool" style="text-align: right;">
@@ -89,8 +89,7 @@ export default {
                 this.caralParams.url = 'https://www.lajixs.com/referrals/index?chapterId=' +
                     this.caralParams.chapterId +
                     '&bookId=' + this.caralParams.bookId +
-                    '&channelId=' + this.caralParams.newMediaId +
-                    '&bookName=' + this.caralParams.bookName
+                    '&channelId=' + this.caralParams.newMediaId
                 this.$store.dispatch('census/addExtensionLink', this.caralParams)
                 this.dialogFormVisible = false
             }

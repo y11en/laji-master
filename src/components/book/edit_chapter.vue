@@ -42,8 +42,8 @@
           <el-input v-show="ruleForm.whetherPublic==1" type="textarea" class="context" v-model="ruleForm.chapterContent"></el-input>
           <div v-show="ruleForm.whetherPublic!=1" class="iframe-wrap">
             <div id="content_edit_sole" unselectable="on" @keydown.native="preventCopy" v-if="isRload" :contenteditable="true" v-model="editContent" @input="editChange" >
-              <template v-for="(item,$index) in initial">
-                <p :uuid="item.uuid">
+              <template v-for="(item, index) in initial">
+                <p :uuid="item.uuid" :key="index">
                   {{item.content}}
                 </p>
               </template>

@@ -5,7 +5,7 @@
             <div class="drop-down-box">
                 <el-collapse-transition>
                     <div v-show="showCanal">
-                        <div class="transition-box" @click="changeCanalId(tmp)" v-for="(tmp, index) in canalList" :key="index">{{tmp.name}}</div>
+                        <div class="transition-box" @click="changeCanalId(tmp)" v-for="(tmp, index) in list" :key="index">{{tmp.name}}</div>
                     </div>
                 </el-collapse-transition>
             </div>
@@ -16,24 +16,24 @@
 <script>
 export default {
 
+    props: [ 'list' ],
+
     data() {
         return {
-            canalName: this.$store.state.census.spreadNameList[0].name,
+            canalName: '',
             showCanal: false,
         }
     },
-    
+
+    mounted() {
+        this.canalName = this.list[0].name
+    },
+
     methods: {
         changeCanalId(val) {
             this.canalName = val.name
             this.showCanal = false
             this.$emit('canalParam', val.id)
-        }
-    },
-
-    computed: {
-        canalList() {
-            return this.$store.state.census.spreadNameList
         }
     }
 }
@@ -46,6 +46,7 @@ export default {
     margin-top 20px
     text-align right
     .drop-down-canal
+        position relative
         .title
             color #64D228
             border 2px solid #64D228
