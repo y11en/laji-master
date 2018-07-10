@@ -6,7 +6,7 @@
         </div>
     </el-alert>
 
-    <div class="version-contain">
+    <div class="version-contain" v-loading="this.$store.state.system.loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading">
         <el-row :gutter="24" style="margin: 0;">
             <el-col :span="8" class="version-info">
 
@@ -18,9 +18,8 @@
                         <el-upload
                             ref='upload'
                             action=""
-                            :limit="2"
                             :auto-upload="false"
-                            :on-change="onChange"
+                            :on-change="beforeUpload"
                             :on-remove="handleRemove"
                             :before-remove="beforeRemove">
                             <el-button size="small" type="primary">点击上传</el-button>
@@ -29,6 +28,17 @@
                     </el-col>
                 </el-row>
 
+                <el-row :gutter="20" style="margin: 20px 0;">
+                    <el-col :span="4">
+                        <p style="text-align: right;">设备</p>
+                    </el-col>
+                    <el-col :span="18">
+                        <el-select v-model="versionData.versionTerminal" placeholder="请选择">
+                            <el-option v-for="item in terminalList" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                        </el-select>
+                    </el-col>
+                </el-row>
+                
                 <el-row :gutter="20" style="margin: 20px 0;">
                     <el-col :span="4">
                         <p style="text-align: right;">版本号</p>
@@ -70,9 +80,13 @@
                             <i class="fa fa-clock-o"></i>
                         </div>
                         <div class="timeline-content">
+                            <p><span class="title">设备：</span><span class="content">{{tmp.versionTerminal}}</span></p>
                             <p><span class="title">版本号：</span><span class="content">{{tmp.version}}</span></p>
                             <p><span class="title">版本号ID：</span><span class="content">{{tmp.id}}</span></p>
-                            <p><span class="title">版本更新描述：</span><span class="content">{{tmp.versionDescription}}</span></p>
+                            <div>
+                                <span class="title">版本更新描述：</span>
+                                <div class="content" v-html="desc(tmp.versionDescription)"></div>
+                            </div>
                             <span class="cd-date">{{tmp.versionUpdateDataTime | time('long')}}</span>
                         </div>
                     </div>
@@ -87,14 +101,14 @@
     export default{
         data() {
             return {
+                terminalList: [{value: '安卓', label: '安卓'}, {value: 'IOS', label: 'IOS'}],
                 versionData: {
                     version: '',
-                    versionTerminal: '安卓',
+                    versionTerminal: '',
                     versionUpdateDataTime: new Date(),
                     versionDescription: '',
                     code: '200',
-                },
-                file: null,
+                }
             }
         },
 
@@ -103,13 +117,31 @@
         },
 
         methods: {
-            onChange(file, fileList) {
-                if(fileList.length === 2) {
-                    fileList.shift()
-                }
-                this.file = fileList[0]
-            },
 
+            beforeUpload(file) {
+                if(file.name.indexOf('.apk') === -1){
+                    this.$message({ message: '请上传apk文件！', type: 'warning' })
+                    this.$refs.upload.clearFiles()
+                }else if(file.size > 419430400){
+                    this.$message({ message: '文件过大！请重新选择！', type: 'warning' })
+                }else {
+                    this.$confirm(`确定上传 ${ file.name }？`, '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        var formData = new FormData()
+                        formData.append('file', file.raw)
+                        this.$store.dispatch('system/appPackgetUpload', formData).then(res => {
+                            if(res.returnCode === 200) this.$refs.upload.clearFiles()
+                        })
+                    }).catch(() => {
+                        this.$message({ type: 'info', message: '已取消删除' })
+                        this.$refs.upload.clearFiles()
+                    })
+                }
+            },
+            
             handleRemove(file, fileList) {
                 this.file = null
             },
@@ -119,14 +151,10 @@
             },
             
             versionUpdate() {
-                if(this.file === null) {
-                    this.$message({ message: '请上传文件！', type: 'warning' })
-                }else if(this.file.name.indexOf('.apk') === -1){
-                    this.$message({ message: '请上传apk文件！', type: 'warning' })
+                if(this.versionData.versionTerminal === '') {
+                    this.$message({ message: '请选择设备！', type: 'warning' })
                 }else if(this.versionData.version === ''){
                     this.$message({ message: '请填写版本号！', type: 'warning' })
-                }else if(this.file.size > 419430400){
-                    this.$message({ message: '文件过大！请重新选择！', type: 'warning' })
                 }else if(this.versionData.versionUpdateDataTime === '') {
                     this.$message({ message: '请选择版本更新时间！', type: 'warning' })
                 }else if(this.versionData.versionDescription === '') {
@@ -137,15 +165,8 @@
                     }else {
                         this.versionData.versionUpdateDataTime = this.dateTiming(this.versionData.versionUpdateDataTime, 'start')
                     }
-                    var formData = new FormData()
-                    formData.append('fileName', this.file.name)
-                    formData.append('file', this.file.raw)
-
-                    this.$store.dispatch('system/versionUpdate', { file: formData, info: this.versionData }).then(res => {
+                    this.$store.dispatch('system/addUpdate', this.versionData).then(res => {
                         if(res.returnCode === 200) {
-                            this.$message({ message: res.msg, type: 'success' })
-                            this.$refs.upload.clearFiles()
-                            this.file = ''
                             this.versionData = {
                                 version: '',
                                 versionTerminal: '安卓',
@@ -156,8 +177,11 @@
                         }
                     })
                 }
-            }
+            },
 
+            desc(val) {
+                return val.replace(/\r\n/g, "<br />")
+            }
         },
 
         computed: {
@@ -208,7 +232,7 @@
                     vertical-align top
                 .content
                     display inline-block
-                    width 70%
+                    width 65%
                 .cd-date
                     position absolute
                     width 100%

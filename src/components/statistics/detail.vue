@@ -409,7 +409,4 @@ export default{
         height 200px
 .title
     margin-bottom 10px
-.fa
-    margin-left 10px
-    cursor pointer
 </style>

@@ -17,6 +17,10 @@ const mutations = {
     openLoading(state) {
         state.loading = true
     },
+    
+    colseLoading(state) {
+        state.loading = false
+    },
 
     changeVersionTimeLine(state, data) {
         state.versionTimeLine = data
@@ -90,34 +94,45 @@ const actions = {
     },
 
     // 版本更新时间轴
-    async getVersionList({commit}) {
+    async getVersionList({ commit }) {
         const res = await service.getVersionList().catch(err => console.error(err))
         if (res.returnCode === 200) commit('changeVersionTimeLine', res.data.reverse())
         else Message.error(res.msg)
     },
 
-    // 版本更新
-    async versionUpdate({commit}, data) {
-        var res = await Promise.all(await service.versionUpdate(data)).then(values =>{
-        console.log(values)
-            // dispatch('getVersionList')
-        })
+    // 版本更新apk
+    async appPackgetUpload({ commit, dispatch }, data) {
+        commit('openLoading')
+        const res = await service.appPackgetUpload(data).catch(err => console.error(err))
+        if(res.returnCode === 200) {
+            Message.success(res.msg)
+            dispatch('getVersionList')
+            commit('colseLoading')
+            return res
+        }else Message.error(res.msg)
+    },
 
+    // 版本更新apk信息
+    async addUpdate({ dispatch }, data) {
+        const res = await service.addUpdate(data).catch(err => console.error(err))
+        if(res.returnCode === 200) {
+            Message.success(res.msg)
+            dispatch('getVersionList')
+            return res
+        }else Message.error(res.msg)
     },
 
 
     // 获取限时免费数据
-    async getFreetimelimit({commit}, data) {
-        commit('openLoading')
+    async getFreetimelimit({ commit }, data) {
+        // commit('openLoading')
         const res = await service.getFreetimelimit(data).catch(err => console.error(err))
         if(res.returnCode === 200) commit('getFreetimelimit', res.data)
         else Message.error(res.msg)
     },
 
-
-
     // 获取活动推荐数据
-    async getActivityRecommendedPosition({commit}) {
+    async getActivityRecommendedPosition({ commit }) {
         commit('openLoading')
         const res = await service.getActivityRecommendedPosition().catch(err => console.error(err))
         if(res.returnCode === 200) commit('getActivityRecommendedPosition', res.data)
@@ -125,7 +140,7 @@ const actions = {
     },
 
     // 获取活动推荐数据
-    async HDupdateActivityRecommendedPosition({commit, dispatch}, data) {
+    async HDupdateActivityRecommendedPosition({ commit, dispatch }, data) {
         commit('openLoading')
         const res = await service.HDupdateActivityRecommendedPosition(data).catch(err => console.error(err))
         if(res.returnCode === 200) {
@@ -135,7 +150,7 @@ const actions = {
     },
 
     // 获取公告
-    async getNotice ({commit}, data) {
+    async getNotice ({ commit }, data) {
         commit('openLoading')
         const res = await service.getNotice(data).catch(err => console.error(err))
         if (res.returnCode === 200) commit('getNotice', res.data)
@@ -143,7 +158,7 @@ const actions = {
     },
 
     // 删除公告
-    async deleteNotice ({dispatch}, data) {
+    async deleteNotice ({ dispatch }, data) {
         const res = await service.deleteNotice(data.a).catch(err => console.error(err))
         if (res.returnCode === 200) {
             Message.success(res.msg)

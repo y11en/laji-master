@@ -249,25 +249,23 @@ export function getVersionList() {
               .then(res => res.data)
 }
 
-// 版本更新
-export function versionUpdate(data) {
-    return new Promise((resolve, reject) => {
-        var file = ax.post('/admin/appPackgetUpload', data.file).then(res => res.data.data)
-        // var info = ax.get('/version/addUpdate', { params: data.info }).then(res => res.data.data)
-        // resolve([file, info])
-        resolve(file)
-    })
+// 版本更新apk
+export function appPackgetUpload(data) {
+    return ax.post('/admin/appPackgetUpload', data)
+              .then(res => res.data)
 }
 
-
+// 版本更新信息
+export function addUpdate(data) {
+    return ax.get('/version/addUpdate', { params: data })
+              .then(res => res.data)
+}
 
 // 获取限时免费数据
 export function getFreetimelimit(data) {
     return ax.post('/admin/sys-getFreetimelimit', data)
               .then(res => res.data)
 }
-
-
 
 // 获取活动推荐数据
 export function getActivityRecommendedPosition() {
